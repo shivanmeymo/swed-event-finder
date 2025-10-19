@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+// LanguageProvider wraps all routes for i18n support
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>

@@ -1,3 +1,4 @@
+import { useState, useMemo } from "react";
 import Navbar from "@/components/Navbar";
 import FilterBar from "@/components/FilterBar";
 import EventCard from "@/components/EventCard";
@@ -5,8 +6,15 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
 
 const Index = () => {
+  const [filters, setFilters] = useState({
+    keywords: [] as string[],
+    date: "",
+    location: "",
+    category: "",
+  });
+
   // Mock data for demonstration
-  const events = [
+  const allEvents = [
     {
       id: 1,
       title: "Uppsala Jazz Festival 2025",
@@ -63,6 +71,36 @@ const Index = () => {
     },
   ];
 
+  // Filter events based on selected filters
+  const filteredEvents = useMemo(() => {
+    return allEvents.filter((event) => {
+      // Keyword filter
+      if (filters.keywords.length > 0) {
+        const eventText = `${event.title} ${event.category} ${event.location}`.toLowerCase();
+        const matchesKeywords = filters.keywords.some((keyword) =>
+          eventText.includes(keyword.toLowerCase())
+        );
+        if (!matchesKeywords) return false;
+      }
+
+      // Location filter
+      if (filters.location && filters.location !== "all") {
+        if (!event.location.toLowerCase().includes(filters.location.toLowerCase())) {
+          return false;
+        }
+      }
+
+      // Category filter
+      if (filters.category && filters.category !== "all") {
+        if (event.category.toLowerCase() !== filters.category.toLowerCase()) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }, [filters, allEvents]);
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -76,10 +114,10 @@ const Index = () => {
               Discover Events Across Sweden
             </div>
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-foreground leading-tight">
-              Find Your Next
               <span className="block bg-gradient-to-r from-primary via-[hsl(230,89%,62%)] to-accent bg-clip-text text-transparent">
-                Amazing Experience
+                Discover Events and Activities
               </span>
+              <span className="block">Across Sweden</span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Explore thousands of events from Uppsala, Stockholm, and beyond. All in one place.
@@ -99,7 +137,7 @@ const Index = () => {
 
       {/* Filter Section */}
       <section className="container mx-auto px-4 -mt-8 relative z-10">
-        <FilterBar />
+        <FilterBar onFilterChange={setFilters} />
       </section>
 
       {/* Events Grid */}
@@ -108,17 +146,62 @@ const Index = () => {
           <div>
             <h2 className="text-3xl font-bold text-foreground">Upcoming Events</h2>
             <p className="text-muted-foreground mt-1">
-              {events.length} events found
+              {filteredEvents.length} events found
             </p>
           </div>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {events.map((event) => (
-            <EventCard key={event.id} {...event} />
-          ))}
+          {filteredEvents.length > 0 ? (
+            filteredEvents.map((event) => (
+              <EventCard key={event.id} {...event} />
+            ))
+          ) : (
+            <div className="col-span-full text-center py-12">
+              <p className="text-muted-foreground text-lg">
+                No events found matching your filters. Try adjusting your search criteria.
+              </p>
+            </div>
+          )}
         </div>
       </section>
+
+      {/* Footer */}
+      <footer className="border-t border-border bg-card mt-20">
+        <div className="container mx-auto px-4 py-12">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div className="md:col-span-2">
+              <h3 className="text-2xl font-bold bg-gradient-to-r from-primary via-[hsl(230,89%,62%)] to-accent bg-clip-text text-transparent mb-4">
+                SwedEvents
+              </h3>
+              <p className="text-muted-foreground mb-4">
+                Discover amazing events and activities across Sweden. From music festivals to tech conferences, find your next experience with us.
+              </p>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold text-foreground mb-4">Quick Links</h4>
+              <ul className="space-y-2 text-muted-foreground">
+                <li><a href="/" className="hover:text-primary transition-colors">Home</a></li>
+                <li><a href="/create" className="hover:text-primary transition-colors">Create Event</a></li>
+                <li><a href="/auth" className="hover:text-primary transition-colors">Sign In</a></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold text-foreground mb-4">Contact</h4>
+              <ul className="space-y-2 text-muted-foreground">
+                <li>Email: info@swedevents.se</li>
+                <li>Support: support@swedevents.se</li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="border-t border-border mt-8 pt-8 text-center text-muted-foreground">
+            <p>&copy; {new Date().getFullYear()} SwedEvents. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

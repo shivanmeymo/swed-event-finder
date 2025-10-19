@@ -12,12 +12,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Calendar, MapPin, Users, Image as ImageIcon, Save } from "lucide-react";
+import { Calendar, MapPin, Users, Upload, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const CreateEvent = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string>("");
   const { toast } = useToast();
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -143,15 +155,35 @@ const CreateEvent = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="image">Event Image URL</Label>
-                  <div className="relative">
-                    <ImageIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="image"
-                      type="url"
-                      placeholder="https://example.com/image.jpg"
-                      className="pl-10"
-                    />
+                  <Label htmlFor="image">Event Image</Label>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-4">
+                      <Input
+                        id="image"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="cursor-pointer"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => document.getElementById("image")?.click()}
+                      >
+                        <Upload className="h-4 w-4 mr-2" />
+                        Upload
+                      </Button>
+                    </div>
+                    {imagePreview && (
+                      <div className="relative w-full h-48 rounded-lg overflow-hidden border border-border">
+                        <img
+                          src={imagePreview}
+                          alt="Event preview"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
 

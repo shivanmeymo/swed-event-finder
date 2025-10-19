@@ -3,8 +3,11 @@ import FilterBar from "@/components/FilterBar";
 import EventCard from "@/components/EventCard";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Index = () => {
+  const { t } = useLanguage();
+  
   // Mock data for demonstration
   const events = [
     {
@@ -73,24 +76,23 @@ const Index = () => {
           <div className="max-w-4xl mx-auto text-center space-y-6">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 text-accent-foreground text-sm font-medium">
               <Sparkles className="h-4 w-4" />
-              Discover Events Across Sweden
+              {t('heroSubtitle')}
             </div>
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-foreground leading-tight">
-              Find Your Next
               <span className="block bg-gradient-to-r from-primary via-[hsl(230,89%,62%)] to-accent bg-clip-text text-transparent">
-                Amazing Experience
+                {t('heroTitle')}
               </span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Explore thousands of events from Uppsala, Stockholm, and beyond. All in one place.
+              {t('heroDescription')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
               <Button size="lg" className="bg-gradient-to-r from-primary to-[hsl(230,89%,62%)] hover:opacity-90 transition-opacity">
-                Explore Events
+                {t('exploreEvents')}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               <Button size="lg" variant="outline" className="border-2">
-                Create Event
+                {t('createEvent')}
               </Button>
             </div>
           </div>
@@ -106,9 +108,9 @@ const Index = () => {
       <section className="container mx-auto px-4 py-16">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-3xl font-bold text-foreground">Upcoming Events</h2>
+            <h2 className="text-3xl font-bold text-foreground">{t('upcomingEvents')}</h2>
             <p className="text-muted-foreground mt-1">
-              {events.length} events found
+              {events.length} {t('eventsFound')}
             </p>
           </div>
         </div>

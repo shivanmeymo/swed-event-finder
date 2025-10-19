@@ -1,49 +1,36 @@
-import { Calendar, Search, User, PlusCircle, Languages } from "lucide-react";
+import { Calendar, Search, User, PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { useLanguage } from "@/contexts/LanguageContext";
-import logo from "@/assets/swedevents-logo.png";
 
 const Navbar = () => {
-  const { language, setLanguage, t } = useLanguage();
-
-  const toggleLanguage = () => {
-    setLanguage(language === 'sv' ? 'en' : 'sv');
-  };
-
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-border bg-card/80 backdrop-blur-lg">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
-          <Link to="/" className="flex items-center hover:opacity-80 transition-opacity">
-            <img src={logo} alt="SwedEvents" className="h-10" />
+          <Link to="/" className="flex items-center gap-2">
+            <Calendar className="h-8 w-8 text-primary" />
+            <span className="text-2xl font-bold bg-gradient-to-r from-primary to-[hsl(230,89%,62%)] bg-clip-text text-transparent">
+              SwedEvents
+            </span>
           </Link>
 
           <div className="flex items-center gap-4">
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={toggleLanguage}
-            >
-              <Languages className="h-4 w-4 mr-2" />
-              {language === 'sv' ? 'EN' : 'SV'}
-            </Button>
             <Button variant="ghost" size="sm" asChild>
               <Link to="/">
                 <Search className="h-4 w-4 mr-2" />
-                {t('events')}
+                Discover
               </Link>
             </Button>
             <Button variant="ghost" size="sm" asChild>
               <Link to="/create">
                 <PlusCircle className="h-4 w-4 mr-2" />
-                {t('createEvent')}
+                Create Event
               </Link>
             </Button>
             <Button variant="default" size="sm" asChild>
               <Link to="/auth">
                 <User className="h-4 w-4 mr-2" />
-                {t('signIn')}
+                Sign In
               </Link>
             </Button>
           </div>

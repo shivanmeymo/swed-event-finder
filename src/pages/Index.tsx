@@ -1,10 +1,11 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import FilterBar from "@/components/FilterBar";
 import EventCard from "@/components/EventCard";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import heroImage from "@/assets/sweden-outdoor-hero.jpg";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
   const [filters, setFilters] = useState({
@@ -13,64 +14,60 @@ const Index = () => {
     location: "",
     category: "",
   });
+  const [allEvents, setAllEvents] = useState<any[]>([]);
 
-  // Mock data for demonstration
-  const allEvents = [
-    {
-      id: 1,
-      title: "Uppsala Jazz Festival 2025",
-      date: "March 15, 2025",
-      location: "Uppsala Concert Hall",
-      attendees: 245,
-      category: "Music",
-      image: "https://images.unsplash.com/photo-1511735111819-9a3f7709049c?w=800&auto=format&fit=crop&q=60",
-    },
-    {
-      id: 2,
-      title: "Tech Innovation Summit",
-      date: "March 20, 2025",
-      location: "Stockholm Tech Hub",
-      attendees: 456,
-      category: "Tech",
-      image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&auto=format&fit=crop&q=60",
-    },
-    {
-      id: 3,
-      title: "Nordic Food Market",
-      date: "March 22, 2025",
-      location: "Stora Torget, Uppsala",
-      attendees: 892,
-      category: "Food",
-      image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&auto=format&fit=crop&q=60",
-    },
-    {
-      id: 4,
-      title: "Art Exhibition: Modern Sweden",
-      date: "March 25, 2025",
-      location: "Uppsala Art Museum",
-      attendees: 178,
-      category: "Art",
-      image: "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=800&auto=format&fit=crop&q=60",
-    },
-    {
-      id: 5,
-      title: "Marathon Stockholm 2025",
-      date: "April 1, 2025",
-      location: "Stockholm City Center",
-      attendees: 1240,
-      category: "Sports",
-      image: "https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?w=800&auto=format&fit=crop&q=60",
-    },
-    {
-      id: 6,
-      title: "EDM Night at Katalin",
-      date: "March 18, 2025",
-      location: "Katalin, Uppsala",
-      attendees: 567,
-      category: "Music",
-      image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format&fit=crop&q=60",
-    },
-  ];
+  // Fetch events from database
+  useEffect(() => {
+    const fetchEvents = async () => {
+      const { data, error } = await supabase
+        .from('events')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (data) {
+        setAllEvents(data.map(event => ({
+          id: event.id,
+          title: event.title,
+          date: event.date,
+          location: event.location,
+          attendees: event.attendees,
+          category: event.category,
+          image: event.image_url,
+        })));
+      }
+    };
+
+    fetchEvents();
+
+    // Set up realtime subscription for new events
+    const channel = supabase
+      .channel('events-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'events',
+        },
+        (payload) => {
+          const newEvent = payload.new;
+          setAllEvents(prev => [{
+            id: newEvent.id,
+            title: newEvent.title,
+            date: newEvent.date,
+            location: newEvent.location,
+            attendees: newEvent.attendees,
+            category: newEvent.category,
+            image: newEvent.image_url,
+          }, ...prev]);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   // Filter events based on selected filters
   const filteredEvents = useMemo(() => {

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,15 +15,38 @@ import {
 } from "@/components/ui/select";
 import { Calendar, MapPin, Users, Upload, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const CreateEvent = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string>("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [user, setUser] = useState<any>(null);
   const { toast } = useToast();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Check authentication
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast({
+          title: "Authentication Required",
+          description: "Please sign in to create events.",
+          variant: "destructive",
+        });
+        navigate("/auth");
+      } else {
+        setUser(session.user);
+      }
+    };
+    checkUser();
+  }, [navigate, toast]);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setImageFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
@@ -31,18 +55,62 @@ const CreateEvent = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!user) return;
+
     setIsLoading(true);
-    
-    // Simulate event creation
-    setTimeout(() => {
-      setIsLoading(false);
+    const formData = new FormData(e.currentTarget);
+
+    try {
+      let imageUrl = "";
+
+      // Upload image if provided
+      if (imageFile) {
+        const fileExt = imageFile.name.split('.').pop();
+        const fileName = `${Math.random()}.${fileExt}`;
+        const { error: uploadError, data } = await supabase.storage
+          .from('event-images')
+          .upload(fileName, imageFile);
+
+        if (uploadError) throw uploadError;
+        
+        // Get public URL
+        const { data: { publicUrl } } = supabase.storage
+          .from('event-images')
+          .getPublicUrl(fileName);
+        
+        imageUrl = publicUrl;
+      }
+
+      // Create event
+      const { error } = await supabase.from('events').insert({
+        title: formData.get('title') as string,
+        description: formData.get('description') as string,
+        date: `${formData.get('date')} ${formData.get('time')}`,
+        location: formData.get('location') as string,
+        category: formData.get('category') as string,
+        image_url: imageUrl,
+        organizer_id: user.id,
+      });
+
+      if (error) throw error;
+
       toast({
         title: "Event Created!",
         description: "Your event has been published successfully.",
       });
-    }, 1500);
+      
+      navigate("/");
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -67,19 +135,21 @@ const CreateEvent = () => {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="title">Event Title *</Label>
-                  <Input
-                    id="title"
-                    placeholder="e.g., Summer Music Festival 2025"
-                    required
-                  />
-                </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="title">Event Title *</Label>
+                    <Input
+                      id="title"
+                      name="title"
+                      placeholder="e.g., Summer Music Festival 2025"
+                      required
+                    />
+                  </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="description">Description *</Label>
                   <Textarea
                     id="description"
+                    name="description"
                     placeholder="Describe your event in detail..."
                     rows={5}
                     required
@@ -93,6 +163,7 @@ const CreateEvent = () => {
                       <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="date"
+                        name="date"
                         type="date"
                         className="pl-10"
                         required
@@ -104,6 +175,7 @@ const CreateEvent = () => {
                     <Label htmlFor="time">Time *</Label>
                     <Input
                       id="time"
+                      name="time"
                       type="time"
                       required
                     />
@@ -116,6 +188,7 @@ const CreateEvent = () => {
                     <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="location"
+                      name="location"
                       placeholder="Venue name and address"
                       className="pl-10"
                       required
@@ -126,16 +199,16 @@ const CreateEvent = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="category">Category *</Label>
-                    <Select required>
+                    <Select name="category" required>
                       <SelectTrigger id="category">
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="music">Music</SelectItem>
-                        <SelectItem value="tech">Tech</SelectItem>
-                        <SelectItem value="sports">Sports</SelectItem>
-                        <SelectItem value="food">Food & Drink</SelectItem>
-                        <SelectItem value="art">Art & Culture</SelectItem>
+                        <SelectItem value="Music">Music</SelectItem>
+                        <SelectItem value="Tech">Tech</SelectItem>
+                        <SelectItem value="Sports">Sports</SelectItem>
+                        <SelectItem value="Food">Food & Drink</SelectItem>
+                        <SelectItem value="Art">Art & Culture</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -146,6 +219,7 @@ const CreateEvent = () => {
                       <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="capacity"
+                        name="capacity"
                         type="number"
                         placeholder="100"
                         className="pl-10"

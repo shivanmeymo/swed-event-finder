@@ -20,16 +20,10 @@ const Navbar = () => {
                 Discover
               </Link>
             </Button>
-            <Button variant="ghost" size="sm" asChild>
+            <Button variant="default" size="sm" asChild>
               <Link to="/create">
                 <PlusCircle className="h-4 w-4 mr-2" />
                 Create Event
-              </Link>
-            </Button>
-            <Button variant="default" size="sm" asChild>
-              <Link to="/auth">
-                <User className="h-4 w-4 mr-2" />
-                Sign In
               </Link>
             </Button>
           </div>

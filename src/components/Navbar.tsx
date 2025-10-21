@@ -1,4 +1,4 @@
-import { Calendar, Search, User, PlusCircle } from "lucide-react";
+import { Settings, PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
@@ -14,16 +14,16 @@ const Navbar = () => {
           </Link>
 
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm" asChild>
-              <Link to="/">
-                <Search className="h-4 w-4 mr-2" />
-                Discover
-              </Link>
-            </Button>
             <Button variant="default" size="sm" asChild>
               <Link to="/create">
                 <PlusCircle className="h-4 w-4 mr-2" />
                 Create Event
+              </Link>
+            </Button>
+            <Button variant="outline" size="sm" asChild>
+              <Link to="/manage">
+                <Settings className="h-4 w-4 mr-2" />
+                Manage Event
               </Link>
             </Button>
           </div>

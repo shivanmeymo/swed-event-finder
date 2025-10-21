@@ -39,27 +39,19 @@ const Index = () => {
 
     fetchEvents();
 
-    // Set up realtime subscription for new events
+    // Set up realtime subscription for all event changes
     const channel = supabase
       .channel('events-changes')
       .on(
         'postgres_changes',
         {
-          event: 'INSERT',
+          event: '*',
           schema: 'public',
           table: 'events',
         },
-        (payload) => {
-          const newEvent = payload.new;
-          setAllEvents(prev => [{
-            id: newEvent.id,
-            title: newEvent.title,
-            date: newEvent.date,
-            location: newEvent.location,
-            attendees: newEvent.attendees,
-            category: newEvent.category,
-            image: newEvent.image_url,
-          }, ...prev]);
+        () => {
+          // Refetch all events on any change
+          fetchEvents();
         }
       )
       .subscribe();
@@ -186,7 +178,7 @@ const Index = () => {
               <ul className="space-y-2 text-muted-foreground">
                 <li><a href="/" className="hover:text-primary transition-colors">Home</a></li>
                 <li><a href="/create" className="hover:text-primary transition-colors">Create Event</a></li>
-                <li><a href="/auth" className="hover:text-primary transition-colors">Sign In</a></li>
+                <li><a href="/manage" className="hover:text-primary transition-colors">Manage Event</a></li>
               </ul>
             </div>
             

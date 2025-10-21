@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
@@ -13,35 +13,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Calendar, MapPin, Users, Upload, Save } from "lucide-react";
+import { Calendar, MapPin, Users, Upload, Save, Copy, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const CreateEvent = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string>("");
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [user, setUser] = useState<any>(null);
+  const [accessCode, setAccessCode] = useState<string>("");
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [copied, setCopied] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    // Check authentication
-    const checkUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        toast({
-          title: "Authentication Required",
-          description: "Please sign in to create events.",
-          variant: "destructive",
-        });
-        navigate("/auth");
-      } else {
-        setUser(session.user);
-      }
-    };
-    checkUser();
-  }, [navigate, toast]);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -57,8 +48,6 @@ const CreateEvent = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!user) return;
-
     setIsLoading(true);
     const formData = new FormData(e.currentTarget);
 
@@ -69,7 +58,7 @@ const CreateEvent = () => {
       if (imageFile) {
         const fileExt = imageFile.name.split('.').pop();
         const fileName = `${Math.random()}.${fileExt}`;
-        const { error: uploadError, data } = await supabase.storage
+        const { error: uploadError } = await supabase.storage
           .from('event-images')
           .upload(fileName, imageFile);
 
@@ -83,25 +72,20 @@ const CreateEvent = () => {
         imageUrl = publicUrl;
       }
 
-      // Create event
-      const { error } = await supabase.from('events').insert({
+      // Create event with auto-generated access code
+      const { data, error } = await supabase.from('events').insert({
         title: formData.get('title') as string,
         description: formData.get('description') as string,
         date: `${formData.get('date')} ${formData.get('time')}`,
         location: formData.get('location') as string,
         category: formData.get('category') as string,
         image_url: imageUrl,
-        organizer_id: user.id,
-      });
+      }).select('access_code').single();
 
       if (error) throw error;
 
-      toast({
-        title: "Event Created!",
-        description: "Your event has been published successfully.",
-      });
-      
-      navigate("/");
+      setAccessCode(data.access_code);
+      setShowSuccessDialog(true);
     } catch (error: any) {
       toast({
         title: "Error",
@@ -111,6 +95,12 @@ const CreateEvent = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const copyAccessCode = () => {
+    navigator.clipboard.writeText(accessCode);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -283,6 +273,57 @@ const CreateEvent = () => {
           </Card>
         </div>
       </div>
+
+      <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Event Created Successfully! 🎉</DialogTitle>
+            <DialogDescription>
+              Save your access code to manage this event later. You'll need it to edit or delete your event.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="p-4 bg-muted rounded-lg">
+              <p className="text-sm text-muted-foreground mb-2">Your Access Code:</p>
+              <div className="flex items-center gap-2">
+                <code className="text-2xl font-bold tracking-wider">{accessCode}</code>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={copyAccessCode}
+                  className="ml-auto"
+                >
+                  {copied ? (
+                    <Check className="h-4 w-4" />
+                  ) : (
+                    <Copy className="h-4 w-4" />
+                  )}
+                </Button>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                onClick={() => {
+                  setShowSuccessDialog(false);
+                  navigate("/");
+                }}
+                className="flex-1"
+              >
+                View Events
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowSuccessDialog(false);
+                  window.location.reload();
+                }}
+              >
+                Create Another
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

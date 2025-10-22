@@ -28,8 +28,7 @@ const Index = () => {
         setAllEvents(data.map(event => ({
           id: event.id,
           title: event.title,
-          start_datetime: event.start_datetime,
-          end_datetime: event.end_datetime,
+          date: event.date,
           location: event.location,
           attendees: event.attendees,
           category: event.category,

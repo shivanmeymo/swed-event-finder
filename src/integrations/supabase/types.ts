@@ -20,13 +20,12 @@ export type Database = {
           attendees: number | null
           category: string
           created_at: string | null
+          date: string
           description: string | null
-          end_datetime: string
           id: string
           image_url: string | null
           location: string
           organizer_id: string | null
-          start_datetime: string
           title: string
           updated_at: string | null
         }
@@ -35,13 +34,12 @@ export type Database = {
           attendees?: number | null
           category: string
           created_at?: string | null
+          date: string
           description?: string | null
-          end_datetime?: string
           id?: string
           image_url?: string | null
           location: string
           organizer_id?: string | null
-          start_datetime?: string
           title: string
           updated_at?: string | null
         }
@@ -50,13 +48,12 @@ export type Database = {
           attendees?: number | null
           category?: string
           created_at?: string | null
+          date?: string
           description?: string | null
-          end_datetime?: string
           id?: string
           image_url?: string | null
           location?: string
           organizer_id?: string | null
-          start_datetime?: string
           title?: string
           updated_at?: string | null
         }

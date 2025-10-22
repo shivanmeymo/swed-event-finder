@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Calendar, MapPin, Upload, Save, Trash2, Key } from "lucide-react";
+import { Calendar, MapPin, Users, Upload, Save, Trash2, Key } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -119,16 +119,12 @@ const ManageEvent = () => {
       }
 
       // Update event
-      const startDateTime = `${formData.get('start_date')}T${formData.get('start_time')}:00`;
-      const endDateTime = `${formData.get('end_date')}T${formData.get('end_time')}:00`;
-      
       const { error } = await supabase
         .from('events')
         .update({
           title: formData.get('title') as string,
           description: formData.get('description') as string,
-          start_datetime: startDateTime,
-          end_datetime: endDateTime,
+          date: `${formData.get('date')} ${formData.get('time')}`,
           location: formData.get('location') as string,
           category: formData.get('category') as string,
           image_url: imageUrl,
@@ -262,66 +258,32 @@ const ManageEvent = () => {
                     />
                   </div>
 
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="start_date">Start Date *</Label>
-                        <div className="relative">
-                          <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                          <Input
-                            id="start_date"
-                            name="start_date"
-                            type="date"
-                            className="pl-10"
-                            defaultValue={event.start_datetime?.split('T')[0]}
-                            required
-                          />
-                        </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="start_time">Start Time *</Label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="date">Date *</Label>
+                      <div className="relative">
+                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input
-                          id="start_time"
-                          name="start_time"
-                          type="time"
-                          defaultValue={event.start_datetime?.split('T')[1]?.substring(0, 5)}
+                          id="date"
+                          name="date"
+                          type="date"
+                          className="pl-10"
+                          defaultValue={event.date.split(' ')[0]}
                           required
                         />
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="end_date">End Date *</Label>
-                        <div className="relative">
-                          <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                          <Input
-                            id="end_date"
-                            name="end_date"
-                            type="date"
-                            className="pl-10"
-                            defaultValue={event.end_datetime?.split('T')[0]}
-                            required
-                          />
-                        </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="end_time">End Time *</Label>
-                        <Input
-                          id="end_time"
-                          name="end_time"
-                          type="time"
-                          defaultValue={event.end_datetime?.split('T')[1]?.substring(0, 5)}
-                          required
-                        />
-                      </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="time">Time *</Label>
+                      <Input
+                        id="time"
+                        name="time"
+                        type="time"
+                        defaultValue={event.date.split(' ')[1]}
+                        required
+                      />
                     </div>
-                    
-                    <p className="text-sm text-muted-foreground bg-muted/50 p-3 rounded-md">
-                      ⚠️ Note: Events will be automatically deleted from the system at the ending date/time.
-                    </p>
                   </div>
 
                   <div className="space-y-2">

@@ -25,12 +25,12 @@ const Index = () => {
         .order('created_at', { ascending: false });
       
       if (data) {
-        setAllEvents(data.map(event => ({
+        setAllEvents(data.map((event: any) => ({
           id: event.id,
           title: event.title,
-          date: event.date,
+          start_datetime: event.start_datetime,
+          end_datetime: event.end_datetime,
           location: event.location,
-          attendees: event.attendees,
           category: event.category,
           image: event.image_url,
         })));

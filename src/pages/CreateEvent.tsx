@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Calendar, MapPin, Users, Upload, Save, Copy, Check } from "lucide-react";
+import { Calendar, MapPin, Upload, Save, Copy, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -73,14 +73,18 @@ const CreateEvent = () => {
       }
 
       // Create event with auto-generated access code
+      const startDatetime = `${formData.get('start_date')} ${formData.get('start_time')}`;
+      const endDatetime = `${formData.get('end_date')} ${formData.get('end_time')}`;
+      
       const { data, error } = await supabase.from('events').insert({
         title: formData.get('title') as string,
         description: formData.get('description') as string,
-        date: `${formData.get('date')} ${formData.get('time')}`,
+        start_datetime: startDatetime,
+        end_datetime: endDatetime,
         location: formData.get('location') as string,
         category: formData.get('category') as string,
         image_url: imageUrl,
-      }).select('access_code').single();
+      } as any).select('access_code').single();
 
       if (error) throw error;
 
@@ -148,12 +152,12 @@ const CreateEvent = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="date">Date *</Label>
+                    <Label htmlFor="start_date">Start Date *</Label>
                     <div className="relative">
                       <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
-                        id="date"
-                        name="date"
+                        id="start_date"
+                        name="start_date"
                         type="date"
                         className="pl-10"
                         required
@@ -162,10 +166,36 @@ const CreateEvent = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="time">Time *</Label>
+                    <Label htmlFor="start_time">Start Time *</Label>
                     <Input
-                      id="time"
-                      name="time"
+                      id="start_time"
+                      name="start_time"
+                      type="time"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="end_date">End Date *</Label>
+                    <div className="relative">
+                      <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="end_date"
+                        name="end_date"
+                        type="date"
+                        className="pl-10"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="end_time">End Time *</Label>
+                    <Input
+                      id="end_time"
+                      name="end_time"
                       type="time"
                       required
                     />
@@ -186,36 +216,20 @@ const CreateEvent = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="category">Category *</Label>
-                    <Select name="category" required>
-                      <SelectTrigger id="category">
-                        <SelectValue placeholder="Select category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Music">Music</SelectItem>
-                        <SelectItem value="Tech">Tech</SelectItem>
-                        <SelectItem value="Sports">Sports</SelectItem>
-                        <SelectItem value="Food">Food & Drink</SelectItem>
-                        <SelectItem value="Art">Art & Culture</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="capacity">Max Attendees</Label>
-                    <div className="relative">
-                      <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="capacity"
-                        name="capacity"
-                        type="number"
-                        placeholder="100"
-                        className="pl-10"
-                      />
-                    </div>
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="category">Category *</Label>
+                  <Select name="category" required>
+                    <SelectTrigger id="category">
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Music">Music</SelectItem>
+                      <SelectItem value="Tech">Tech</SelectItem>
+                      <SelectItem value="Sports">Sports</SelectItem>
+                      <SelectItem value="Food">Food & Drink</SelectItem>
+                      <SelectItem value="Art">Art & Culture</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div className="space-y-2">

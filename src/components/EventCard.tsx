@@ -1,17 +1,25 @@
-import { Calendar, MapPin, Users } from "lucide-react";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Calendar, MapPin, Clock } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { format } from "date-fns";
 
 interface EventCardProps {
   title: string;
-  date: string;
+  start_datetime: string;
+  end_datetime: string;
   location: string;
-  attendees: number;
   category: string;
   image: string;
 }
 
-const EventCard = ({ title, date, location, attendees, category, image }: EventCardProps) => {
+const EventCard = ({ title, start_datetime, end_datetime, location, category, image }: EventCardProps) => {
+  const formatDateTime = (datetime: string) => {
+    try {
+      return format(new Date(datetime), "MMM d, yyyy 'at' h:mm a");
+    } catch {
+      return datetime;
+    }
+  };
   const getCategoryColor = (cat: string) => {
     const colors: Record<string, string> = {
       Music: "bg-gradient-to-r from-purple-500 to-pink-500",
@@ -41,21 +49,19 @@ const EventCard = ({ title, date, location, attendees, category, image }: EventC
         </h3>
         <div className="space-y-2 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
-            <Calendar className="h-4 w-4" />
-            <span>{date}</span>
+            <Calendar className="h-4 w-4 flex-shrink-0" />
+            <span className="line-clamp-1">{formatDateTime(start_datetime)}</span>
           </div>
           <div className="flex items-center gap-2">
-            <MapPin className="h-4 w-4" />
-            <span>{location}</span>
+            <Clock className="h-4 w-4 flex-shrink-0" />
+            <span className="line-clamp-1">{formatDateTime(end_datetime)}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <MapPin className="h-4 w-4 flex-shrink-0" />
+            <span className="line-clamp-1">{location}</span>
           </div>
         </div>
       </CardContent>
-      <CardFooter className="px-4 pb-4 pt-0">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Users className="h-4 w-4" />
-          <span>{attendees} attending</span>
-        </div>
-      </CardFooter>
     </Card>
   );
 };

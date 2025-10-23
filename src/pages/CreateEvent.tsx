@@ -228,6 +228,8 @@ const CreateEvent = () => {
                       <SelectItem value="Sports">Sports</SelectItem>
                       <SelectItem value="Food">Food & Drink</SelectItem>
                       <SelectItem value="Art">Art & Culture</SelectItem>
+                      <SelectItem value="Student">Student</SelectItem>
+                      <SelectItem value="Kid">Kid</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -294,6 +296,8 @@ const CreateEvent = () => {
             <DialogTitle>Event Created Successfully! 🎉</DialogTitle>
             <DialogDescription>
               Save your access code to manage this event later. You'll need it to edit or delete your event.
+              <br /><br />
+              <strong>Note:</strong> Your event will be automatically deleted at the end of the event date and time.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">

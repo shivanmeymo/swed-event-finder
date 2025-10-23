@@ -34,6 +34,7 @@ const ManageEvent = () => {
   const [imagePreview, setImagePreview] = useState<string>("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [attemptCount, setAttemptCount] = useState(0);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -42,6 +43,15 @@ const ManageEvent = () => {
       toast({
         title: "Access Code Required",
         description: "Please enter your event access code",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (attemptCount >= 6) {
+      toast({
+        title: "Maximum Attempts Reached",
+        description: "You have exceeded the maximum number of attempts. Please try again later.",
         variant: "destructive",
       });
       return;
@@ -56,15 +66,20 @@ const ManageEvent = () => {
         .single();
 
       if (error || !data) {
+        setAttemptCount(prev => prev + 1);
+        const remainingAttempts = 6 - (attemptCount + 1);
         toast({
           title: "Event Not Found",
-          description: "No event found with this access code",
+          description: remainingAttempts > 0 
+            ? `No event found with this access code. ${remainingAttempts} attempts remaining.`
+            : "Maximum attempts reached. Please try again later.",
           variant: "destructive",
         });
         return;
       }
 
       setEvent(data);
+      setAttemptCount(0); // Reset on success
       if (data.image_url) {
         setImagePreview(data.image_url);
       }
@@ -344,6 +359,8 @@ const ManageEvent = () => {
                         <SelectItem value="Sports">Sports</SelectItem>
                         <SelectItem value="Food">Food & Drink</SelectItem>
                         <SelectItem value="Art">Art & Culture</SelectItem>
+                        <SelectItem value="Student">Student</SelectItem>
+                        <SelectItem value="Kid">Kid</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

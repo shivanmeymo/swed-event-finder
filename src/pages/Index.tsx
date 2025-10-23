@@ -117,11 +117,11 @@ const Index = () => {
               Explore thousands of events from Uppsala, Stockholm, and beyond. All in one place.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-              <Button size="lg" className="bg-gradient-to-r from-primary to-[hsl(230,89%,62%)] hover:opacity-90 transition-opacity">
+              <Button size="lg" className="bg-gradient-to-r from-primary to-[hsl(230,89%,62%)] hover:opacity-90 transition-opacity" onClick={() => document.getElementById('events-section')?.scrollIntoView({ behavior: 'smooth' })}>
                 Explore Events
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-              <Button size="lg" variant="outline" className="border-2 bg-white/10 backdrop-blur-sm text-white border-white/30 hover:bg-white/20">
+              <Button size="lg" variant="outline" className="border-2 bg-white/10 backdrop-blur-sm text-white border-white/30 hover:bg-white/20" onClick={() => window.location.href = '/create'}>
                 Create Event
               </Button>
             </div>
@@ -135,7 +135,7 @@ const Index = () => {
       </section>
 
       {/* Events Grid */}
-      <section className="container mx-auto px-4 py-16">
+      <section id="events-section" className="container mx-auto px-4 py-16">
         <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="text-3xl font-bold text-foreground">Upcoming Events</h2>
@@ -183,10 +183,11 @@ const Index = () => {
             </div>
             
             <div>
-              <h4 className="font-semibold text-foreground mb-4">Contact</h4>
+              <h4 className="font-semibold text-foreground mb-4">Legal & Contact</h4>
               <ul className="space-y-2 text-muted-foreground">
-                <li>Email: info@swedevents.se</li>
-                <li>Support: support@swedevents.se</li>
+                <li><a href="/contact" className="hover:text-primary transition-colors">Contact Us</a></li>
+                <li><a href="#" className="hover:text-primary transition-colors">Data Integrity</a></li>
+                <li><a href="#" className="hover:text-primary transition-colors">Privacy Policy</a></li>
               </ul>
             </div>
           </div>

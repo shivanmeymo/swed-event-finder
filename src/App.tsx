@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import CreateEvent from "./pages/CreateEvent";
 import ManageEvent from "./pages/ManageEvent";
 import EventDetail from "./pages/EventDetail";
+import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
           <Route path="/create" element={<CreateEvent />} />
           <Route path="/manage" element={<ManageEvent />} />
           <Route path="/event/:id" element={<EventDetail />} />
+          <Route path="/contact" element={<Contact />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

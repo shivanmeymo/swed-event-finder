@@ -2,8 +2,10 @@ import { Calendar, MapPin, Clock } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
 
 interface EventCardProps {
+  id: string;
   title: string;
   start_datetime: string;
   end_datetime: string;
@@ -12,7 +14,8 @@ interface EventCardProps {
   image: string;
 }
 
-const EventCard = ({ title, start_datetime, end_datetime, location, category, image }: EventCardProps) => {
+const EventCard = ({ id, title, start_datetime, end_datetime, location, category, image }: EventCardProps) => {
+  const navigate = useNavigate();
   const formatDateTime = (datetime: string) => {
     try {
       return format(new Date(datetime), "MMM d, yyyy 'at' h:mm a");
@@ -32,7 +35,10 @@ const EventCard = ({ title, start_datetime, end_datetime, location, category, im
   };
 
   return (
-    <Card className="group overflow-hidden border-border hover:shadow-[var(--shadow-lg)] transition-all duration-300 cursor-pointer">
+    <Card 
+      className="group overflow-hidden border-border hover:shadow-[var(--shadow-lg)] transition-all duration-300 cursor-pointer"
+      onClick={() => navigate(`/event/${id}`)}
+    >
       <div className="relative h-48 overflow-hidden">
         <img
           src={image}

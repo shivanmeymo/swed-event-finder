@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Mail, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const Contact = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -27,27 +28,31 @@ const Contact = () => {
     const formData = new FormData(e.currentTarget);
 
     try {
-      // Prepare email data
       const emailData = {
         name: formData.get('name') as string,
         email: formData.get('email') as string,
-        topic: formData.get('topic') as string,
-        category: formData.get('category') as string,
-        summary: formData.get('summary') as string,
+        subject: `${formData.get('category')} Event Inquiry`,
+        message: formData.get('summary') as string,
       };
 
-      // TODO: Implement email sending via edge function
-      console.log('Contact form data:', emailData);
+      const { data, error } = await supabase.functions.invoke('send-contact-email', {
+        body: emailData
+      });
+
+      if (error) throw error;
 
       toast({
         title: "Message Sent!",
         description: "We've received your message and will get back to you soon.",
       });
 
+      e.currentTarget.reset();
+
       setTimeout(() => {
         navigate("/");
       }, 2000);
     } catch (error: any) {
+      console.error('Error sending email:', error);
       toast({
         title: "Error",
         description: error.message || "Failed to send message. Please try again.",

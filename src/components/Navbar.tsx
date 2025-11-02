@@ -8,8 +8,8 @@ const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           <Link to="/" className="flex items-center">
-            <span className="text-2xl font-bold bg-gradient-to-r from-primary via-[hsl(230,89%,62%)] to-accent bg-clip-text text-transparent tracking-tight hover:opacity-80 transition-opacity">
-              SwedEvents
+            <span className="text-2xl font-bold text-primary tracking-tight hover:opacity-80 transition-opacity">
+              NowInTown
             </span>
           </Link>
 

@@ -16,6 +16,7 @@ import {
 import { Mail, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import contactHero from "@/assets/contact-hero.jpg";
 
 const Contact = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -69,14 +70,23 @@ const Contact = () => {
       
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-5xl mx-auto">
+          {/* Hero Image */}
+          <div className="mb-12 rounded-lg overflow-hidden shadow-[var(--shadow-lg)]">
+            <img 
+              src={contactHero} 
+              alt="Contact NowInTown" 
+              className="w-full h-64 object-cover"
+            />
+          </div>
+
           {/* Header */}
           <div className="mb-12 text-center">
-            <h1 className="text-4xl font-bold text-foreground mb-4">✉️ Contact Swedevents</h1>
+            <h1 className="text-4xl font-bold text-foreground mb-4">✉️ Contact NowInTown</h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               We'd love to hear from you!
             </p>
             <p className="text-muted-foreground mt-2 max-w-3xl mx-auto">
-              Whether you're planning an unforgettable corporate event, a private celebration, or looking to collaborate, the Swedevents team is here to make it happen.
+              Whether you're planning an unforgettable corporate event, a private celebration, or looking to collaborate, the NowInTown team is here to make it happen.
             </p>
           </div>
 
@@ -89,8 +99,8 @@ const Contact = () => {
               <CardContent className="space-y-4">
                 <div>
                   <p className="font-semibold text-foreground mb-1">Email:</p>
-                  <a href="mailto:info@swedevents.com" className="text-primary hover:underline">
-                    info@swedevents.com
+                  <a href="mailto:shivan.meymo@gmail.com" className="text-primary hover:underline">
+                    shivan.meymo@gmail.com
                   </a>
                 </div>
                 <div>
@@ -102,9 +112,9 @@ const Contact = () => {
                 <div>
                   <p className="font-semibold text-foreground mb-1">Office Address:</p>
                   <p className="text-muted-foreground">
-                    Swedevents AB<br />
-                    Skeppsbron 2, 111 30<br />
-                    Stockholm, Sweden
+                    NowInTown AB<br />
+                    Kungsgatan 66Å<br />
+                    75341 Uppsala, Sweden
                   </p>
                 </div>
               </CardContent>
@@ -207,7 +217,7 @@ const Contact = () => {
           <div className="mt-12 text-center">
             <h3 className="text-2xl font-bold text-foreground mb-2">🤝 Let's Create Something Unforgettable</h3>
             <p className="text-muted-foreground max-w-3xl mx-auto">
-              At Swedevents, we specialize in turning your ideas into memorable experiences — from concept to celebration. 
+              At NowInTown, we specialize in turning your ideas into memorable experiences — from concept to celebration. 
               Fill out the form or reach out directly, and one of our event specialists will get back to you within 24 hours.
             </p>
           </div>
@@ -217,7 +227,7 @@ const Contact = () => {
       <footer className="border-t border-border bg-card mt-12">
         <div className="container mx-auto px-4 py-8">
           <div className="text-center text-sm text-muted-foreground">
-            <p>&copy; {new Date().getFullYear()} SwedEvents. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} NowInTown. All rights reserved.</p>
           </div>
         </div>
       </footer>

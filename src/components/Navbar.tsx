@@ -1,14 +1,16 @@
 import { Settings, PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import logo from "@/assets/logo.png";
 
 const Navbar = () => {
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-border bg-card/80 backdrop-blur-lg">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
-          <Link to="/" className="flex items-center">
-            <span className="text-2xl font-bold text-primary tracking-tight hover:opacity-80 transition-opacity">
+          <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+            <img src={logo} alt="NowInTown" className="h-10 w-10" />
+            <span className="text-2xl font-bold text-primary tracking-tight">
               NowInTown
             </span>
           </Link>

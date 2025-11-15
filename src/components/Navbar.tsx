@@ -10,7 +10,7 @@ const Navbar = () => {
         <div className="flex h-16 items-center justify-between">
           <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
             <img src={logo} alt="NowInTown" className="h-10 w-10" />
-            <span className="text-2xl font-bold text-primary tracking-tight">
+            <span className="text-2xl font-bold tracking-tight bg-gradient-to-r from-[#006AA7] to-[#FECC00] bg-clip-text text-transparent">
               NowInTown
             </span>
           </Link>

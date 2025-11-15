@@ -1,9 +1,20 @@
-import { Settings, PlusCircle } from "lucide-react";
+import { Settings, PlusCircle, LogOut, User as UserIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "@/assets/logo.png";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 
 const Navbar = () => {
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast.success("Signed out successfully");
+    navigate("/");
+  };
+
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-border bg-card/80 backdrop-blur-lg">
       <div className="container mx-auto px-4">
@@ -16,18 +27,33 @@ const Navbar = () => {
           </Link>
 
           <div className="flex items-center gap-4">
-            <Button variant="default" size="sm" asChild>
-              <Link to="/create">
-                <PlusCircle className="h-4 w-4 mr-2" />
-                Create Event
-              </Link>
-            </Button>
-            <Button variant="outline" size="sm" asChild>
-              <Link to="/manage">
-                <Settings className="h-4 w-4 mr-2" />
-                Manage Event
-              </Link>
-            </Button>
+            {user ? (
+              <>
+                <Button variant="default" size="sm" asChild>
+                  <Link to="/create">
+                    <PlusCircle className="h-4 w-4 mr-2" />
+                    Create Event
+                  </Link>
+                </Button>
+                <Button variant="outline" size="sm" asChild>
+                  <Link to="/manage">
+                    <Settings className="h-4 w-4 mr-2" />
+                    Manage Events
+                  </Link>
+                </Button>
+                <Button variant="ghost" size="sm" onClick={handleSignOut}>
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sign Out
+                </Button>
+              </>
+            ) : (
+              <Button variant="default" size="sm" asChild>
+                <Link to="/auth">
+                  <UserIcon className="h-4 w-4 mr-2" />
+                  Sign In
+                </Link>
+              </Button>
+            )}
           </div>
         </div>
       </div>

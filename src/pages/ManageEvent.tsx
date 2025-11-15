@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,6 +29,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 const ManageEvent = () => {
+  const { user, loading } = useAuth();
   const [accessCode, setAccessCode] = useState("");
   const [event, setEvent] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -37,6 +39,17 @@ const ManageEvent = () => {
   const [attemptCount, setAttemptCount] = useState(0);
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to manage events",
+        variant: "destructive",
+      });
+      navigate("/auth");
+    }
+  }, [user, loading, navigate, toast]);
 
   const handleFindEvent = async () => {
     if (!accessCode.trim()) {
@@ -63,6 +76,7 @@ const ManageEvent = () => {
         .from('events')
         .select('*')
         .eq('access_code', accessCode.trim())
+        .eq('organizer_id', user?.id)
         .single();
 
       if (error || !data) {

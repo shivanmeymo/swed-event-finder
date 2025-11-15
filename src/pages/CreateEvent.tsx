@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,6 +17,7 @@ import {
 import { Calendar, MapPin, Upload, Save, Copy, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { z } from "zod";
 import {
   Dialog,
   DialogContent,
@@ -24,7 +26,19 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+const eventSchema = z.object({
+  title: z.string().trim().min(3, "Title must be at least 3 characters").max(200),
+  description: z.string().trim().max(2000, "Description too long").optional(),
+  location: z.string().trim().min(3, "Location must be at least 3 characters").max(200),
+  category: z.string().min(1, "Please select a category"),
+  start_date: z.string().min(1, "Start date is required"),
+  start_time: z.string().min(1, "Start time is required"),
+  end_date: z.string().min(1, "End date is required"),
+  end_time: z.string().min(1, "End time is required"),
+});
+
 const CreateEvent = () => {
+  const { user, loading } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string>("");
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -33,6 +47,17 @@ const CreateEvent = () => {
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to create events",
+        variant: "destructive",
+      });
+      navigate("/auth");
+    }
+  }, [user, loading, navigate, toast]);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -52,6 +77,18 @@ const CreateEvent = () => {
     const formData = new FormData(e.currentTarget);
 
     try {
+      // Validate form data
+      const validated = eventSchema.parse({
+        title: formData.get('title'),
+        description: formData.get('description') || '',
+        location: formData.get('location'),
+        category: formData.get('category'),
+        start_date: formData.get('start_date'),
+        start_time: formData.get('start_time'),
+        end_date: formData.get('end_date'),
+        end_time: formData.get('end_time'),
+      });
+
       let imageUrl = "";
 
       // Upload image if provided
@@ -73,17 +110,18 @@ const CreateEvent = () => {
       }
 
       // Create event with auto-generated access code
-      const startDatetime = `${formData.get('start_date')} ${formData.get('start_time')}`;
-      const endDatetime = `${formData.get('end_date')} ${formData.get('end_time')}`;
+      const startDatetime = `${validated.start_date} ${validated.start_time}`;
+      const endDatetime = `${validated.end_date} ${validated.end_time}`;
       
       const { data, error } = await supabase.from('events').insert({
-        title: formData.get('title') as string,
-        description: formData.get('description') as string,
+        title: validated.title,
+        description: validated.description,
         start_datetime: startDatetime,
         end_datetime: endDatetime,
-        location: formData.get('location') as string,
-        category: formData.get('category') as string,
+        location: validated.location,
+        category: validated.category,
         image_url: imageUrl,
+        organizer_id: user?.id,
       } as any).select('access_code').single();
 
       if (error) throw error;
@@ -91,11 +129,19 @@ const CreateEvent = () => {
       setAccessCode(data.access_code);
       setShowSuccessDialog(true);
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
+      if (error instanceof z.ZodError) {
+        toast({
+          title: "Validation Error",
+          description: error.errors[0].message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
     } finally {
       setIsLoading(false);
     }

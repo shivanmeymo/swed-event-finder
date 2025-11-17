@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Calendar, MapPin, Upload, Save, Trash2, Key } from "lucide-react";
+import { Calendar, MapPin, Upload, Save, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -30,13 +30,12 @@ import {
 
 const ManageEvent = () => {
   const { user, loading } = useAuth();
-  const [accessCode, setAccessCode] = useState("");
-  const [event, setEvent] = useState<any>(null);
+  const [events, setEvents] = useState<any[]>([]);
+  const [selectedEvent, setSelectedEvent] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string>("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [attemptCount, setAttemptCount] = useState(0);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -48,55 +47,24 @@ const ManageEvent = () => {
         variant: "destructive",
       });
       navigate("/auth");
+    } else if (!loading && user) {
+      fetchUserEvents();
     }
   }, [user, loading, navigate, toast]);
 
-  const handleFindEvent = async () => {
-    if (!accessCode.trim()) {
-      toast({
-        title: "Access Code Required",
-        description: "Please enter your event access code",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (attemptCount >= 6) {
-      toast({
-        title: "Maximum Attempts Reached",
-        description: "You have exceeded the maximum number of attempts. Please try again later.",
-        variant: "destructive",
-      });
-      return;
-    }
-
+  const fetchUserEvents = async () => {
+    if (!user) return;
+    
     setIsLoading(true);
     try {
       const { data, error } = await supabase
         .from('events')
         .select('*')
-        .eq('access_code', accessCode.trim())
-        .eq('organizer_id', user?.id)
-        .single();
+        .eq('organizer_id', user.id)
+        .order('start_datetime', { ascending: true });
 
-      if (error || !data) {
-        setAttemptCount(prev => prev + 1);
-        const remainingAttempts = 6 - (attemptCount + 1);
-        toast({
-          title: "Event Not Found",
-          description: remainingAttempts > 0 
-            ? `No event found with this access code. ${remainingAttempts} attempts remaining.`
-            : "Maximum attempts reached. Please try again later.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      setEvent(data);
-      setAttemptCount(0); // Reset on success
-      if (data.image_url) {
-        setImagePreview(data.image_url);
-      }
+      if (error) throw error;
+      setEvents(data || []);
     } catch (error: any) {
       toast({
         title: "Error",
@@ -105,6 +73,13 @@ const ManageEvent = () => {
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleSelectEvent = (event: any) => {
+    setSelectedEvent(event);
+    if (event.image_url) {
+      setImagePreview(event.image_url);
     }
   };
 
@@ -122,13 +97,13 @@ const ManageEvent = () => {
 
   const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!event) return;
+    if (!selectedEvent) return;
 
     setIsLoading(true);
     const formData = new FormData(e.currentTarget);
 
     try {
-      let imageUrl = event.image_url;
+      let imageUrl = selectedEvent.image_url;
 
       // Upload new image if provided
       if (imageFile) {
@@ -162,7 +137,7 @@ const ManageEvent = () => {
           category: formData.get('category') as string,
           image_url: imageUrl,
         } as any)
-        .eq('access_code', accessCode);
+        .eq('id', selectedEvent.id);
 
       if (error) throw error;
 
@@ -171,7 +146,8 @@ const ManageEvent = () => {
         description: "Your event has been updated successfully.",
       });
       
-      navigate("/");
+      setSelectedEvent(null);
+      fetchUserEvents();
     } catch (error: any) {
       toast({
         title: "Error",
@@ -184,14 +160,14 @@ const ManageEvent = () => {
   };
 
   const handleDelete = async () => {
-    if (!event) return;
+    if (!selectedEvent) return;
 
     setIsLoading(true);
     try {
       const { error } = await supabase
         .from('events')
         .delete()
-        .eq('access_code', accessCode);
+        .eq('id', selectedEvent.id);
 
       if (error) throw error;
 
@@ -200,7 +176,8 @@ const ManageEvent = () => {
         description: "Your event has been deleted successfully.",
       });
       
-      navigate("/");
+      setSelectedEvent(null);
+      fetchUserEvents();
     } catch (error: any) {
       toast({
         title: "Error",
@@ -226,47 +203,57 @@ const ManageEvent = () => {
             </p>
           </div>
 
-          {!event ? (
+          {!selectedEvent ? (
             <Card className="border-border shadow-[var(--shadow-lg)]">
               <CardHeader>
-                <CardTitle>Find Your Event</CardTitle>
+                <CardTitle>Your Events</CardTitle>
                 <CardDescription>
-                  Enter the access code you received when creating the event
+                  Select an event to edit or delete
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="access-code">Access Code</Label>
-                    <div className="relative">
-                      <Key className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="access-code"
-                        placeholder="Enter your 8-character code"
-                        className="pl-10"
-                        value={accessCode}
-                        onChange={(e) => setAccessCode(e.target.value)}
-                        maxLength={8}
-                      />
-                    </div>
+                {isLoading ? (
+                  <p className="text-center text-muted-foreground py-8">Loading your events...</p>
+                ) : events.length === 0 ? (
+                  <p className="text-center text-muted-foreground py-8">
+                    You haven't created any events yet.
+                  </p>
+                ) : (
+                  <div className="space-y-3">
+                    {events.map((event) => (
+                      <button
+                        key={event.id}
+                        onClick={() => handleSelectEvent(event)}
+                        className="w-full text-left p-4 rounded-lg border border-border hover:bg-accent transition-colors"
+                      >
+                        <h3 className="font-semibold text-foreground">{event.title}</h3>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {new Date(event.start_datetime).toLocaleDateString()} - {event.location}
+                        </p>
+                      </button>
+                    ))}
                   </div>
-                  <Button
-                    onClick={handleFindEvent}
-                    disabled={isLoading}
-                    className="w-full bg-gradient-to-r from-primary to-[hsl(230,89%,62%)]"
-                  >
-                    {isLoading ? "Searching..." : "Find Event"}
-                  </Button>
-                </div>
+                )}
               </CardContent>
             </Card>
           ) : (
             <Card className="border-border shadow-[var(--shadow-lg)]">
               <CardHeader>
-                <CardTitle>Edit Event Details</CardTitle>
-                <CardDescription>
-                  Update your event information or delete it
-                </CardDescription>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle>Edit Event Details</CardTitle>
+                    <CardDescription>
+                      Update your event information or delete it
+                    </CardDescription>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => setSelectedEvent(null)}
+                  >
+                    Back to List
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleUpdate} className="space-y-6">
@@ -275,7 +262,7 @@ const ManageEvent = () => {
                     <Input
                       id="title"
                       name="title"
-                      defaultValue={event.title}
+                      defaultValue={selectedEvent.title}
                       required
                     />
                   </div>
@@ -285,7 +272,7 @@ const ManageEvent = () => {
                     <Textarea
                       id="description"
                       name="description"
-                      defaultValue={event.description}
+                      defaultValue={selectedEvent.description}
                       rows={5}
                       required
                     />
@@ -301,7 +288,7 @@ const ManageEvent = () => {
                           name="start_date"
                           type="date"
                           className="pl-10"
-                          defaultValue={event.start_datetime?.split(' ')[0] || ''}
+                          defaultValue={selectedEvent.start_datetime?.split(' ')[0] || ''}
                           required
                         />
                       </div>
@@ -313,7 +300,7 @@ const ManageEvent = () => {
                         id="start_time"
                         name="start_time"
                         type="time"
-                        defaultValue={event.start_datetime?.split(' ')[1]?.substring(0, 5) || ''}
+                        defaultValue={selectedEvent.start_datetime?.split(' ')[1]?.substring(0, 5) || ''}
                         required
                       />
                     </div>
@@ -329,7 +316,7 @@ const ManageEvent = () => {
                           name="end_date"
                           type="date"
                           className="pl-10"
-                          defaultValue={event.end_datetime?.split(' ')[0] || ''}
+                          defaultValue={selectedEvent.end_datetime?.split(' ')[0] || ''}
                           required
                         />
                       </div>
@@ -341,7 +328,7 @@ const ManageEvent = () => {
                         id="end_time"
                         name="end_time"
                         type="time"
-                        defaultValue={event.end_datetime?.split(' ')[1]?.substring(0, 5) || ''}
+                        defaultValue={selectedEvent.end_datetime?.split(' ')[1]?.substring(0, 5) || ''}
                         required
                       />
                     </div>
@@ -354,7 +341,7 @@ const ManageEvent = () => {
                       <Input
                         id="location"
                         name="location"
-                        defaultValue={event.location}
+                        defaultValue={selectedEvent.location}
                         className="pl-10"
                         required
                       />
@@ -363,7 +350,7 @@ const ManageEvent = () => {
 
                   <div className="space-y-2">
                     <Label htmlFor="category">Category *</Label>
-                    <Select name="category" defaultValue={event.category} required>
+                    <Select name="category" defaultValue={selectedEvent.category} required>
                       <SelectTrigger id="category">
                         <SelectValue />
                       </SelectTrigger>

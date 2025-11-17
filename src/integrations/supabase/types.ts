@@ -16,7 +16,6 @@ export type Database = {
     Tables: {
       events: {
         Row: {
-          access_code: string | null
           attendees: number | null
           category: string
           created_at: string | null
@@ -31,7 +30,6 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
-          access_code?: string | null
           attendees?: number | null
           category: string
           created_at?: string | null
@@ -46,7 +44,6 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
-          access_code?: string | null
           attendees?: number | null
           category?: string
           created_at?: string | null

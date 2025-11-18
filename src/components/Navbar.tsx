@@ -39,6 +39,10 @@ const Navbar = () => {
     );
   }
 
+  const primaryMenuItems = menuItems.filter(
+    (item) => item.to !== "/create" && item.to !== "/manage"
+  );
+
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-border bg-card/80 backdrop-blur-lg" role="navigation" aria-label="Main navigation">
       <div className="container mx-auto px-4">
@@ -51,34 +55,48 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-4">
-            {user ? (
-              <>
-                <Button variant="default" size="sm" asChild>
-                  <Link to="/create">
-                    <PlusCircle className="h-4 w-4 mr-2" aria-hidden="true" />
-                    Create Event
-                  </Link>
-                </Button>
-                <Button variant="outline" size="sm" asChild>
-                  <Link to="/manage">
-                    <Settings className="h-4 w-4 mr-2" aria-hidden="true" />
-                    Manage Events
-                  </Link>
-                </Button>
-                <Button variant="ghost" size="sm" onClick={handleSignOut}>
-                  <LogOut className="h-4 w-4 mr-2" aria-hidden="true" />
-                  Sign Out
-                </Button>
-              </>
-            ) : (
-              <Button variant="default" size="sm" asChild>
-                <Link to="/auth">
-                  <UserIcon className="h-4 w-4 mr-2" aria-hidden="true" />
-                  Sign In
+          <div className="hidden md:flex items-center justify-between gap-6 flex-1 ml-8">
+            <div className="flex items-center gap-4">
+              {primaryMenuItems.map((item) => (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+                >
+                  {item.label}
                 </Link>
-              </Button>
-            )}
+              ))}
+            </div>
+
+            <div className="flex items-center gap-3 justify-end">
+              {user ? (
+                <>
+                  <Button variant="outline" size="sm" asChild>
+                    <Link to="/manage">
+                      <Settings className="h-4 w-4 mr-2" aria-hidden="true" />
+                      Manage Events
+                    </Link>
+                  </Button>
+                  <Button variant="default" size="sm" asChild>
+                    <Link to="/create">
+                      <PlusCircle className="h-4 w-4 mr-2" aria-hidden="true" />
+                      Create Event
+                    </Link>
+                  </Button>
+                  <Button variant="ghost" size="sm" onClick={handleSignOut}>
+                    <LogOut className="h-4 w-4 mr-2" aria-hidden="true" />
+                    Sign Out
+                  </Button>
+                </>
+              ) : (
+                <Button variant="default" size="sm" asChild>
+                  <Link to="/auth">
+                    <UserIcon className="h-4 w-4 mr-2" aria-hidden="true" />
+                    Sign In
+                  </Link>
+                </Button>
+              )}
+            </div>
           </div>
 
           {/* Mobile Menu */}

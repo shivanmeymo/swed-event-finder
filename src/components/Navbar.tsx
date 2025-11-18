@@ -26,22 +26,13 @@ const Navbar = () => {
   };
 
   const menuItems = [
-    { to: "/", label: "Home" },
     { to: "/about", label: "About Us" },
     { to: "/contact", label: "Contact Us" },
-    { to: "/data-integrity", label: "Data Integrity" },
   ];
 
   if (user) {
-    menuItems.push(
-      { to: "/create", label: "Create Event" },
-      { to: "/manage", label: "Manage Events" }
-    );
+    menuItems.push({ to: "/create", label: "Create Event" });
   }
-
-  const primaryMenuItems = menuItems.filter(
-    (item) => item.to !== "/create" && item.to !== "/manage"
-  );
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-border bg-card/80 backdrop-blur-lg" role="navigation" aria-label="Main navigation">
@@ -55,54 +46,21 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center justify-between gap-6 flex-1 ml-8">
-            <div className="flex items-center gap-4">
-              {primaryMenuItems.map((item) => (
-                <Link
-                  key={item.to}
-                  to={item.to}
-                  className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
-                >
-                  {item.label}
+          <div className="flex items-center gap-3 ml-auto">
+            {user && (
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/manage">
+                  <Settings className="h-4 w-4 mr-2" aria-hidden="true" />
+                  Manage Events
                 </Link>
-              ))}
-            </div>
-
-            <div className="flex items-center gap-3 justify-end">
-              {user ? (
-                <>
-                  <Button variant="outline" size="sm" asChild>
-                    <Link to="/manage">
-                      <Settings className="h-4 w-4 mr-2" aria-hidden="true" />
-                      Manage Events
-                    </Link>
-                  </Button>
-                  <Button variant="default" size="sm" asChild>
-                    <Link to="/create">
-                      <PlusCircle className="h-4 w-4 mr-2" aria-hidden="true" />
-                      Create Event
-                    </Link>
-                  </Button>
-                  <Button variant="ghost" size="sm" onClick={handleSignOut}>
-                    <LogOut className="h-4 w-4 mr-2" aria-hidden="true" />
-                    Sign Out
-                  </Button>
-                </>
-              ) : (
-                <Button variant="default" size="sm" asChild>
-                  <Link to="/auth">
-                    <UserIcon className="h-4 w-4 mr-2" aria-hidden="true" />
-                    Sign In
-                  </Link>
-                </Button>
-              )}
-            </div>
+              </Button>
+            )}
           </div>
 
-          {/* Mobile Menu */}
+          {/* Burger Menu */}
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
-            <SheetTrigger asChild className="md:hidden">
-              <Button variant="ghost" size="sm" aria-label="Open menu">
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="sm" aria-label="Open menu" className="ml-2">
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>

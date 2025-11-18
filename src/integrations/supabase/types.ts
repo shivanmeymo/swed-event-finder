@@ -24,7 +24,7 @@ export type Database = {
           id: string
           image_url: string | null
           location: string
-          organizer_id: string | null
+          organizer_id: string
           start_datetime: string
           title: string
           updated_at: string | null
@@ -38,7 +38,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           location: string
-          organizer_id?: string | null
+          organizer_id: string
           start_datetime?: string
           title: string
           updated_at?: string | null
@@ -52,7 +52,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           location?: string
-          organizer_id?: string | null
+          organizer_id?: string
           start_datetime?: string
           title?: string
           updated_at?: string | null

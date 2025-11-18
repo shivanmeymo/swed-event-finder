@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -38,19 +38,26 @@ const ManageEvent = () => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     if (!loading && !user) {
-      toast({
-        title: "Authentication Required",
-        description: "Please sign in to manage events",
-        variant: "destructive",
-      });
       navigate("/auth");
     } else if (!loading && user) {
       fetchUserEvents();
     }
-  }, [user, loading, navigate, toast]);
+  }, [user, loading, navigate]);
+
+  useEffect(() => {
+    // Check if there's an eventId in the query params
+    const eventId = searchParams.get('eventId');
+    if (eventId && events.length > 0) {
+      const event = events.find(e => e.id === eventId);
+      if (event) {
+        handleSelectEvent(event);
+      }
+    }
+  }, [searchParams, events]);
 
   const fetchUserEvents = async () => {
     if (!user) return;

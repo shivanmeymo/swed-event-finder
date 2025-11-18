@@ -50,14 +50,9 @@ const CreateEvent = () => {
 
   useEffect(() => {
     if (!loading && !user) {
-      toast({
-        title: "Authentication Required",
-        description: "Please sign in to create events",
-        variant: "destructive",
-      });
       navigate("/auth");
     }
-  }, [user, loading, navigate, toast]);
+  }, [user, loading, navigate]);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

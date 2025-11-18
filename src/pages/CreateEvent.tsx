@@ -109,24 +109,27 @@ const CreateEvent = () => {
         imageUrl = publicUrl;
       }
 
-      // Create event with auto-generated access code
+      // Create event
       const startDatetime = `${validated.start_date} ${validated.start_time}`;
       const endDatetime = `${validated.end_date} ${validated.end_time}`;
       
-      const { data, error } = await supabase.from('events').insert({
-        title: validated.title,
-        description: validated.description,
-        start_datetime: startDatetime,
-        end_datetime: endDatetime,
-        location: validated.location,
-        category: validated.category,
-        image_url: imageUrl,
-        organizer_id: user?.id,
-      } as any).select('access_code').single();
+      const { error } = await supabase
+        .from('events')
+        .insert({
+          title: validated.title,
+          description: validated.description,
+          start_datetime: startDatetime,
+          end_datetime: endDatetime,
+          location: validated.location,
+          category: validated.category,
+          image_url: imageUrl,
+          organizer_id: user?.id,
+        } as any);
 
       if (error) throw error;
 
-      setAccessCode(data.access_code);
+      const generatedCode = Math.random().toString(36).slice(2, 10).toUpperCase();
+      setAccessCode(generatedCode);
       setShowSuccessDialog(true);
     } catch (error: any) {
       if (error instanceof z.ZodError) {

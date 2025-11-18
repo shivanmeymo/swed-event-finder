@@ -1,6 +1,7 @@
-import { Calendar, MapPin, Clock } from "lucide-react";
+import { Calendar, MapPin, Clock, Edit } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 
@@ -12,10 +13,13 @@ interface EventCardProps {
   location: string;
   category: string;
   image: string;
+  organizer_id?: string;
+  currentUserId?: string;
 }
 
-const EventCard = ({ id, title, start_datetime, end_datetime, location, category, image }: EventCardProps) => {
+const EventCard = ({ id, title, start_datetime, end_datetime, location, category, image, organizer_id, currentUserId }: EventCardProps) => {
   const navigate = useNavigate();
+  const isOwnEvent = organizer_id && currentUserId && organizer_id === currentUserId;
   const formatDateTime = (datetime: string) => {
     try {
       return format(new Date(datetime), "MMM d, yyyy 'at' h:mm a");
@@ -48,6 +52,21 @@ const EventCard = ({ id, title, start_datetime, end_datetime, location, category
         <Badge className={`absolute top-3 right-3 ${getCategoryColor(category)} text-white border-0`}>
           {category}
         </Badge>
+        {isOwnEvent && (
+          <Button
+            size="sm"
+            variant="secondary"
+            className="absolute top-3 left-3 shadow-md"
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(`/manage?eventId=${id}`);
+            }}
+            aria-label="Edit event"
+          >
+            <Edit className="h-3 w-3 mr-1" aria-hidden="true" />
+            Edit
+          </Button>
+        )}
       </div>
       <CardContent className="p-4">
         <h3 className="text-lg font-semibold mb-3 line-clamp-2 text-card-foreground group-hover:text-primary transition-colors">
@@ -55,15 +74,15 @@ const EventCard = ({ id, title, start_datetime, end_datetime, location, category
         </h3>
         <div className="space-y-2 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
-            <Calendar className="h-4 w-4 flex-shrink-0" />
+            <Calendar className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
             <span className="line-clamp-1">{formatDateTime(start_datetime)}</span>
           </div>
           <div className="flex items-center gap-2">
-            <Clock className="h-4 w-4 flex-shrink-0" />
+            <Clock className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
             <span className="line-clamp-1">{formatDateTime(end_datetime)}</span>
           </div>
           <div className="flex items-center gap-2">
-            <MapPin className="h-4 w-4 flex-shrink-0" />
+            <MapPin className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
             <span className="line-clamp-1">{location}</span>
           </div>
         </div>

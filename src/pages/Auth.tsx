@@ -28,6 +28,8 @@ const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [signUpData, setSignUpData] = useState({ fullName: "", email: "", password: "" });
   const [signInData, setSignInData] = useState({ email: "", password: "" });
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
@@ -127,6 +129,34 @@ const Auth = () => {
     }
   };
 
+  const handlePasswordReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      const emailSchema = z.string().trim().email("Invalid email address");
+      const validated = emailSchema.parse(resetEmail);
+
+      const { error } = await supabase.auth.resetPasswordForEmail(validated, {
+        redirectTo: `${window.location.origin}/auth`,
+      });
+
+      if (error) throw error;
+
+      toast.success("Password reset email sent! Check your inbox.");
+      setResetEmail("");
+      setShowForgotPassword(false);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast.error(error.errors[0].message);
+      } else if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
@@ -151,35 +181,83 @@ const Auth = () => {
             </TabsList>
 
             <TabsContent value="signin">
-              <form onSubmit={handleSignIn} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signin-email">Email</Label>
-                  <Input
-                    id="signin-email"
-                    type="email"
-                    placeholder="you@example.com"
-                    value={signInData.email}
-                    onChange={(e) => setSignInData({ ...signInData, email: e.target.value })}
-                    required
-                    autoComplete="email"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signin-password">Password</Label>
-                  <Input
-                    id="signin-password"
-                    type="password"
-                    placeholder="••••••••"
-                    value={signInData.password}
-                    onChange={(e) => setSignInData({ ...signInData, password: e.target.value })}
-                    required
-                    autoComplete="current-password"
-                  />
-                </div>
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? "Signing in..." : "Sign In"}
-                </Button>
-              </form>
+              {!showForgotPassword ? (
+                <form onSubmit={handleSignIn} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="signin-email">Email</Label>
+                    <Input
+                      id="signin-email"
+                      type="email"
+                      placeholder="you@example.com"
+                      value={signInData.email}
+                      onChange={(e) => setSignInData({ ...signInData, email: e.target.value })}
+                      required
+                      autoComplete="email"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signin-password">Password</Label>
+                    <Input
+                      id="signin-password"
+                      type="password"
+                      placeholder="••••••••"
+                      value={signInData.password}
+                      onChange={(e) => setSignInData({ ...signInData, password: e.target.value })}
+                      required
+                      autoComplete="current-password"
+                    />
+                  </div>
+                  <div className="flex justify-end">
+                    <button
+                      type="button"
+                      onClick={() => setShowForgotPassword(true)}
+                      className="text-sm text-primary hover:underline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded"
+                      aria-label="Forgot password"
+                    >
+                      Forgot password?
+                    </button>
+                  </div>
+                  <Button type="submit" className="w-full" disabled={isLoading}>
+                    {isLoading ? "Signing in..." : "Sign In"}
+                  </Button>
+                </form>
+              ) : (
+                <form onSubmit={handlePasswordReset} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="reset-email">Email</Label>
+                    <Input
+                      id="reset-email"
+                      type="email"
+                      placeholder="you@example.com"
+                      value={resetEmail}
+                      onChange={(e) => setResetEmail(e.target.value)}
+                      required
+                      autoComplete="email"
+                      aria-label="Email address for password reset"
+                    />
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Enter your email address and we'll send you a link to reset your password.
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        setShowForgotPassword(false);
+                        setResetEmail("");
+                      }}
+                      className="flex-1"
+                      disabled={isLoading}
+                    >
+                      Back
+                    </Button>
+                    <Button type="submit" className="flex-1" disabled={isLoading}>
+                      {isLoading ? "Sending..." : "Send Reset Link"}
+                    </Button>
+                  </div>
+                </form>
+              )}
               
               <div className="relative my-6">
                 <div className="absolute inset-0 flex items-center">

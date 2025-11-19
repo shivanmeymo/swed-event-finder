@@ -184,34 +184,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Filter Section */}
-      <section id="filter-section" className="container mx-auto px-4 -mt-8 relative z-20" aria-label="Event filters">
-        <FilterBar onFilterChange={setFilters} />
-      </section>
-
-      {/* Events Section */}
-      <section id="events-section" className="container mx-auto px-4 py-8" aria-label="Event listings">
-        <div className="mb-4">
-          <h2 className="text-3xl font-bold text-foreground">{t("events.title")}</h2>
-          <p className="text-muted-foreground mt-1" role="status" aria-live="polite">
-            {filteredEvents.length} {t("events.found")}
-          </p>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredEvents.length > 0 ? (
-            filteredEvents.map((event) => (
-              <EventCard key={event.id} {...event} currentUserId={user?.id} />
-            ))
-          ) : (
-            <div className="col-span-full text-center py-12">
-              <p className="text-muted-foreground text-lg">
-                {t("events.noResults")}
-              </p>
-            </div>
-          )}
-        </div>
-      </section>
 
       {/* Footer */}
       <footer className="border-t border-border bg-card mt-12" role="contentinfo">

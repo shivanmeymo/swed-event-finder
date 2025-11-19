@@ -49,6 +49,8 @@ const CreateEvent = () => {
   const [accessCode, setAccessCode] = useState<string>("");
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [showCustomCategory, setShowCustomCategory] = useState(false);
+  const [customCategory, setCustomCategory] = useState("");
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -76,12 +78,16 @@ const CreateEvent = () => {
     const formData = new FormData(e.currentTarget);
 
     try {
+      // Get category value
+      const categoryValue = formData.get('category');
+      const finalCategory = categoryValue === 'Others' ? customCategory : categoryValue;
+      
       // Validate form data
       const validated = eventSchema.parse({
         title: formData.get('title'),
         description: formData.get('description') || '',
         location: formData.get('location'),
-        category: formData.get('category'),
+        category: finalCategory,
         start_date: formData.get('start_date'),
         start_time: formData.get('start_time'),
         end_date: formData.get('end_date'),
@@ -277,7 +283,11 @@ const CreateEvent = () => {
 
                 <div className="space-y-2">
                   <Label htmlFor="category">Category *</Label>
-                  <Select name="category" required>
+                  <Select 
+                    name="category" 
+                    required 
+                    onValueChange={(value) => setShowCustomCategory(value === "Others")}
+                  >
                     <SelectTrigger id="category">
                       <SelectValue placeholder="Select category" />
                     </SelectTrigger>
@@ -289,9 +299,24 @@ const CreateEvent = () => {
                       <SelectItem value="Art">Art & Culture</SelectItem>
                       <SelectItem value="Student">Student</SelectItem>
                       <SelectItem value="Kid">Kid</SelectItem>
+                      <SelectItem value="Others">Others</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
+
+                {showCustomCategory && (
+                  <div className="space-y-2">
+                    <Label htmlFor="customCategory">Custom Category *</Label>
+                    <Input
+                      id="customCategory"
+                      name="customCategory"
+                      placeholder="Enter your custom category"
+                      value={customCategory}
+                      onChange={(e) => setCustomCategory(e.target.value)}
+                      required
+                    />
+                  </div>
+                )}
 
                 <div className="space-y-2">
                   <Label htmlFor="organizer_email">{t("create.organizerEmail")} *</Label>

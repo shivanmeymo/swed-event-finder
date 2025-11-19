@@ -2,3 +2,9 @@ project_id = "rapduxzrdugvthezhcmk"
 
 [functions.send-contact-email]
 verify_jwt = false
+
+[functions.notify-admin-event-created]
+verify_jwt = false
+
+[functions.handle-event-approval]
+verify_jwt = false

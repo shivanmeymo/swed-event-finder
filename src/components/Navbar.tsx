@@ -51,7 +51,7 @@ const Navbar = () => {
           {/* Right side buttons */}
           <div className="flex items-center gap-2">
             {user && (
-              <Button asChild className="bg-[#FECC00] hover:bg-[#FECC00]/90 text-black font-semibold">
+              <Button asChild className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold">
                 <Link to="/create">
                   <PlusCircle className="h-4 w-4 mr-2" aria-hidden="true" />
                   Create Event
@@ -62,7 +62,7 @@ const Navbar = () => {
             {/* Burger Menu */}
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
-                <Button className="bg-[#006AA7] hover:bg-[#006AA7]/90 text-white" size="default" aria-label="Open menu">
+                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground" size="default" aria-label="Open menu">
                   <Menu className="h-6 w-6" />
                 </Button>
               </SheetTrigger>
@@ -82,7 +82,7 @@ const Navbar = () => {
                   </Link>
                 ))}
                 {user ? (
-                  <Button onClick={handleSignOut} className="w-full justify-start bg-[#006AA7] hover:bg-[#006AA7]/90 text-white">
+                  <Button onClick={handleSignOut} className="w-full justify-start bg-primary hover:bg-primary/90 text-primary-foreground">
                     <LogOut className="h-4 w-4 mr-2" aria-hidden="true" />
                     Sign Out
                   </Button>

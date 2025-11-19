@@ -47,11 +47,54 @@ const CookieConsent = () => {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-sm text-muted-foreground">
-            We use cookies to enhance your experience and protect your data with industry-standard security measures. Necessary cookies enable basic functionality, while optional cookies help us improve our services.
-          </p>
-          <p className="text-sm text-muted-foreground">
-            Your data is protected through encryption, authentication, and role-based access control. For more details, visit our <a href="/data-integrity" className="text-primary hover:underline">Data Integrity</a> page.
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="flex items-start gap-3">
+              <Shield className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+              <div>
+                <h3 className="font-semibold text-sm mb-1">Data Protection</h3>
+                <p className="text-xs text-muted-foreground">
+                  Your information is encrypted and stored securely in compliance with GDPR and international privacy standards.
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex items-start gap-3">
+              <Lock className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+              <div>
+                <h3 className="font-semibold text-sm mb-1">Access Control</h3>
+                <p className="text-xs text-muted-foreground">
+                  Role-based permissions ensure only authorized users can access sensitive data, protecting your privacy.
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex items-start gap-3">
+              <Database className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+              <div>
+                <h3 className="font-semibold text-sm mb-1">Data Integrity</h3>
+                <p className="text-xs text-muted-foreground">
+                  We maintain comprehensive audit trails and implement validation rules to ensure data accuracy.
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex items-start gap-3">
+              <Shield className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+              <div>
+                <h3 className="font-semibold text-sm mb-1">Cookie Usage</h3>
+                <p className="text-xs text-muted-foreground">
+                  We use necessary cookies for functionality and optional cookies to improve your experience.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <p className="text-sm text-muted-foreground pt-2">
+            For more detailed information about our security practices and data handling procedures, please visit our{" "}
+            <a href="/data-integrity" className="text-primary hover:underline font-medium">
+              Data Integrity
+            </a>{" "}
+            page.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 pt-2">

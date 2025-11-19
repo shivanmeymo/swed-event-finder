@@ -149,19 +149,25 @@ const Index = () => {
       <Navbar />
       
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-b from-background to-background/80 py-20" role="banner" aria-labelledby="hero-heading">
-        <div className="container mx-auto px-4">
-          <div className="text-center space-y-6 mb-12 animate-fade-in">
-            <img 
-              src={logo} 
-              alt="NowInTown Logo" 
-              className="h-24 w-24 mx-auto mb-4"
-            />
-            <h1 id="hero-heading" className="text-4xl md:text-6xl font-bold tracking-tight text-foreground">
+      <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden" role="banner" aria-labelledby="hero-heading">
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src={heroImage} 
+            alt="Sweden outdoor activities" 
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/40"></div>
+        </div>
+        
+        {/* Content Overlay */}
+        <div className="container mx-auto px-4 z-10 relative">
+          <div className="text-center space-y-6 animate-fade-in">
+            <h1 id="hero-heading" className="text-4xl md:text-6xl font-bold tracking-tight text-white drop-shadow-lg">
               {t("hero.title1")} <br />
               {t("hero.title2")}
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto drop-shadow-md">
               {t("hero.subtitle")}
             </p>
             <Button
@@ -210,17 +216,6 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Hero Image - Below Events */}
-      <section className="container mx-auto px-4 py-8">
-        <div className="w-full max-w-6xl mx-auto">
-          <img 
-            src={heroImage} 
-            alt="Sweden outdoor activities and events" 
-            className="w-full h-auto rounded-2xl shadow-2xl animate-fade-in"
-          />
-        </div>
-      </section>
-
       {/* Footer */}
       <footer className="border-t border-border bg-card mt-12" role="contentinfo">
         <div className="container mx-auto px-4 py-8">

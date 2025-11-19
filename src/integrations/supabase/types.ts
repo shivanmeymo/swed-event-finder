@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       events: {
         Row: {
+          approved: boolean | null
           attendees: number | null
           category: string
           created_at: string | null
@@ -24,12 +25,15 @@ export type Database = {
           id: string
           image_url: string | null
           location: string
+          organizer_description: string | null
+          organizer_email: string | null
           organizer_id: string
           start_datetime: string
           title: string
           updated_at: string | null
         }
         Insert: {
+          approved?: boolean | null
           attendees?: number | null
           category: string
           created_at?: string | null
@@ -38,12 +42,15 @@ export type Database = {
           id?: string
           image_url?: string | null
           location: string
+          organizer_description?: string | null
+          organizer_email?: string | null
           organizer_id: string
           start_datetime?: string
           title: string
           updated_at?: string | null
         }
         Update: {
+          approved?: boolean | null
           attendees?: number | null
           category?: string
           created_at?: string | null
@@ -52,6 +59,8 @@ export type Database = {
           id?: string
           image_url?: string | null
           location?: string
+          organizer_description?: string | null
+          organizer_email?: string | null
           organizer_id?: string
           start_datetime?: string
           title?: string

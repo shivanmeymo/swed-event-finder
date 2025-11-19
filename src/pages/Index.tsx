@@ -149,40 +149,36 @@ const Index = () => {
       <Navbar />
       
       {/* Hero Section */}
-      <section className="relative overflow-hidden py-32" aria-label="Welcome banner">
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-4xl mx-auto text-center space-y-6 mb-12">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight animate-fade-in">
-              <span className="block text-foreground drop-shadow-lg">
-                {t("hero.title1")}
-              </span>
-              <span className="block text-accent drop-shadow-lg">{t("hero.title2")}</span>
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto animate-fade-in" style={{ animationDelay: '0.2s' }}>
-              {t("hero.subtitle")}
-            </p>
-            <div className="flex justify-center gap-4 mt-8 animate-fade-in" style={{ animationDelay: '0.4s' }}>
-              <Button 
-                size="lg" 
-                className="group rounded-lg" 
-                onClick={() => {
-                  const filterSection = document.getElementById('filter-section');
-                  filterSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }}
-              >
-                {t("hero.exploreButton")}
-                <ArrowDown className="ml-2 h-5 w-5 group-hover:translate-y-1 transition-transform" aria-hidden="true" />
-              </Button>
-            </div>
-          </div>
+      <section className="relative min-h-[600px] flex flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-background to-muted/20">
+        {/* Content */}
+        <div className="container mx-auto px-4 py-12 text-center z-10">
+          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-[#006AA7] to-[#FECC00] bg-clip-text text-transparent animate-fade-in">
+            {t("hero.title1")} <br />
+            {t("hero.title2")}
+          </h1>
+          <p className="text-xl md:text-2xl mb-8 text-foreground/90 max-w-3xl mx-auto animate-fade-in">
+            {t("hero.subtitle")}
+          </p>
+          <Button 
+            size="lg" 
+            className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold text-lg px-8 py-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-in"
+            onClick={() => {
+              const filterSection = document.getElementById('filter-section');
+              filterSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }}
+          >
+            {t("hero.exploreButton")}
+            <ArrowDown className="ml-2 h-5 w-5 animate-bounce" />
+          </Button>
         </div>
-        <div className="absolute inset-0 -z-10">
+        
+        {/* Hero Image */}
+        <div className="w-full max-w-6xl mx-auto px-4 mt-8">
           <img 
             src={heroImage} 
-            alt="Scenic outdoor activities in Sweden" 
-            className="w-full h-full object-cover animate-fade-in opacity-20"
+            alt="Sweden outdoor activities and events" 
+            className="w-full h-auto rounded-2xl shadow-2xl animate-fade-in"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/90 to-background" aria-hidden="true" />
         </div>
       </section>
 

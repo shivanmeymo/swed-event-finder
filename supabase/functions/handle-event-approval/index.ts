@@ -79,10 +79,9 @@ const handler = async (req: Request): Promise<Response> => {
       }
 
       // Redirect to approval page
-      // Get the app URL from environment (not the edge function URL)
-      const appUrl = Deno.env.get("SUPABASE_URL")?.replace('/supabase', '') || url.origin;
-      const baseUrl = appUrl.includes('localhost') ? 'http://localhost:8080' : appUrl;
-      const redirectUrl = `${baseUrl}/event-approved?title=${encodeURIComponent(event?.title || 'Unknown')}`;
+      // Use the actual app URL from environment or default to deployed URL
+      const appUrl = Deno.env.get("APP_URL") || "https://nowintown.lovable.app";
+      const redirectUrl = `${appUrl}/event-approved?title=${encodeURIComponent(event?.title || 'Unknown')}`;
       
       console.log("Redirecting to:", redirectUrl);
       

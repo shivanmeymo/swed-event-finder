@@ -137,44 +137,59 @@ const Navbar = () => {
               <SheetHeader className="pb-4 border-b-2 border-foreground">
                 <SheetTitle className="text-foreground font-bold">{t("nav.menu")}</SheetTitle>
               </SheetHeader>
-              <nav className="flex flex-col gap-1 mt-4" aria-label="Mobile navigation">
-                {menuItems.map((item, index) => (
-                  <Link
-                    key={item.to}
-                    to={item.to}
-                    onClick={() => setIsOpen(false)}
-                    className={`text-sm font-medium hover:text-primary transition-colors py-3 px-2 ${
-                      index < menuItems.length - 1 ? "border-b-2 border-foreground" : ""
-                    }`}
+            <nav className="flex flex-col gap-1 mt-4" aria-label="Mobile navigation">
+              {user && (
+                <div className="pb-4 mb-4 border-b-2 border-foreground">
+                  <Button 
+                    onClick={() => { 
+                      navigate("/profile"); 
+                      setIsOpen(false); 
+                    }} 
+                    variant="outline" 
+                    className="w-full gap-2"
                   >
-                    {item.label}
-                  </Link>
-                ))}
-                <div className="mt-4 pt-4 border-t-2 border-foreground">
-                  {user && (
-                    <>
-                      <Button 
-                        onClick={() => { 
-                          navigate("/profile"); 
-                          setIsOpen(false); 
-                        }} 
-                        variant="outline" 
-                        className="w-full gap-2 mb-2"
-                      >
-                        <UserIcon className="h-4 w-4" />
-                        {userName || user.email?.split('@')[0]}
-                      </Button>
-                      <Button 
-                        onClick={handleSignOut} 
-                        className="w-full justify-start bg-foreground hover:bg-foreground/90 text-background rounded-lg border-2 border-foreground"
-                      >
-                        <LogOut className="h-4 w-4 mr-2" aria-hidden="true" />
-                        {t("nav.signOut")}
-                      </Button>
-                    </>
-                  )}
+                    <UserIcon className="h-4 w-4" />
+                    {userName || user.email?.split('@')[0]}
+                  </Button>
                 </div>
-              </nav>
+              )}
+              
+              {menuItems.map((item, index) => (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  onClick={() => setIsOpen(false)}
+                  className={`text-sm font-medium hover:text-primary transition-colors py-3 px-2 ${
+                    index < menuItems.length - 1 ? "border-b-2 border-foreground" : ""
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              ))}
+              
+              <div className="mt-4 pt-4 border-t-2 border-foreground">
+                {user ? (
+                  <Button 
+                    onClick={handleSignOut} 
+                    className="w-full justify-start bg-foreground hover:bg-foreground/90 text-background rounded-lg border-2 border-foreground"
+                  >
+                    <LogOut className="h-4 w-4 mr-2" aria-hidden="true" />
+                    {t("nav.signOut")}
+                  </Button>
+                ) : (
+                  <Button 
+                    onClick={() => { 
+                      navigate("/auth"); 
+                      setIsOpen(false); 
+                    }} 
+                    className="w-full justify-start bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg"
+                  >
+                    <UserIcon className="h-4 w-4 mr-2" aria-hidden="true" />
+                    {t("nav.signIn")}
+                  </Button>
+                )}
+              </div>
+            </nav>
             </SheetContent>
             </Sheet>
           </div>

@@ -149,41 +149,77 @@ const Index = () => {
       <Navbar />
       
       {/* Hero Section */}
-      <section className="relative min-h-[600px] flex flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-background to-muted/20">
-        <div className="container mx-auto px-4 py-12 z-10 flex flex-col items-center">
-          {/* Content */}
-          <div className="text-center mb-8">
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-[#006AA7] to-[#FECC00] bg-clip-text text-transparent animate-fade-in">
+      <section className="relative bg-gradient-to-b from-background to-background/80 py-20" role="banner" aria-labelledby="hero-heading">
+        <div className="container mx-auto px-4">
+          <div className="text-center space-y-6 mb-12 animate-fade-in">
+            <img 
+              src={logo} 
+              alt="NowInTown Logo" 
+              className="h-24 w-24 mx-auto mb-4"
+            />
+            <h1 id="hero-heading" className="text-4xl md:text-6xl font-bold tracking-tight text-foreground">
               {t("hero.title1")} <br />
               {t("hero.title2")}
             </h1>
-            <p className="text-xl md:text-2xl mb-8 text-foreground/90 max-w-3xl mx-auto animate-fade-in">
+            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
               {t("hero.subtitle")}
             </p>
-            <Button 
-              size="lg" 
-              className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold text-lg px-8 py-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-in"
+            <Button
               onClick={() => {
                 const filterSection = document.getElementById('filter-section');
                 filterSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
               }}
+              size="lg"
+              variant="default"
+              className="text-lg h-12 px-8 shadow-lg hover:shadow-xl transition-all bg-accent hover:bg-accent/90"
+              aria-label={t("hero.exploreButton")}
             >
               {t("hero.exploreButton")}
               <ArrowDown className="ml-2 h-5 w-5 animate-bounce" />
             </Button>
           </div>
-          
-          {/* Hero Image */}
-          <div className="w-full max-w-6xl">
-            <img 
-              src={heroImage} 
-              alt="Sweden outdoor activities and events" 
-              className="w-full h-auto rounded-2xl shadow-2xl animate-fade-in"
-            />
-          </div>
         </div>
       </section>
 
+      {/* Filter Section */}
+      <section id="filter-section" className="container mx-auto px-4 py-8" aria-label="Event filters">
+        <FilterBar onFilterChange={setFilters} />
+      </section>
+
+      {/* Events Section */}
+      <section id="events-section" className="container mx-auto px-4 py-8" aria-label="Event listings">
+        <div className="mb-4">
+          <h2 className="text-3xl font-bold text-foreground">{t("events.title")}</h2>
+          <p className="text-muted-foreground mt-1" role="status" aria-live="polite">
+            {filteredEvents.length} {t("events.found")}
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredEvents.length > 0 ? (
+            filteredEvents.map((event) => (
+              <EventCard key={event.id} {...event} currentUserId={user?.id} />
+            ))
+          ) : (
+            <div className="col-span-full text-center py-12">
+              <p className="text-muted-foreground text-lg">
+                {t("events.noResults")}
+              </p>
+            </div>
+          )}
+        </div>
+      </section>
+      
+      {/* Hero Image - Below Events */}
+      <section className="container mx-auto px-4 py-8">
+        <div className="w-full max-w-6xl mx-auto">
+          <img 
+            src={heroImage} 
+            alt="Sweden outdoor activities and events" 
+            className="w-full h-auto rounded-2xl shadow-2xl animate-fade-in"
+          />
+        </div>
+      </section>
 
       {/* Footer */}
       <footer className="border-t border-border bg-card mt-12" role="contentinfo">

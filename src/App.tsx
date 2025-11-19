@@ -10,6 +10,7 @@ import Contact from "./pages/Contact";
 import DataIntegrity from "./pages/DataIntegrity";
 import AboutUs from "./pages/AboutUs";
 import Auth from "./pages/Auth";
+import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
         <Route path="/data-integrity" element={<DataIntegrity />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/auth" element={<Auth />} />
+        <Route path="/admin" element={<AdminDashboard />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>

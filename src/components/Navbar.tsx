@@ -2,6 +2,8 @@ import { LogOut, User as UserIcon, Menu, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "@/assets/logo.png";
+import flagSweden from "@/assets/flag-sweden.png";
+import flagUK from "@/assets/flag-uk.png";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { useState } from "react";
@@ -55,12 +57,16 @@ const Navbar = () => {
             <Button 
               variant="ghost" 
               size="icon" 
-              className="hidden sm:flex hover:bg-accent/20 text-2xl"
+              className="hidden sm:flex hover:bg-accent/20"
               aria-label={language === "sv" ? "Switch to English" : "Byt till Svenska"}
               title={language === "sv" ? "English" : "Svenska"}
               onClick={toggleLanguage}
             >
-              {language === "sv" ? "🇸🇪" : "🇬🇧"}
+              <img 
+                src={language === "sv" ? flagSweden : flagUK} 
+                alt={language === "sv" ? "Swedish flag" : "UK flag"}
+                className="h-6 w-6 rounded"
+              />
             </Button>
 
             {/* Create Event Button */}
@@ -77,13 +83,13 @@ const Navbar = () => {
             {/* Burger Menu */}
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
-                <Button className="bg-[#006AA7] hover:bg-[#005a8f] text-white rounded-lg" size="default" aria-label="Open menu">
+                <Button className="bg-background border-2 border-foreground hover:bg-muted text-foreground rounded-lg" size="default" aria-label="Open menu">
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-            <SheetContent side="right" className="w-[280px] rounded-l-xl">
-              <SheetHeader className="pb-4 border-b border-border">
-                <SheetTitle>{t("nav.menu")}</SheetTitle>
+            <SheetContent side="right" className="w-[280px] bg-background border-l-4 border-foreground rounded-l-xl">
+              <SheetHeader className="pb-4 border-b-2 border-foreground">
+                <SheetTitle className="text-foreground font-bold">{t("nav.menu")}</SheetTitle>
               </SheetHeader>
               <nav className="flex flex-col gap-1 mt-4" aria-label="Mobile navigation">
                 {menuItems.map((item, index) => (
@@ -92,20 +98,20 @@ const Navbar = () => {
                     to={item.to}
                     onClick={() => setIsOpen(false)}
                     className={`text-sm font-medium hover:text-primary transition-colors py-3 px-2 ${
-                      index < menuItems.length - 1 ? "border-b border-border" : ""
+                      index < menuItems.length - 1 ? "border-b-2 border-foreground" : ""
                     }`}
                   >
                     {item.label}
                   </Link>
                 ))}
-                <div className="mt-4">
+                <div className="mt-4 pt-4 border-t-2 border-foreground">
                   {user ? (
-                    <Button onClick={handleSignOut} className="w-full justify-start bg-[#006AA7] hover:bg-[#005a8f] text-white rounded-lg">
+                    <Button onClick={handleSignOut} className="w-full justify-start bg-foreground hover:bg-foreground/90 text-background rounded-lg border-2 border-foreground">
                       <LogOut className="h-4 w-4 mr-2" aria-hidden="true" />
                       {t("nav.signOut")}
                     </Button>
                   ) : (
-                    <Button asChild className="w-full justify-start bg-[#006AA7] hover:bg-[#005a8f] text-white rounded-lg">
+                    <Button asChild className="w-full justify-start bg-foreground hover:bg-foreground/90 text-background rounded-lg border-2 border-foreground">
                       <Link to="/auth" onClick={() => setIsOpen(false)}>
                         <UserIcon className="h-4 w-4 mr-2" aria-hidden="true" />
                         {t("nav.signIn")}

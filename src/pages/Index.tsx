@@ -150,35 +150,37 @@ const Index = () => {
       
       {/* Hero Section */}
       <section className="relative min-h-[600px] flex flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-background to-muted/20">
-        {/* Content */}
-        <div className="container mx-auto px-4 py-12 text-center z-10">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-[#006AA7] to-[#FECC00] bg-clip-text text-transparent animate-fade-in">
-            {t("hero.title1")} <br />
-            {t("hero.title2")}
-          </h1>
-          <p className="text-xl md:text-2xl mb-8 text-foreground/90 max-w-3xl mx-auto animate-fade-in">
-            {t("hero.subtitle")}
-          </p>
-          <Button 
-            size="lg" 
-            className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold text-lg px-8 py-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-in"
-            onClick={() => {
-              const filterSection = document.getElementById('filter-section');
-              filterSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }}
-          >
-            {t("hero.exploreButton")}
-            <ArrowDown className="ml-2 h-5 w-5 animate-bounce" />
-          </Button>
-        </div>
-        
-        {/* Hero Image */}
-        <div className="w-full max-w-6xl mx-auto px-4 mt-8">
-          <img 
-            src={heroImage} 
-            alt="Sweden outdoor activities and events" 
-            className="w-full h-auto rounded-2xl shadow-2xl animate-fade-in"
-          />
+        <div className="container mx-auto px-4 py-12 z-10 flex flex-col items-center">
+          {/* Content */}
+          <div className="text-center mb-8">
+            <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-[#006AA7] to-[#FECC00] bg-clip-text text-transparent animate-fade-in">
+              {t("hero.title1")} <br />
+              {t("hero.title2")}
+            </h1>
+            <p className="text-xl md:text-2xl mb-8 text-foreground/90 max-w-3xl mx-auto animate-fade-in">
+              {t("hero.subtitle")}
+            </p>
+            <Button 
+              size="lg" 
+              className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold text-lg px-8 py-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-in"
+              onClick={() => {
+                const filterSection = document.getElementById('filter-section');
+                filterSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }}
+            >
+              {t("hero.exploreButton")}
+              <ArrowDown className="ml-2 h-5 w-5 animate-bounce" />
+            </Button>
+          </div>
+          
+          {/* Hero Image */}
+          <div className="w-full max-w-6xl">
+            <img 
+              src={heroImage} 
+              alt="Sweden outdoor activities and events" 
+              className="w-full h-auto rounded-2xl shadow-2xl animate-fade-in"
+            />
+          </div>
         </div>
       </section>
 

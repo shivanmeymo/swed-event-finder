@@ -48,8 +48,8 @@ const Navbar = () => {
             </span>
           </Link>
 
-          {/* Desktop Create Event Button */}
-          <div className="hidden md:flex items-center gap-3">
+          {/* Right side buttons */}
+          <div className="flex items-center gap-2">
             {user && (
               <Button asChild className="bg-[#FECC00] hover:bg-[#FECC00]/90 text-black font-semibold">
                 <Link to="/create">
@@ -58,15 +58,14 @@ const Navbar = () => {
                 </Link>
               </Button>
             )}
-          </div>
 
-          {/* Burger Menu */}
-          <Sheet open={isOpen} onOpenChange={setIsOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="sm" aria-label="Open menu" className="ml-2">
-                <Menu className="h-5 w-5" />
-              </Button>
-            </SheetTrigger>
+            {/* Burger Menu */}
+            <Sheet open={isOpen} onOpenChange={setIsOpen}>
+              <SheetTrigger asChild>
+                <Button className="bg-[#006AA7] hover:bg-[#006AA7]/90 text-white" size="default" aria-label="Open menu">
+                  <Menu className="h-6 w-6" />
+                </Button>
+              </SheetTrigger>
             <SheetContent side="right" className="w-[280px]">
               <SheetHeader>
                 <SheetTitle>Menu</SheetTitle>
@@ -97,7 +96,8 @@ const Navbar = () => {
                 )}
               </nav>
             </SheetContent>
-          </Sheet>
+            </Sheet>
+          </div>
         </div>
       </div>
     </nav>

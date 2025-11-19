@@ -222,12 +222,12 @@ const Index = () => {
                 
                 <h4 className="font-semibold text-foreground mb-2 text-sm">Quick Links</h4>
                 <ul className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
-                  <li><a href="/" className="text-accent hover:text-accent/80 transition-colors">Home</a></li>
-                  <li><a href="/create" className="text-accent hover:text-accent/80 transition-colors">Create Event</a></li>
-                  <li><a href="/manage" className="text-accent hover:text-accent/80 transition-colors">Manage Event</a></li>
-                  <li><a href="/about" className="text-accent hover:text-accent/80 transition-colors">About Us</a></li>
-                  <li><a href="/contact" className="text-accent hover:text-accent/80 transition-colors">Contact Us</a></li>
-                  <li><a href="/data-integrity" className="text-accent hover:text-accent/80 transition-colors">Data Integrity</a></li>
+                  <li><a href="/" className="text-[#006AA7] hover:text-[#006AA7]/80 font-medium transition-colors">Home</a></li>
+                  <li><a href="/create" className="text-[#006AA7] hover:text-[#006AA7]/80 font-medium transition-colors">Create Event</a></li>
+                  <li><a href="/manage" className="text-[#006AA7] hover:text-[#006AA7]/80 font-medium transition-colors">Manage Event</a></li>
+                  <li><a href="/about" className="text-[#006AA7] hover:text-[#006AA7]/80 font-medium transition-colors">About Us</a></li>
+                  <li><a href="/contact" className="text-[#006AA7] hover:text-[#006AA7]/80 font-medium transition-colors">Contact Us</a></li>
+                  <li><a href="/data-integrity" className="text-[#006AA7] hover:text-[#006AA7]/80 font-medium transition-colors">Data Integrity</a></li>
                 </ul>
               </div>
               

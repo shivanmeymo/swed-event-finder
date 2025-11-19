@@ -59,6 +59,33 @@ export type Database = {
         }
         Relationships: []
       }
+      newsletter_subscriptions: {
+        Row: {
+          category_filter: string | null
+          created_at: string
+          email: string
+          id: string
+          keyword_filter: string | null
+          location_filter: string | null
+        }
+        Insert: {
+          category_filter?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          keyword_filter?: string | null
+          location_filter?: string | null
+        }
+        Update: {
+          category_filter?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          keyword_filter?: string | null
+          location_filter?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null

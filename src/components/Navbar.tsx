@@ -48,6 +48,17 @@ const Navbar = () => {
             </span>
           </Link>
 
+          {/* Desktop Create Event Button */}
+          <div className="hidden md:flex items-center gap-3">
+            {user && (
+              <Button asChild className="bg-[#FECC00] hover:bg-[#FECC00]/90 text-black font-semibold">
+                <Link to="/create">
+                  <PlusCircle className="h-4 w-4 mr-2" aria-hidden="true" />
+                  Create Event
+                </Link>
+              </Button>
+            )}
+          </div>
 
           {/* Burger Menu */}
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -72,7 +83,7 @@ const Navbar = () => {
                   </Link>
                 ))}
                 {user ? (
-                  <Button onClick={handleSignOut} variant="outline" className="w-full justify-start">
+                  <Button onClick={handleSignOut} className="w-full justify-start bg-[#006AA7] hover:bg-[#006AA7]/90 text-white">
                     <LogOut className="h-4 w-4 mr-2" aria-hidden="true" />
                     Sign Out
                   </Button>

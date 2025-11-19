@@ -49,7 +49,7 @@ const EventCard = ({ id, title, start_datetime, end_datetime, location, category
           alt={title}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
-        <Badge className={`absolute top-3 right-3 ${getCategoryColor(category)} text-white border-0`}>
+        <Badge className={`absolute top-3 right-3 ${getCategoryColor(category)} text-white border-0 text-base font-semibold px-3 py-1`}>
           {category}
         </Badge>
         {isOwnEvent && (

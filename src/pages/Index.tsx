@@ -2,11 +2,16 @@ import { useState, useMemo, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import FilterBar from "@/components/FilterBar";
 import EventCard from "@/components/EventCard";
+import CookieConsent from "@/components/CookieConsent";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowRight } from "lucide-react";
 import heroImage from "@/assets/sweden-outdoor-hero.jpg";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 
 const Index = () => {
   const { user } = useAuth();
@@ -17,6 +22,10 @@ const Index = () => {
     category: "",
   });
   const [allEvents, setAllEvents] = useState<any[]>([]);
+  const [subscribeEmail, setSubscribeEmail] = useState("");
+  const [subscribeCategory, setSubscribeCategory] = useState("");
+  const [subscribeLocation, setSubscribeLocation] = useState("");
+  const [subscribeKeyword, setSubscribeKeyword] = useState("");
 
   // Fetch events from database
   useEffect(() => {
@@ -63,6 +72,44 @@ const Index = () => {
       supabase.removeChannel(channel);
     };
   }, []);
+
+  // Handle newsletter subscription
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!subscribeEmail) {
+      toast.error("Please enter your email address");
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('newsletter_subscriptions')
+        .insert({
+          email: subscribeEmail,
+          category_filter: subscribeCategory || null,
+          location_filter: subscribeLocation || null,
+          keyword_filter: subscribeKeyword || null,
+        });
+
+      if (error) {
+        if (error.code === '23505') {
+          toast.error("This email is already subscribed");
+        } else {
+          throw error;
+        }
+      } else {
+        toast.success("Successfully subscribed to newsletter!");
+        setSubscribeEmail("");
+        setSubscribeCategory("");
+        setSubscribeLocation("");
+        setSubscribeKeyword("");
+      }
+    } catch (error) {
+      console.error("Subscription error:", error);
+      toast.error("Failed to subscribe. Please try again.");
+    }
+  };
 
   // Filter events based on selected filters
   const filteredEvents = useMemo(() => {
@@ -186,16 +233,66 @@ const Index = () => {
                   <li><a href="/" className="hover:text-primary transition-colors">Home</a></li>
                   <li><a href="/create" className="hover:text-primary transition-colors">Create Event</a></li>
                   <li><a href="/manage" className="hover:text-primary transition-colors">Manage Event</a></li>
-                </ul>
-              </div>
-              
-              <div>
-                <h4 className="font-semibold text-foreground mb-4">Legal & Contact</h4>
-                <ul className="space-y-2 text-muted-foreground">
                   <li><a href="/about" className="hover:text-primary transition-colors">About Us</a></li>
                   <li><a href="/contact" className="hover:text-primary transition-colors">Contact Us</a></li>
                   <li><a href="/data-integrity" className="hover:text-primary transition-colors">Data Integrity</a></li>
                 </ul>
+              </div>
+              
+              <div>
+                <h4 className="font-semibold text-foreground mb-4">Subscribe to Newsletter</h4>
+                <form onSubmit={handleSubscribe} className="space-y-3">
+                  <div>
+                    <Label htmlFor="subscribe-email" className="sr-only">Email</Label>
+                    <Input
+                      id="subscribe-email"
+                      type="email"
+                      placeholder="Your email"
+                      value={subscribeEmail}
+                      onChange={(e) => setSubscribeEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="subscribe-category" className="text-xs text-muted-foreground">Category</Label>
+                    <Select value={subscribeCategory} onValueChange={setSubscribeCategory}>
+                      <SelectTrigger id="subscribe-category" className="h-9">
+                        <SelectValue placeholder="Any" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Any category</SelectItem>
+                        <SelectItem value="music">Music</SelectItem>
+                        <SelectItem value="sports">Sports</SelectItem>
+                        <SelectItem value="food">Food</SelectItem>
+                        <SelectItem value="art">Art</SelectItem>
+                        <SelectItem value="tech">Tech</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="subscribe-location" className="text-xs text-muted-foreground">Location</Label>
+                    <Input
+                      id="subscribe-location"
+                      type="text"
+                      placeholder="Any location"
+                      value={subscribeLocation}
+                      onChange={(e) => setSubscribeLocation(e.target.value)}
+                      className="h-9"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="subscribe-keyword" className="text-xs text-muted-foreground">Keywords</Label>
+                    <Input
+                      id="subscribe-keyword"
+                      type="text"
+                      placeholder="Optional"
+                      value={subscribeKeyword}
+                      onChange={(e) => setSubscribeKeyword(e.target.value)}
+                      className="h-9"
+                    />
+                  </div>
+                  <Button type="submit" size="sm" className="w-full">Subscribe</Button>
+                </form>
               </div>
             </div>
           </nav>
@@ -205,6 +302,8 @@ const Index = () => {
           </div>
         </div>
       </footer>
+      
+      <CookieConsent />
     </div>
   );
 };

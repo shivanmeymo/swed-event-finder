@@ -59,11 +59,23 @@ const translations = {
     "category.tech": "Tech",
     
     // Cookie Consent
-    "cookie.title": "Vi värnar om din integritet",
-    "cookie.description": "Vi använder cookies för att förbättra din surfupplevelse, visa personliga annonser eller innehåll och analysera vår trafik. Genom att klicka på \"Acceptera alla\" samtycker du till vår användning av cookies.",
-    "cookie.customize": "Anpassa",
-    "cookie.rejectAll": "Avvisa alla",
-    "cookie.acceptAll": "Acceptera alla",
+    "cookie.title": "We care about your privacy",
+    "cookie.description": "We use cookies to improve your browsing experience, show personalized ads or content and analyze our traffic. By clicking \"Accept all\" you consent to our use of cookies.",
+    "cookie.customize": "Customize",
+    "cookie.rejectAll": "Reject all",
+    "cookie.acceptAll": "Accept all",
+    
+    // Auth
+    "auth.invalidEmail": "Invalid email address. Please check and try again.",
+    "auth.wrongPassword": "Incorrect password. Please try again or reset your password.",
+    "auth.userNotFound": "No account found with this email. Please sign up first.",
+    "auth.technicalIssue": "Technical issue occurred. Please contact support@NowInTown.com",
+    
+    // Create Event
+    "create.organizerEmail": "Organizer Email",
+    "create.aboutYourself": "About Yourself",
+    "create.aboutPlaceholder": "Tell us about yourself and why you want to create this event...",
+    "create.pendingApproval": "Your event is pending approval. You'll receive an email confirmation once approved.",
   },
   sv: {
     // Navbar
@@ -118,6 +130,18 @@ const translations = {
     "cookie.customize": "Anpassa",
     "cookie.rejectAll": "Avvisa alla",
     "cookie.acceptAll": "Acceptera alla",
+    
+    // Auth
+    "auth.invalidEmail": "Ogiltig e-postadress. Vänligen kontrollera och försök igen.",
+    "auth.wrongPassword": "Felaktigt lösenord. Försök igen eller återställ ditt lösenord.",
+    "auth.userNotFound": "Inget konto hittades med denna e-post. Vänligen registrera dig först.",
+    "auth.technicalIssue": "Tekniskt problem uppstod. Kontakta support@NowInTown.com",
+    
+    // Create Event
+    "create.organizerEmail": "Arrangörs E-post",
+    "create.aboutYourself": "Om Dig Själv",
+    "create.aboutPlaceholder": "Berätta om dig själv och varför du vill skapa detta event...",
+    "create.pendingApproval": "Ditt event väntar på godkännande. Du kommer få en e-postbekräftelse när det godkänts.",
   },
 };
 

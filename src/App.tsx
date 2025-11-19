@@ -12,6 +12,7 @@ import AboutUs from "./pages/AboutUs";
 import Auth from "./pages/Auth";
 import AdminDashboard from "./pages/AdminDashboard";
 import EventApproved from "./pages/EventApproved";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
         <Route path="/auth" element={<Auth />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/event-approved" element={<EventApproved />} />
+        <Route path="/profile" element={<Profile />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>

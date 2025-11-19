@@ -1,7 +1,10 @@
 import { useEffect } from "react";
-import { Shield, Lock, Database, FileCheck, Eye, RefreshCw } from "lucide-react";
+import { Shield, Lock, Database, FileCheck, Eye, RefreshCw, User } from "lucide-react";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const DataIntegrity = () => {
   useEffect(() => {
@@ -51,9 +54,13 @@ const DataIntegrity = () => {
               <CardDescription>Secure authentication and authorization</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground mb-4">
                 Event organizers receive unique access codes to manage their events. Only authorized users can view, 
                 modify, or delete event information, ensuring complete control over your data.
+              </p>
+              <p className="text-muted-foreground">
+                Users can manage their account settings, reset passwords, and delete their accounts at any time through 
+                their <Link to="/profile" className="text-primary hover:underline font-medium">account page</Link>.
               </p>
             </CardContent>
           </Card>
@@ -135,15 +142,20 @@ const DataIntegrity = () => {
             </p>
           </div>
         </section>
+
+        <section className="bg-gradient-to-br from-primary/10 via-[hsl(230,89%,62%)]/10 to-accent/10 rounded-lg p-12 text-center">
+          <User className="w-16 h-16 mx-auto mb-4 text-primary" aria-hidden="true" />
+          <h2 className="text-3xl font-bold mb-4">Manage Your Account</h2>
+          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+            Take full control of your account settings, update your password, or delete your account at any time.
+          </p>
+          <Button size="lg" asChild>
+            <Link to="/profile">Go to My Account</Link>
+          </Button>
+        </section>
       </main>
 
-      <footer className="border-t border-border bg-card mt-12">
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center text-sm text-muted-foreground">
-            <p>&copy; {new Date().getFullYear()} SwedEvents. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };

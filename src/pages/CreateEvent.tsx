@@ -114,7 +114,7 @@ const CreateEvent = () => {
       const startDatetime = `${validated.start_date} ${validated.start_time}`;
       const endDatetime = `${validated.end_date} ${validated.end_time}`;
       
-      const { error } = await supabase
+      const { data: eventData, error } = await supabase
         .from('events')
         .insert({
           title: validated.title,
@@ -125,13 +125,22 @@ const CreateEvent = () => {
           category: validated.category,
           image_url: imageUrl,
           organizer_id: user?.id,
-        } as any);
+          organizer_email: validated.organizer_email,
+          organizer_description: validated.organizer_description,
+          approved: false,
+        } as any)
+        .select()
+        .single();
 
       if (error) throw error;
 
-      const generatedCode = Math.random().toString(36).slice(2, 10).toUpperCase();
-      setAccessCode(generatedCode);
-      setShowSuccessDialog(true);
+      toast({
+        title: language === "sv" ? "Event skapat!" : "Event created!",
+        description: t("create.pendingApproval"),
+      });
+
+      // Navigate back to home after short delay
+      setTimeout(() => navigate("/"), 2000);
     } catch (error: any) {
       if (error instanceof z.ZodError) {
         toast({
@@ -282,6 +291,28 @@ const CreateEvent = () => {
                       <SelectItem value="Kid">Kid</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="organizer_email">{t("create.organizerEmail")} *</Label>
+                  <Input
+                    id="organizer_email"
+                    name="organizer_email"
+                    type="email"
+                    placeholder="organizer@example.com"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="organizer_description">{t("create.aboutYourself")} *</Label>
+                  <Textarea
+                    id="organizer_description"
+                    name="organizer_description"
+                    placeholder={t("create.aboutPlaceholder")}
+                    rows={4}
+                    required
+                  />
                 </div>
 
                 <div className="space-y-2">

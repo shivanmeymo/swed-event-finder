@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ArrowDown } from "lucide-react";
 import heroImage from "@/assets/sweden-outdoor-hero.jpg";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -170,7 +170,7 @@ const Index = () => {
               <Button size="lg" className="group" asChild>
                 <a href="#events-section">
                   Explore Events
-                  <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
+                  <ArrowDown className="ml-2 h-5 w-5 group-hover:translate-y-1 transition-transform" aria-hidden="true" />
                 </a>
               </Button>
             </div>
@@ -184,8 +184,8 @@ const Index = () => {
       </section>
 
       {/* Events Section */}
-      <section id="events-section" className="container mx-auto px-4 py-12" aria-label="Event listings">
-        <div className="mb-8">
+      <section id="events-section" className="container mx-auto px-4 py-8" aria-label="Event listings">
+        <div className="mb-4">
           <h2 className="text-3xl font-bold text-foreground">Upcoming Events</h2>
           <p className="text-muted-foreground mt-1" role="status" aria-live="polite">
             {filteredEvents.length} events found
@@ -292,8 +292,8 @@ const Index = () => {
             </div>
           </nav>
           
-          <div className="border-t border-border mt-6 pt-3 text-center text-muted-foreground text-xs">
-            <p>&copy; 2025 NowInTown. All rights reserved.</p>
+          <div className="border-t border-border mt-4 pt-2 text-center text-muted-foreground text-xs">
+            <p>&copy; 2026 NowInTown. All rights reserved.</p>
           </div>
         </div>
       </footer>

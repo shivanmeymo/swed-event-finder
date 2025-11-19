@@ -241,17 +241,13 @@ const ManageEvent = () => {
                             </p>
                           </div>
                           <div className="flex-shrink-0">
-                            {event.approved === null ? (
-                              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-300">
-                                Approval in Progress
-                              </span>
-                            ) : event.approved === false ? (
-                              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-300">
-                                Rejected
-                              </span>
-                            ) : (
+                            {event.approved === true ? (
                               <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-300">
                                 Approved & Published
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-300">
+                                Approval in Progress
                               </span>
                             )}
                           </div>
@@ -272,17 +268,13 @@ const ManageEvent = () => {
                       Update your event information or delete it
                     </CardDescription>
                     <div className="mt-2">
-                      {selectedEvent.approved === null ? (
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-300">
-                          Status: Approval in Progress
-                        </span>
-                      ) : selectedEvent.approved === false ? (
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-300">
-                          Status: Rejected
-                        </span>
-                      ) : (
+                      {selectedEvent.approved === true ? (
                         <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-300">
                           Status: Approved & Published
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-300">
+                          Status: Approval in Progress
                         </span>
                       )}
                     </div>

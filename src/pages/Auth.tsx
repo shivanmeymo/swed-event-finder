@@ -32,10 +32,18 @@ const Auth = () => {
   const [signInData, setSignInData] = useState({ email: "", password: "" });
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
+  const [showPasswordUpdate, setShowPasswordUpdate] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Auth event:', event);
       setSession(session);
+      
+      // Handle password recovery
+      if (event === 'PASSWORD_RECOVERY') {
+        setShowPasswordUpdate(true);
+      }
     });
 
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -46,10 +54,10 @@ const Auth = () => {
   }, []);
 
   useEffect(() => {
-    if (session) {
+    if (session && !showPasswordUpdate) {
       navigate("/");
     }
-  }, [session, navigate]);
+  }, [session, navigate, showPasswordUpdate]);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -169,6 +177,81 @@ const Auth = () => {
       setIsLoading(false);
     }
   };
+
+  const handleUpdatePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      const passwordSchema = z.string().min(6, "Password must be at least 6 characters").max(100);
+      const validated = passwordSchema.parse(newPassword);
+
+      const { error } = await supabase.auth.updateUser({
+        password: validated,
+      });
+
+      if (error) throw error;
+
+      toast.success("Password updated successfully! You can now sign in with your new password.");
+      setNewPassword("");
+      setShowPasswordUpdate(false);
+      navigate("/");
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast.error(error.errors[0].message);
+      } else if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Show password update form if user clicked reset link
+  if (showPasswordUpdate) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center space-y-4">
+            <div className="flex justify-center">
+              <img src={logo} alt="" className="h-16 w-16" aria-hidden="true" />
+            </div>
+            <div>
+              <CardTitle className="text-3xl font-bold bg-gradient-to-r from-[#006AA7] to-[#FECC00] bg-clip-text text-transparent">
+                Update Password
+              </CardTitle>
+              <CardDescription className="mt-2">
+                Enter your new password below
+              </CardDescription>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleUpdatePassword} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="new-password">New Password</Label>
+                <Input
+                  id="new-password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required
+                  autoComplete="new-password"
+                  minLength={6}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Must be at least 6 characters
+                </p>
+              </div>
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? "Updating..." : "Update Password"}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex items-center justify-center p-4">

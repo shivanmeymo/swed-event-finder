@@ -1,4 +1,4 @@
-import { LogOut, User as UserIcon, Menu, Languages, Calendar } from "lucide-react";
+import { LogOut, User as UserIcon, Menu, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "@/assets/logo.png";
@@ -55,12 +55,12 @@ const Navbar = () => {
             <Button 
               variant="ghost" 
               size="icon" 
-              className="hidden sm:flex hover:bg-accent/20"
-              aria-label="Change language"
-              title="Language"
+              className="hidden sm:flex hover:bg-accent/20 text-2xl"
+              aria-label={language === "sv" ? "Switch to English" : "Byt till Svenska"}
+              title={language === "sv" ? "English" : "Svenska"}
               onClick={toggleLanguage}
             >
-              <Languages className="h-5 w-5" />
+              {language === "sv" ? "🇸🇪" : "🇬🇧"}
             </Button>
 
             {/* Create Event Button */}

@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   Select,
   SelectContent,
@@ -35,10 +36,13 @@ const eventSchema = z.object({
   start_time: z.string().min(1, "Start time is required"),
   end_date: z.string().min(1, "End date is required"),
   end_time: z.string().min(1, "End time is required"),
+  organizer_email: z.string().trim().email("Invalid email address").max(255),
+  organizer_description: z.string().trim().min(20, "Please write at least 20 characters about yourself").max(1000),
 });
 
 const CreateEvent = () => {
   const { user, loading } = useAuth();
+  const { t, language } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string>("");
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -82,6 +86,8 @@ const CreateEvent = () => {
         start_time: formData.get('start_time'),
         end_date: formData.get('end_date'),
         end_time: formData.get('end_time'),
+        organizer_email: formData.get('organizer_email'),
+        organizer_description: formData.get('organizer_description'),
       });
 
       let imageUrl = "";

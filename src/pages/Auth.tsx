@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import logo from "@/assets/logo.png";
 import { Session } from "@supabase/supabase-js";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const signUpSchema = z.object({
   fullName: z.string().trim().min(2, "Name must be at least 2 characters").max(100),
@@ -24,6 +25,7 @@ const signInSchema = z.object({
 
 const Auth = () => {
   const navigate = useNavigate();
+  const { t, language } = useLanguage();
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [signUpData, setSignUpData] = useState({ fullName: "", email: "", password: "" });
@@ -95,15 +97,26 @@ const Auth = () => {
         password: validated.password
       });
 
-      if (error) throw error;
+      if (error) {
+        // Provide specific error messages
+        if (error.message.includes("Invalid login credentials")) {
+          toast.error(t("auth.wrongPassword"));
+        } else if (error.message.includes("Email not confirmed")) {
+          toast.error(language === "sv" ? "E-post ej bekräftad. Kontrollera din inkorg." : "Email not confirmed. Check your inbox.");
+        } else if (error.message.includes("User not found")) {
+          toast.error(t("auth.userNotFound"));
+        } else {
+          toast.error(t("auth.technicalIssue"));
+        }
+        throw error;
+      }
 
-      toast.success("Signed in successfully!");
+      toast.success(language === "sv" ? "Inloggad!" : "Signed in successfully!");
     } catch (error) {
       if (error instanceof z.ZodError) {
         toast.error(error.errors[0].message);
-      } else if (error instanceof Error) {
-        toast.error(error.message);
       }
+      // Error already handled above
     } finally {
       setIsLoading(false);
     }

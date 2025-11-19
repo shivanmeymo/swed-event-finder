@@ -1,4 +1,4 @@
-import { Settings, PlusCircle, LogOut, User as UserIcon, Menu, X } from "lucide-react";
+import { Settings, PlusCircle, LogOut, User as UserIcon, Menu, X, Languages, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "@/assets/logo.png";
@@ -28,12 +28,12 @@ const Navbar = () => {
   const menuItems = [
     { to: "/about", label: "About Us" },
     { to: "/contact", label: "Contact Us" },
+    { to: "/manage", label: "Manage Events" },
   ];
 
   if (user) {
     menuItems.unshift(
-      { to: "/create", label: "Create Event" },
-      { to: "/manage", label: "Manage Events" }
+      { to: "/create", label: "Create Event" }
     );
   }
 
@@ -50,33 +50,46 @@ const Navbar = () => {
 
           {/* Right side buttons */}
           <div className="flex items-center gap-2">
-            {user && (
-              <Button asChild className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold">
-                <Link to="/create">
-                  <PlusCircle className="h-4 w-4 mr-2" aria-hidden="true" />
-                  Create Event
-                </Link>
-              </Button>
-            )}
+            {/* Language Selector */}
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="hidden sm:flex"
+              aria-label="Change language"
+              title="Language"
+            >
+              <Languages className="h-5 w-5" />
+            </Button>
+
+            {/* Create Event Button */}
+            <Button 
+              asChild 
+              className="hidden sm:flex bg-accent hover:bg-accent/90 text-accent-foreground font-semibold"
+            >
+              <Link to="/create">
+                <Calendar className="h-4 w-4 mr-2" aria-hidden="true" />
+                Create Event
+              </Link>
+            </Button>
 
             {/* Burger Menu */}
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
                 <Button className="bg-primary hover:bg-primary/90 text-primary-foreground" size="default" aria-label="Open menu">
-                  <Menu className="h-6 w-6" />
+                  <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
             <SheetContent side="right" className="w-[280px]">
               <SheetHeader>
                 <SheetTitle>Menu</SheetTitle>
               </SheetHeader>
-              <nav className="flex flex-col gap-4 mt-6" aria-label="Mobile navigation">
+              <nav className="flex flex-col gap-2 mt-6" aria-label="Mobile navigation">
                 {menuItems.map((item) => (
                   <Link
                     key={item.to}
                     to={item.to}
                     onClick={() => setIsOpen(false)}
-                    className="text-base font-medium hover:text-primary transition-colors py-2"
+                    className="text-sm font-medium hover:text-primary transition-colors py-1.5"
                   >
                     {item.label}
                   </Link>

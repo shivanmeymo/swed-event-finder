@@ -167,11 +167,16 @@ const Index = () => {
               Explore thousands of events from Uppsala, Stockholm, and beyond. All in one place.
             </p>
             <div className="flex justify-center gap-4 mt-8 animate-fade-in" style={{ animationDelay: '0.4s' }}>
-              <Button size="lg" className="group" asChild>
-                <a href="#events-section">
-                  Explore Events
-                  <ArrowDown className="ml-2 h-5 w-5 group-hover:translate-y-1 transition-transform" aria-hidden="true" />
-                </a>
+              <Button 
+                size="lg" 
+                className="group" 
+                onClick={() => {
+                  const filterSection = document.getElementById('filter-section');
+                  filterSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }}
+              >
+                Explore Events
+                <ArrowDown className="ml-2 h-5 w-5 group-hover:translate-y-1 transition-transform" aria-hidden="true" />
               </Button>
             </div>
           </div>
@@ -179,7 +184,7 @@ const Index = () => {
       </section>
 
       {/* Filter Section */}
-      <section className="container mx-auto px-4 -mt-8 relative z-20" aria-label="Event filters">
+      <section id="filter-section" className="container mx-auto px-4 -mt-8 relative z-20" aria-label="Event filters">
         <FilterBar onFilterChange={setFilters} />
       </section>
 

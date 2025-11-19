@@ -40,7 +40,7 @@ const EventCard = ({ id, title, start_datetime, end_datetime, location, category
 
   return (
     <Card 
-      className="group overflow-hidden border-border hover:shadow-[var(--shadow-lg)] transition-all duration-300 cursor-pointer"
+      className="group overflow-hidden border border-border hover:border-foreground hover:shadow-[var(--shadow-lg)] transition-all duration-300 cursor-pointer"
       onClick={() => navigate(`/event/${id}`)}
     >
       <div className="relative h-48 overflow-hidden">
@@ -55,8 +55,8 @@ const EventCard = ({ id, title, start_datetime, end_datetime, location, category
         {isOwnEvent && (
           <Button
             size="sm"
-            variant="secondary"
-            className="absolute top-3 left-3 shadow-md"
+            variant="default"
+            className="absolute top-3 left-3 shadow-md bg-primary text-primary-foreground hover:bg-primary/90 border border-primary"
             onClick={(e) => {
               e.stopPropagation();
               navigate(`/manage?eventId=${id}`);

@@ -84,7 +84,7 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
   };
 
   return (
-    <div className="w-full bg-card border border-border rounded-xl p-6 shadow-[var(--shadow-md)]">
+    <div className="w-full bg-accent/10 border-2 border-accent/20 rounded-xl p-6 shadow-lg backdrop-blur-sm">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="lg:col-span-2 space-y-2">
           <div className="relative">

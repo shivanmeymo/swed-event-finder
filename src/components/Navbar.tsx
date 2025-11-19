@@ -139,16 +139,16 @@ const Navbar = () => {
               </SheetHeader>
             <nav className="flex flex-col gap-1 mt-4" aria-label="Mobile navigation">
               {user && (
-                <div className="pb-4 mb-4 border-b-2 border-foreground">
+                <div className="pb-3 mb-3 border-b border-border">
                   <div 
                     onClick={() => { 
                       navigate("/profile"); 
                       setIsOpen(false); 
                     }} 
-                    className="w-full flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-accent/10 rounded-md transition-colors"
+                    className="w-full flex items-center gap-2 px-3 py-2.5 cursor-pointer hover:bg-accent/10 rounded-md transition-colors bg-accent/5"
                   >
-                    <UserIcon className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm font-medium text-foreground">{userName || user.email?.split('@')[0]}</span>
+                    <UserIcon className="h-5 w-5 text-primary" />
+                    <span className="text-base font-semibold text-foreground">{userName || user.email?.split('@')[0]}</span>
                   </div>
                 </div>
               )}
@@ -158,15 +158,13 @@ const Navbar = () => {
                   key={item.to}
                   to={item.to}
                   onClick={() => setIsOpen(false)}
-                  className={`text-sm font-medium hover:text-primary transition-colors py-3 px-2 ${
-                    index < menuItems.length - 1 ? "border-b-2 border-foreground" : ""
-                  }`}
+                  className="text-sm font-medium hover:text-primary transition-colors py-3 px-2"
                 >
                   {item.label}
                 </Link>
               ))}
               
-              <div className="mt-4 pt-4 border-t-2 border-foreground">
+              <div className="mt-4 pt-4">
                 {user ? (
                   <Button 
                     onClick={handleSignOut} 

@@ -37,7 +37,6 @@ const eventSchema = z.object({
   start_time: z.string().min(1, "Start time is required"),
   end_date: z.string().min(1, "End date is required"),
   end_time: z.string().min(1, "End time is required"),
-  organizer_email: z.string().trim().email("Invalid email address").max(255),
   organizer_description: z.string().trim().min(20, "Please write at least 20 characters about yourself").max(1000),
 });
 
@@ -94,7 +93,6 @@ const CreateEvent = () => {
         start_time: formData.get('start_time') as string,
         end_date: formData.get('end_date') as string,
         end_time: formData.get('end_time') as string,
-        organizer_email: formData.get('organizer_email') as string,
         organizer_description: formData.get('organizer_description') as string,
       });
 
@@ -134,7 +132,7 @@ const CreateEvent = () => {
           end_datetime: endDatetime,
           organizer_id: user!.id,
           image_url: imageUrl,
-          organizer_email: validated.organizer_email,
+          organizer_email: user!.email,
           organizer_description: validated.organizer_description,
           approved: false,
         }])
@@ -153,7 +151,7 @@ const CreateEvent = () => {
             location: validated.location,
             category: finalCategory,
             startDatetime: startDatetime,
-            organizerEmail: validated.organizer_email,
+            organizerEmail: user!.email,
             organizerDescription: validated.organizer_description,
           },
         });
@@ -350,17 +348,6 @@ const CreateEvent = () => {
                     />
                   </div>
                 )}
-
-                <div className="space-y-2">
-                  <Label htmlFor="organizer_email">{t("create.organizerEmail")} *</Label>
-                  <Input
-                    id="organizer_email"
-                    name="organizer_email"
-                    type="email"
-                    placeholder="organizer@example.com"
-                    required
-                  />
-                </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="organizer_description">{t("create.aboutYourself")} *</Label>

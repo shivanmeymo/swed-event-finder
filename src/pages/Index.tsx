@@ -7,14 +7,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowRight, ArrowDown } from "lucide-react";
+import { ArrowDown } from "lucide-react";
 import heroImage from "@/assets/sweden-outdoor-hero.jpg";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { useLanguage } from "@/contexts/LanguageContext";
+import logo from "@/assets/logo.png";
 
 const Index = () => {
   const { user } = useAuth();
+  const { t, language } = useLanguage();
   const [filters, setFilters] = useState({
     keywords: [] as string[],
     date: "",
@@ -78,7 +81,7 @@ const Index = () => {
     e.preventDefault();
     
     if (!subscribeEmail) {
-      toast.error("Please enter your email address");
+      toast.error(language === "sv" ? "Ange din e-postadress" : "Please enter your email address");
       return;
     }
 
@@ -94,12 +97,12 @@ const Index = () => {
 
       if (error) {
         if (error.code === '23505') {
-          toast.error("This email is already subscribed");
+          toast.error(language === "sv" ? "Denna e-post är redan prenumererad" : "This email is already subscribed");
         } else {
           throw error;
         }
       } else {
-        toast.success("Successfully subscribed to newsletter!");
+        toast.success(language === "sv" ? "Prenumeration lyckades!" : "Successfully subscribed to newsletter!");
         setSubscribeEmail("");
         setSubscribeCategory("");
         setSubscribeLocation("");
@@ -107,7 +110,7 @@ const Index = () => {
       }
     } catch (error) {
       console.error("Subscription error:", error);
-      toast.error("Failed to subscribe. Please try again.");
+      toast.error(language === "sv" ? "Misslyckades att prenumerera" : "Failed to subscribe. Please try again.");
     }
   };
 
@@ -146,40 +149,40 @@ const Index = () => {
       <Navbar />
       
       {/* Hero Section */}
-      <section className="relative overflow-hidden py-20" aria-label="Welcome banner">
-        <div className="absolute inset-0">
-          <img 
-            src={heroImage} 
-            alt="Scenic outdoor activities in Sweden" 
-            className="w-full h-full object-cover animate-fade-in"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-background" aria-hidden="true" />
-        </div>
+      <section className="relative overflow-hidden py-32" aria-label="Welcome banner">
         <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-4xl mx-auto text-center space-y-6">
+          <div className="max-w-4xl mx-auto text-center space-y-6 mb-12">
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight animate-fade-in">
-              <span className="block text-white drop-shadow-lg">
-                Discover Events and Activities
+              <span className="block text-foreground drop-shadow-lg">
+                {t("hero.title1")}
               </span>
-              <span className="block text-accent drop-shadow-lg">Across Sweden</span>
+              <span className="block text-accent drop-shadow-lg">{t("hero.title2")}</span>
             </h1>
-            <p className="text-xl text-white/90 max-w-2xl mx-auto drop-shadow-md animate-fade-in" style={{ animationDelay: '0.2s' }}>
-              Explore thousands of events from Uppsala, Stockholm, and beyond. All in one place.
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto animate-fade-in" style={{ animationDelay: '0.2s' }}>
+              {t("hero.subtitle")}
             </p>
             <div className="flex justify-center gap-4 mt-8 animate-fade-in" style={{ animationDelay: '0.4s' }}>
               <Button 
                 size="lg" 
-                className="group" 
+                className="group rounded-lg" 
                 onClick={() => {
                   const filterSection = document.getElementById('filter-section');
                   filterSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }}
               >
-                Explore Events
+                {t("hero.exploreButton")}
                 <ArrowDown className="ml-2 h-5 w-5 group-hover:translate-y-1 transition-transform" aria-hidden="true" />
               </Button>
             </div>
           </div>
+        </div>
+        <div className="absolute inset-0 -z-10">
+          <img 
+            src={heroImage} 
+            alt="Scenic outdoor activities in Sweden" 
+            className="w-full h-full object-cover animate-fade-in opacity-20"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/90 to-background" aria-hidden="true" />
         </div>
       </section>
 
@@ -191,9 +194,9 @@ const Index = () => {
       {/* Events Section */}
       <section id="events-section" className="container mx-auto px-4 py-8" aria-label="Event listings">
         <div className="mb-4">
-          <h2 className="text-3xl font-bold text-foreground">Upcoming Events</h2>
+          <h2 className="text-3xl font-bold text-foreground">{t("events.title")}</h2>
           <p className="text-muted-foreground mt-1" role="status" aria-live="polite">
-            {filteredEvents.length} events found
+            {filteredEvents.length} {t("events.found")}
           </p>
         </div>
         
@@ -205,7 +208,7 @@ const Index = () => {
           ) : (
             <div className="col-span-full text-center py-12">
               <p className="text-muted-foreground text-lg">
-                No events found matching your filters. Try adjusting your search criteria.
+                {t("events.noResults")}
               </p>
             </div>
           )}
@@ -218,33 +221,38 @@ const Index = () => {
           <nav aria-label="Footer navigation">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
-                <h3 className="text-xl font-bold text-primary mb-3">
-                  NowInTown
-                </h3>
+                <button
+                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                  className="flex items-center gap-3 hover:opacity-80 transition-opacity mb-3"
+                  aria-label="Scroll to top"
+                >
+                  <img src={logo} alt="" className="h-10 w-10" aria-hidden="true" />
+                  <span className="text-2xl font-bold tracking-tight bg-gradient-to-r from-[#006AA7] to-[#FECC00] bg-clip-text text-transparent">
+                    NowInTown
+                  </span>
+                </button>
                 <p className="text-muted-foreground text-sm mb-4">
-                  Discover amazing events and activities across Sweden.
+                  {t("footer.description")}
                 </p>
                 
-                <h4 className="font-semibold text-foreground mb-2 text-sm">Quick Links</h4>
+                <h4 className="font-semibold text-foreground mb-2 text-sm">{t("footer.quickLinks")}</h4>
                 <ul className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
-                  <li><a href="/" className="text-primary hover:text-primary/80 font-medium transition-colors">Home</a></li>
-                  <li><a href="/create" className="text-primary hover:text-primary/80 font-medium transition-colors">Create Event</a></li>
-                  <li><a href="/manage" className="text-primary hover:text-primary/80 font-medium transition-colors">Manage Event</a></li>
-                  <li><a href="/about" className="text-primary hover:text-primary/80 font-medium transition-colors">About Us</a></li>
-                  <li><a href="/contact" className="text-primary hover:text-primary/80 font-medium transition-colors">Contact Us</a></li>
-                  <li><a href="/data-integrity" className="text-primary hover:text-primary/80 font-medium transition-colors">Data Integrity</a></li>
+                  <li><a href="/create" className="text-primary hover:text-primary/80 font-medium transition-colors">{t("footer.createEvent")}</a></li>
+                  <li><a href="/about" className="text-primary hover:text-primary/80 font-medium transition-colors">{t("footer.aboutUs")}</a></li>
+                  <li><a href="/contact" className="text-primary hover:text-primary/80 font-medium transition-colors">{t("footer.contactUs")}</a></li>
+                  <li><a href="/data-integrity" className="text-primary hover:text-primary/80 font-medium transition-colors">{t("footer.dataIntegrity")}</a></li>
                 </ul>
               </div>
               
               <div>
-                <h4 className="font-semibold text-foreground mb-3 text-sm">Subscribe to Newsletter</h4>
+                <h4 className="font-semibold text-foreground mb-3 text-sm">{t("footer.newsletter")}</h4>
                 <form onSubmit={handleSubscribe} className="space-y-2">
                   <div>
-                    <Label htmlFor="subscribe-email" className="sr-only">Email</Label>
+                    <Label htmlFor="subscribe-email" className="sr-only">{t("footer.email")}</Label>
                     <Input
                       id="subscribe-email"
                       type="email"
-                      placeholder="Your email"
+                      placeholder={t("footer.email")}
                       value={subscribeEmail}
                       onChange={(e) => setSubscribeEmail(e.target.value)}
                       required
@@ -253,52 +261,52 @@ const Index = () => {
                   </div>
                   <div className="grid grid-cols-3 gap-2">
                     <div>
-                      <Label htmlFor="subscribe-category" className="text-xs text-muted-foreground">Category</Label>
+                      <Label htmlFor="subscribe-category" className="text-xs text-muted-foreground">{t("footer.category")}</Label>
                       <Select value={subscribeCategory} onValueChange={setSubscribeCategory}>
                         <SelectTrigger id="subscribe-category" className="h-8 text-xs">
-                          <SelectValue placeholder="Any" />
+                          <SelectValue placeholder={t("footer.any")} />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="all">Any</SelectItem>
-                          <SelectItem value="music">Music</SelectItem>
-                          <SelectItem value="sports">Sports</SelectItem>
-                          <SelectItem value="food">Food</SelectItem>
-                          <SelectItem value="art">Art</SelectItem>
-                          <SelectItem value="tech">Tech</SelectItem>
+                          <SelectItem value="all">{t("category.all")}</SelectItem>
+                          <SelectItem value="music">{t("category.music")}</SelectItem>
+                          <SelectItem value="sports">{t("category.sports")}</SelectItem>
+                          <SelectItem value="food">{t("category.food")}</SelectItem>
+                          <SelectItem value="art">{t("category.art")}</SelectItem>
+                          <SelectItem value="tech">{t("category.tech")}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     <div>
-                      <Label htmlFor="subscribe-location" className="text-xs text-muted-foreground">Location</Label>
+                      <Label htmlFor="subscribe-location" className="text-xs text-muted-foreground">{t("footer.location")}</Label>
                       <Input
                         id="subscribe-location"
                         type="text"
-                        placeholder="Any"
+                        placeholder={t("footer.any")}
                         value={subscribeLocation}
                         onChange={(e) => setSubscribeLocation(e.target.value)}
                         className="h-8 text-xs"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="subscribe-keyword" className="text-xs text-muted-foreground">Keywords</Label>
+                      <Label htmlFor="subscribe-keyword" className="text-xs text-muted-foreground">{t("footer.keywords")}</Label>
                       <Input
                         id="subscribe-keyword"
                         type="text"
-                        placeholder="Optional"
+                        placeholder={t("footer.optional")}
                         value={subscribeKeyword}
                         onChange={(e) => setSubscribeKeyword(e.target.value)}
                         className="h-8 text-xs"
                       />
                     </div>
                   </div>
-                  <Button type="submit" size="sm" className="w-full h-8 text-xs">Subscribe</Button>
+                  <Button type="submit" size="sm" className="w-full h-8 text-xs rounded-lg">{t("footer.subscribe")}</Button>
                 </form>
               </div>
             </div>
           </nav>
           
           <div className="border-t border-border mt-4 pt-2 text-center text-muted-foreground text-xs">
-            <p>&copy; 2026 NowInTown. All rights reserved.</p>
+            <p>{t("footer.copyright")}</p>
           </div>
         </div>
       </footer>

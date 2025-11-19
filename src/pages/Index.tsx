@@ -175,8 +175,8 @@ const Index = () => {
               onClick={() => {
                 const filterSection = document.getElementById('filter-section');
                 if (filterSection) {
-                  const yOffset = -20;
-                  const y = filterSection.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                  const navbarHeight = 80;
+                  const y = filterSection.getBoundingClientRect().top + window.pageYOffset - navbarHeight;
                   window.scrollTo({ top: y, behavior: 'smooth' });
                 }
               }}

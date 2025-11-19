@@ -34,7 +34,7 @@ const Navbar = () => {
   };
 
   const menuItems = [
-    { to: "/manage", label: t("nav.manageEvents") },
+    ...(user ? [{ to: "/manage", label: t("nav.manageEvents") }] : []),
     { to: "/create", label: t("nav.createEvent") },
     { to: "/about", label: t("nav.aboutUs") },
     { to: "/contact", label: t("nav.contactUs") },

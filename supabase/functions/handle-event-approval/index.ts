@@ -78,17 +78,14 @@ const handler = async (req: Request): Promise<Response> => {
         }
       }
 
-      return new Response(
-        `<html><body style="font-family: Arial; text-align: center; padding: 50px;">
-          <h1 style="color: #28a745;">✓ Event Approved!</h1>
-          <p>The event "${event?.title || 'Unknown'}" has been successfully approved.</p>
-          <p style="color: #666; margin-top: 20px;">A confirmation email has been sent to the organizer.</p>
-        </body></html>`,
-        {
-          status: 200,
-          headers: { "Content-Type": "text/html" },
-        }
-      );
+      // Redirect to approval page
+      const redirectUrl = `${url.origin}/event-approved?title=${encodeURIComponent(event?.title || 'Unknown')}`;
+      return new Response(null, {
+        status: 302,
+        headers: { 
+          "Location": redirectUrl,
+        },
+      });
     } else if (action === "reject") {
       // Delete the event
       const { data: event } = await supabase

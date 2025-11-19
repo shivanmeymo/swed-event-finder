@@ -46,46 +46,15 @@ const CookieConsent = () => {
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="grid md:grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Shield className="w-8 h-8 text-primary" aria-hidden="true" />
-              <h3 className="font-semibold">Data Protection</h3>
-              <p className="text-sm text-muted-foreground">
-                All event data is encrypted both in transit and at rest using industry-standard encryption protocols.
-              </p>
-            </div>
+        <CardContent className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            We use cookies to enhance your experience and protect your data with industry-standard security measures. Necessary cookies enable basic functionality, while optional cookies help us improve our services.
+          </p>
+          <p className="text-sm text-muted-foreground">
+            Your data is protected through encryption, authentication, and role-based access control. For more details, visit our <a href="/data-integrity" className="text-primary hover:underline">Data Integrity</a> page.
+          </p>
 
-            <div className="space-y-2">
-              <Lock className="w-8 h-8 text-primary" aria-hidden="true" />
-              <h3 className="font-semibold">Access Control</h3>
-              <p className="text-sm text-muted-foreground">
-                Only authorized users can view, modify, or delete event information.
-              </p>
-            </div>
-
-            <div className="space-y-2">
-              <Database className="w-8 h-8 text-primary" aria-hidden="true" />
-              <h3 className="font-semibold">Data Integrity</h3>
-              <p className="text-sm text-muted-foreground">
-                We maintain strict data validation rules to ensure all event information remains accurate.
-              </p>
-            </div>
-          </div>
-
-          <div className="border-t pt-4">
-            <h3 className="font-semibold mb-2">Cookie Usage</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              We use cookies to enhance your experience. Necessary cookies are required for the site to function, 
-              while optional cookies help us improve our services and understand how you use our platform.
-            </p>
-            <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
-              <li><strong>Necessary:</strong> Authentication, security, and basic functionality</li>
-              <li><strong>Optional:</strong> Analytics and performance monitoring</li>
-            </ul>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-3 pt-4">
+          <div className="flex flex-col sm:flex-row gap-3 pt-2">
             <Button onClick={handleAcceptAll} className="flex-1">
               Accept All
             </Button>

@@ -31,7 +31,7 @@ const Navbar = () => {
   ];
 
   if (user) {
-    menuItems.push({ to: "/create", label: "Create Event" });
+    menuItems.unshift({ to: "/manage", label: "Manage Events" });
   }
 
   return (
@@ -48,12 +48,20 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <div className="flex items-center gap-3 ml-auto">
             {user && (
-              <Button variant="outline" size="sm" asChild>
-                <Link to="/manage">
-                  <Settings className="h-4 w-4 mr-2" aria-hidden="true" />
-                  Manage Events
-                </Link>
-              </Button>
+              <>
+                <Button variant="default" size="sm" asChild>
+                  <Link to="/create">
+                    <PlusCircle className="h-4 w-4 mr-2" aria-hidden="true" />
+                    Create Event
+                  </Link>
+                </Button>
+                <Button variant="outline" size="sm" asChild>
+                  <Link to="/manage">
+                    <Settings className="h-4 w-4 mr-2" aria-hidden="true" />
+                    Manage Events
+                  </Link>
+                </Button>
+              </>
             )}
           </div>
 

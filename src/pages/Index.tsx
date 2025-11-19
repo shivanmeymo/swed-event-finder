@@ -166,26 +166,12 @@ const Index = () => {
             <p className="text-xl text-white/90 max-w-2xl mx-auto drop-shadow-md animate-fade-in" style={{ animationDelay: '0.2s' }}>
               Explore thousands of events from Uppsala, Stockholm, and beyond. All in one place.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4 animate-fade-in" style={{ animationDelay: '0.4s' }}>
-              <Button size="lg" className="bg-primary hover:bg-primary/90 transition-all hover:scale-105" onClick={() => document.getElementById('events-section')?.scrollIntoView({ behavior: 'smooth' })}>
-                Explore Events
-                <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
-              </Button>
-              <Button 
-                size="lg" 
-                variant="outline" 
-                className="border-2 bg-accent hover:bg-accent/90 text-accent-foreground border-accent font-semibold shadow-lg hover:shadow-xl transition-all hover:scale-105" 
-                onClick={() => window.location.href = '/create'}
-              >
-                Create Event
-              </Button>
-            </div>
           </div>
         </div>
       </section>
 
       {/* Filter Section */}
-      <section className="container mx-auto px-4 -mt-8 relative z-20" aria-label="Event filters">
+      <section className="container mx-auto px-4 py-8 relative z-20" aria-label="Event filters">
         <FilterBar onFilterChange={setFilters} />
       </section>
 
@@ -214,22 +200,20 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border bg-card mt-20" role="contentinfo">
-        <div className="container mx-auto px-4 py-12">
+      <footer className="border-t border-border bg-card mt-12" role="contentinfo">
+        <div className="container mx-auto px-4 py-8">
           <nav aria-label="Footer navigation">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-              <div className="md:col-span-2">
-                <h3 className="text-2xl font-bold text-primary mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div>
+                <h3 className="text-xl font-bold text-primary mb-3">
                   NowInTown
                 </h3>
-                <p className="text-muted-foreground mb-4">
-                  Discover amazing events and activities across Sweden. From music festivals to tech conferences, find your next experience with us.
+                <p className="text-muted-foreground text-sm mb-4">
+                  Discover amazing events and activities across Sweden.
                 </p>
-              </div>
-              
-              <div>
-                <h4 className="font-semibold text-foreground mb-4">Quick Links</h4>
-                <ul className="space-y-2 text-muted-foreground">
+                
+                <h4 className="font-semibold text-foreground mb-2 text-sm">Quick Links</h4>
+                <ul className="space-y-1 text-muted-foreground text-sm">
                   <li><a href="/" className="hover:text-primary transition-colors">Home</a></li>
                   <li><a href="/create" className="hover:text-primary transition-colors">Create Event</a></li>
                   <li><a href="/manage" className="hover:text-primary transition-colors">Manage Event</a></li>
@@ -240,8 +224,8 @@ const Index = () => {
               </div>
               
               <div>
-                <h4 className="font-semibold text-foreground mb-4">Subscribe to Newsletter</h4>
-                <form onSubmit={handleSubscribe} className="space-y-3">
+                <h4 className="font-semibold text-foreground mb-3 text-sm">Subscribe to Newsletter</h4>
+                <form onSubmit={handleSubscribe} className="space-y-2">
                   <div>
                     <Label htmlFor="subscribe-email" className="sr-only">Email</Label>
                     <Input
@@ -251,54 +235,57 @@ const Index = () => {
                       value={subscribeEmail}
                       onChange={(e) => setSubscribeEmail(e.target.value)}
                       required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="subscribe-category" className="text-xs text-muted-foreground">Category</Label>
-                    <Select value={subscribeCategory} onValueChange={setSubscribeCategory}>
-                      <SelectTrigger id="subscribe-category" className="h-9">
-                        <SelectValue placeholder="Any" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">Any category</SelectItem>
-                        <SelectItem value="music">Music</SelectItem>
-                        <SelectItem value="sports">Sports</SelectItem>
-                        <SelectItem value="food">Food</SelectItem>
-                        <SelectItem value="art">Art</SelectItem>
-                        <SelectItem value="tech">Tech</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="subscribe-location" className="text-xs text-muted-foreground">Location</Label>
-                    <Input
-                      id="subscribe-location"
-                      type="text"
-                      placeholder="Any location"
-                      value={subscribeLocation}
-                      onChange={(e) => setSubscribeLocation(e.target.value)}
                       className="h-9"
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="subscribe-keyword" className="text-xs text-muted-foreground">Keywords</Label>
-                    <Input
-                      id="subscribe-keyword"
-                      type="text"
-                      placeholder="Optional"
-                      value={subscribeKeyword}
-                      onChange={(e) => setSubscribeKeyword(e.target.value)}
-                      className="h-9"
-                    />
+                  <div className="grid grid-cols-3 gap-2">
+                    <div>
+                      <Label htmlFor="subscribe-category" className="text-xs text-muted-foreground">Category</Label>
+                      <Select value={subscribeCategory} onValueChange={setSubscribeCategory}>
+                        <SelectTrigger id="subscribe-category" className="h-8 text-xs">
+                          <SelectValue placeholder="Any" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">Any</SelectItem>
+                          <SelectItem value="music">Music</SelectItem>
+                          <SelectItem value="sports">Sports</SelectItem>
+                          <SelectItem value="food">Food</SelectItem>
+                          <SelectItem value="art">Art</SelectItem>
+                          <SelectItem value="tech">Tech</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="subscribe-location" className="text-xs text-muted-foreground">Location</Label>
+                      <Input
+                        id="subscribe-location"
+                        type="text"
+                        placeholder="Any"
+                        value={subscribeLocation}
+                        onChange={(e) => setSubscribeLocation(e.target.value)}
+                        className="h-8 text-xs"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="subscribe-keyword" className="text-xs text-muted-foreground">Keywords</Label>
+                      <Input
+                        id="subscribe-keyword"
+                        type="text"
+                        placeholder="Optional"
+                        value={subscribeKeyword}
+                        onChange={(e) => setSubscribeKeyword(e.target.value)}
+                        className="h-8 text-xs"
+                      />
+                    </div>
                   </div>
-                  <Button type="submit" size="sm" className="w-full">Subscribe</Button>
+                  <Button type="submit" size="sm" className="w-full h-8 text-xs">Subscribe</Button>
                 </form>
               </div>
             </div>
           </nav>
           
-          <div className="border-t border-border mt-8 pt-4 text-center text-muted-foreground text-sm">
-            <p>&copy; {new Date().getFullYear()} NowInTown. All rights reserved.</p>
+          <div className="border-t border-border mt-6 pt-3 text-center text-muted-foreground text-xs">
+            <p>&copy; 2026 NowInTown. All rights reserved.</p>
           </div>
         </div>
       </footer>

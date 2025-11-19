@@ -1,10 +1,13 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.76.0";
+import { Resend } from "https://esm.sh/resend@2.0.0";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY") || "";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+const resend = new Resend(RESEND_API_KEY);
 
 const handler = async (req: Request): Promise<Response> => {
   try {
@@ -49,8 +52,31 @@ const handler = async (req: Request): Promise<Response> => {
         .eq("id", eventId)
         .single();
 
-      // TODO: Send confirmation email to organizer
-      console.log("Event approved, should send confirmation to:", event?.organizer_email);
+      // Send confirmation email to organizer
+      if (event?.organizer_email) {
+        try {
+          await resend.emails.send({
+            from: "NowInTown <onboarding@resend.dev>",
+            to: [event.organizer_email],
+            subject: "Your Event Has Been Approved! 🎉",
+            html: `
+              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h1 style="color: #28a745;">Your Event is Now Live!</h1>
+                <p>Great news! Your event "<strong>${event.title}</strong>" has been approved and is now visible to everyone on NowInTown.</p>
+                <p>Your event will appear in the upcoming events section and users can start discovering it.</p>
+                <p style="margin-top: 30px;">Thank you for contributing to our community!</p>
+                <p style="color: #666; font-size: 14px; margin-top: 30px;">
+                  Best regards,<br>
+                  The NowInTown Team
+                </p>
+              </div>
+            `,
+          });
+          console.log("Confirmation email sent to:", event.organizer_email);
+        } catch (emailError) {
+          console.error("Failed to send confirmation email:", emailError);
+        }
+      }
 
       return new Response(
         `<html><body style="font-family: Arial; text-align: center; padding: 50px;">

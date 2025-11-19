@@ -36,6 +36,7 @@ const Index = () => {
       const { data, error } = await supabase
         .from('events')
         .select('*')
+        .eq('approved', true)
         .order('created_at', { ascending: false });
       
       if (data) {
@@ -173,7 +174,11 @@ const Index = () => {
             <Button
               onClick={() => {
                 const filterSection = document.getElementById('filter-section');
-                filterSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                if (filterSection) {
+                  const yOffset = -20;
+                  const y = filterSection.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                  window.scrollTo({ top: y, behavior: 'smooth' });
+                }
               }}
               size="lg"
               variant="default"

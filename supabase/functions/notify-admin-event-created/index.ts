@@ -1,10 +1,9 @@
+import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { Resend } from "npm:resend@2.0.0";
 
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 const ADMIN_EMAIL = "shivan.meymo@gmail.com";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
-const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY") || "";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -40,7 +39,7 @@ const handler = async (req: Request): Promise<Response> => {
     const approveUrl = `${SUPABASE_URL}/functions/v1/handle-event-approval?token=${approveToken}`;
     const rejectUrl = `${SUPABASE_URL}/functions/v1/handle-event-approval?token=${rejectToken}`;
 
-    const emailResponse = await resend.emails.send({
+    const emailBody = {
       from: "NowInTown <onboarding@resend.dev>",
       to: [ADMIN_EMAIL],
       subject: `New Event Pending Approval: ${title}`,
@@ -84,11 +83,21 @@ const handler = async (req: Request): Promise<Response> => {
           </p>
         </div>
       `,
+    };
+
+    const emailResponse = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${RESEND_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(emailBody),
     });
 
-    console.log("Email sent successfully:", emailResponse);
+    const emailData = await emailResponse.json();
+    console.log("Email sent successfully:", emailData);
 
-    return new Response(JSON.stringify({ success: true, data: emailResponse }), {
+    return new Response(JSON.stringify({ success: true, data: emailData }), {
       status: 200,
       headers: {
         "Content-Type": "application/json",

@@ -79,21 +79,21 @@ const CreateEvent = () => {
 
     try {
       // Get category value
-      const categoryValue = formData.get('category');
+      const categoryValue = formData.get('category') as string;
       const finalCategory = categoryValue === 'Others' ? customCategory : categoryValue;
       
       // Validate form data
       const validated = eventSchema.parse({
-        title: formData.get('title'),
-        description: formData.get('description') || '',
-        location: formData.get('location'),
+        title: formData.get('title') as string,
+        description: (formData.get('description') as string) || '',
+        location: formData.get('location') as string,
         category: finalCategory,
-        start_date: formData.get('start_date'),
-        start_time: formData.get('start_time'),
-        end_date: formData.get('end_date'),
-        end_time: formData.get('end_time'),
-        organizer_email: formData.get('organizer_email'),
-        organizer_description: formData.get('organizer_description'),
+        start_date: formData.get('start_date') as string,
+        start_time: formData.get('start_time') as string,
+        end_date: formData.get('end_date') as string,
+        end_time: formData.get('end_time') as string,
+        organizer_email: formData.get('organizer_email') as string,
+        organizer_description: formData.get('organizer_description') as string,
       });
 
       let imageUrl = "";
@@ -116,29 +116,50 @@ const CreateEvent = () => {
         imageUrl = publicUrl;
       }
 
-      // Create event
+      // Create datetime strings
       const startDatetime = `${validated.start_date} ${validated.start_time}`;
       const endDatetime = `${validated.end_date} ${validated.end_time}`;
-      
-      const { data: eventData, error } = await supabase
+
+      // Insert event data
+      const { data: eventData, error: insertError } = await supabase
         .from('events')
-        .insert({
+        .insert([{
           title: validated.title,
           description: validated.description,
+          location: validated.location,
+          category: finalCategory,
           start_datetime: startDatetime,
           end_datetime: endDatetime,
-          location: validated.location,
-          category: validated.category,
+          organizer_id: user!.id,
           image_url: imageUrl,
-          organizer_id: user?.id,
           organizer_email: validated.organizer_email,
           organizer_description: validated.organizer_description,
           approved: false,
-        } as any)
+        }])
         .select()
         .single();
 
-      if (error) throw error;
+      if (insertError) throw insertError;
+
+      // Notify admin about new event
+      try {
+        await supabase.functions.invoke('notify-admin-event-created', {
+          body: {
+            eventId: eventData.id,
+            title: validated.title,
+            description: validated.description || '',
+            location: validated.location,
+            category: finalCategory,
+            startDatetime: startDatetime,
+            organizerEmail: validated.organizer_email,
+            organizerDescription: validated.organizer_description,
+          },
+        });
+        console.log("Admin notification sent");
+      } catch (notifError) {
+        console.error("Failed to send admin notification:", notifError);
+        // Don't fail the event creation if notification fails
+      }
 
       toast({
         title: language === "sv" ? "Event skapat!" : "Event created!",

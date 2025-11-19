@@ -72,6 +72,18 @@ const AdminDashboard = () => {
       toast.error("Failed to approve event");
     } else {
       toast.success("Event approved successfully");
+      
+      // Send approval email to organizer
+      try {
+        await supabase.functions.invoke('send-approval-email', {
+          body: { eventId },
+        });
+        console.log("Approval email sent to organizer");
+      } catch (emailError) {
+        console.error("Failed to send approval email:", emailError);
+        // Don't fail the approval if email fails
+      }
+      
       fetchEvents();
     }
   };
@@ -79,13 +91,13 @@ const AdminDashboard = () => {
   const handleReject = async (eventId: string) => {
     const { error } = await supabase
       .from('events')
-      .delete()
+      .update({ approved: null })
       .eq('id', eventId);
 
     if (error) {
       toast.error("Failed to reject event");
     } else {
-      toast.success("Event rejected and deleted");
+      toast.success("Event rejected");
       fetchEvents();
     }
   };

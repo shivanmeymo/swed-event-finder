@@ -79,7 +79,13 @@ const handler = async (req: Request): Promise<Response> => {
       }
 
       // Redirect to approval page
-      const redirectUrl = `${url.origin}/event-approved?title=${encodeURIComponent(event?.title || 'Unknown')}`;
+      // Get the app URL from environment (not the edge function URL)
+      const appUrl = Deno.env.get("SUPABASE_URL")?.replace('/supabase', '') || url.origin;
+      const baseUrl = appUrl.includes('localhost') ? 'http://localhost:8080' : appUrl;
+      const redirectUrl = `${baseUrl}/event-approved?title=${encodeURIComponent(event?.title || 'Unknown')}`;
+      
+      console.log("Redirecting to:", redirectUrl);
+      
       return new Response(null, {
         status: 302,
         headers: { 

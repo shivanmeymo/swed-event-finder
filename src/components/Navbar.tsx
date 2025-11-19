@@ -1,13 +1,15 @@
 import { LogOut, User as UserIcon, Menu, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import logo from "@/assets/logo.png";
 import flagSweden from "@/assets/flag-sweden.png";
 import flagUK from "@/assets/flag-uk.png";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Sheet,
   SheetContent,
@@ -20,7 +22,30 @@ const Navbar = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const [userName, setUserName] = useState("");
   const { language, setLanguage, t } = useLanguage();
+
+  useEffect(() => {
+    const fetchUserName = async () => {
+      if (user) {
+        if (user.user_metadata?.full_name) {
+          setUserName(user.user_metadata.full_name);
+        } else {
+          const { data } = await supabase
+            .from('profiles')
+            .select('full_name')
+            .eq('id', user.id)
+            .single();
+          
+          if (data?.full_name) {
+            setUserName(data.full_name);
+          }
+        }
+      }
+    };
+
+    fetchUserName();
+  }, [user]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -80,6 +105,31 @@ const Navbar = () => {
               </Link>
             </Button>
 
+            {/* User Menu */}
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="gap-2 hidden sm:flex">
+                    <UserIcon className="h-4 w-4" />
+                    {userName || user.email?.split('@')[0]}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => navigate("/profile")}>
+                    My Account
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    {t("nav.signOut")}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link to="/auth" className="hidden sm:block">
+                <Button variant="outline">{t("nav.signIn")}</Button>
+              </Link>
+            )}
+
             {/* Burger Menu */}
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
@@ -106,10 +156,26 @@ const Navbar = () => {
                 ))}
                 <div className="mt-4 pt-4 border-t-2 border-foreground">
                   {user ? (
-                    <Button onClick={handleSignOut} className="w-full justify-start bg-foreground hover:bg-foreground/90 text-background rounded-lg border-2 border-foreground">
-                      <LogOut className="h-4 w-4 mr-2" aria-hidden="true" />
-                      {t("nav.signOut")}
-                    </Button>
+                    <>
+                      <Button 
+                        onClick={() => { 
+                          navigate("/profile"); 
+                          setIsOpen(false); 
+                        }} 
+                        variant="outline" 
+                        className="w-full gap-2 mb-2"
+                      >
+                        <UserIcon className="h-4 w-4" />
+                        {userName || user.email?.split('@')[0]}
+                      </Button>
+                      <Button 
+                        onClick={handleSignOut} 
+                        className="w-full justify-start bg-foreground hover:bg-foreground/90 text-background rounded-lg border-2 border-foreground"
+                      >
+                        <LogOut className="h-4 w-4 mr-2" aria-hidden="true" />
+                        {t("nav.signOut")}
+                      </Button>
+                    </>
                   ) : (
                     <Button asChild className="w-full justify-start bg-foreground hover:bg-foreground/90 text-background rounded-lg border-2 border-foreground">
                       <Link to="/auth" onClick={() => setIsOpen(false)}>

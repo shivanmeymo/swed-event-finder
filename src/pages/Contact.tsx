@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,6 +21,7 @@ import contactHero from "@/assets/contact-hero.jpg";
 
 const Contact = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [category, setCategory] = useState("");
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -32,7 +34,7 @@ const Contact = () => {
       const emailData = {
         name: formData.get('name') as string,
         email: formData.get('email') as string,
-        subject: `${formData.get('category')} Event Inquiry`,
+        subject: `${category} Inquiry`,
         message: formData.get('summary') as string,
       };
 
@@ -48,6 +50,7 @@ const Contact = () => {
       });
 
       e.currentTarget.reset();
+      setCategory("");
 
       setTimeout(() => {
         navigate("/");
@@ -99,22 +102,20 @@ const Contact = () => {
               <CardContent className="space-y-4">
                 <div>
                   <p className="font-semibold text-foreground mb-1">Email:</p>
-                  <a href="mailto:shivan.meymo@gmail.com" className="text-primary hover:underline">
-                    shivan.meymo@gmail.com
+                  <a href="mailto:contact@nowintown.com" className="text-primary hover:underline">
+                    contact@nowintown.com
                   </a>
                 </div>
                 <div>
                   <p className="font-semibold text-foreground mb-1">Phone:</p>
-                  <a href="tel:+46700543050" className="text-primary hover:underline">
-                    +46 (0)70 05430505
+                  <a href="tel:+46705430505" className="text-primary hover:underline">
+                    +46 (0)70 543 05 05
                   </a>
                 </div>
                 <div>
                   <p className="font-semibold text-foreground mb-1">Office Address:</p>
                   <p className="text-muted-foreground">
-                    NowInTown AB<br />
-                    Kungsgatan 66Å<br />
-                    75341 Uppsala, Sweden
+                    Uppsala, Sweden
                   </p>
                 </div>
               </CardContent>
@@ -175,16 +176,18 @@ const Contact = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="category">Type of Event *</Label>
-                    <Select name="category" required>
+                    <Label htmlFor="category">Category *</Label>
+                    <Select value={category} onValueChange={setCategory} required>
                       <SelectTrigger id="category">
-                        <SelectValue placeholder="Select event type" />
+                        <SelectValue placeholder="Select category" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="sport">Sport</SelectItem>
-                        <SelectItem value="art">Art</SelectItem>
-                        <SelectItem value="kids">Kids</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
+                        <SelectItem value="Support">Support</SelectItem>
+                        <SelectItem value="Data Integrity">Data Integrity</SelectItem>
+                        <SelectItem value="Suggestion">Suggestion</SelectItem>
+                        <SelectItem value="Events">Events</SelectItem>
+                        <SelectItem value="Business">Business</SelectItem>
+                        <SelectItem value="Others">Others</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -224,13 +227,7 @@ const Contact = () => {
         </div>
       </div>
 
-      <footer className="border-t border-border bg-card mt-12">
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center text-sm text-muted-foreground">
-            <p>&copy; {new Date().getFullYear()} NowInTown. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };

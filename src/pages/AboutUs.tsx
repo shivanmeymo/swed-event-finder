@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Heart, Users, Sparkles, MapPin, Calendar, Award } from "lucide-react";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -33,9 +34,9 @@ const AboutUs = () => {
 
         <section className="mb-16" aria-labelledby="mission-heading">
           <div className="bg-card border rounded-lg p-8">
-            <h2 id="mission-heading" className="text-3xl font-bold mb-6">Our Mission</h2>
+          <h2 id="mission-heading" className="text-3xl font-bold mb-6">Our Mission</h2>
             <p className="text-lg text-muted-foreground mb-4">
-              SwedEvents was born from a simple idea: every amazing event happening across Sweden should be easily 
+              NowInTown was born from a simple idea: every amazing event happening across Sweden should be easily 
               discoverable by everyone. Whether it's a local art exhibition in Malmö, a sports tournament in Stockholm, 
               or a music festival in Gothenburg, we believe great experiences should never go unnoticed.
             </p>
@@ -165,9 +166,9 @@ const AboutUs = () => {
             Have questions, suggestions, or just want to say hello? We'd love to hear from you!
           </p>
           <div className="space-y-2 text-muted-foreground">
-            <p><strong>Email:</strong> <a href="mailto:info@swedevents.com" className="text-primary hover:underline">info@swedevents.com</a></p>
-            <p><strong>Phone:</strong> <a href="tel:+46700543050" className="text-primary hover:underline">+46 (0)70 054 3050</a></p>
-            <p><strong>Address:</strong> Skeppsbron 2, 111 30 Stockholm, Sweden</p>
+            <p><strong>Email:</strong> <a href="mailto:contact@nowintown.com" className="text-primary hover:underline">contact@nowintown.com</a></p>
+            <p><strong>Phone:</strong> <a href="tel:+46705430505" className="text-primary hover:underline">+46 (0)70 543 05 05</a></p>
+            <p><strong>Address:</strong> Uppsala, Sweden</p>
           </div>
           <Button className="mt-6" variant="default" asChild>
             <Link to="/contact">Contact Us</Link>
@@ -175,13 +176,7 @@ const AboutUs = () => {
         </section>
       </main>
 
-      <footer className="border-t border-border bg-card mt-12">
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center text-sm text-muted-foreground">
-            <p>&copy; {new Date().getFullYear()} SwedEvents. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };

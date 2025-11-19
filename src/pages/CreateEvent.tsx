@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/dialog";
 
 const eventSchema = z.object({
+  organizer_name: z.string().trim().min(2, "Name must be at least 2 characters").max(100),
   title: z.string().trim().min(3, "Title must be at least 3 characters").max(200),
   description: z.string().trim().max(2000, "Description too long").optional(),
   location: z.string().trim().min(3, "Location must be at least 3 characters").max(200),
@@ -84,6 +85,7 @@ const CreateEvent = () => {
       
       // Validate form data
       const validated = eventSchema.parse({
+        organizer_name: formData.get('organizer_name') as string,
         title: formData.get('title') as string,
         description: (formData.get('description') as string) || '',
         location: formData.get('location') as string,
@@ -215,15 +217,25 @@ const CreateEvent = () => {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="title">Event Title *</Label>
-                    <Input
-                      id="title"
-                      name="title"
-                      placeholder="e.g., Summer Music Festival 2025"
-                      required
-                    />
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="organizer_name">Your Name *</Label>
+                  <Input
+                    id="organizer_name"
+                    name="organizer_name"
+                    placeholder="Your full name"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="title">Event Title *</Label>
+                  <Input
+                    id="title"
+                    name="title"
+                    placeholder="e.g., Summer Music Festival 2025"
+                    required
+                  />
+                </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="description">Description *</Label>

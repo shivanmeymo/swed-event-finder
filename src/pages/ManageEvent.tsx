@@ -204,9 +204,9 @@ const ManageEvent = () => {
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-3xl mx-auto">
           <div className="mb-8">
-            <h1 className="text-4xl font-bold text-foreground mb-2">Manage Your Event</h1>
+            <h1 className="text-4xl font-bold text-foreground mb-2">Manage Your Events</h1>
             <p className="text-muted-foreground">
-              Enter your access code to edit or delete your event
+              View, edit, or delete your created events
             </p>
           </div>
 
@@ -233,10 +233,29 @@ const ManageEvent = () => {
                         onClick={() => handleSelectEvent(event)}
                         className="w-full text-left p-4 rounded-lg border border-border hover:bg-accent transition-colors"
                       >
-                        <h3 className="font-semibold text-foreground">{event.title}</h3>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {new Date(event.start_datetime).toLocaleDateString()} - {event.location}
-                        </p>
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-foreground">{event.title}</h3>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              {new Date(event.start_datetime).toLocaleDateString()} - {event.location}
+                            </p>
+                          </div>
+                          <div className="flex-shrink-0">
+                            {event.approved === null ? (
+                              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-300">
+                                Approval in Progress
+                              </span>
+                            ) : event.approved === false ? (
+                              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-300">
+                                Rejected
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-300">
+                                Approved & Published
+                              </span>
+                            )}
+                          </div>
+                        </div>
                       </button>
                     ))}
                   </div>
@@ -247,11 +266,26 @@ const ManageEvent = () => {
             <Card className="border-border shadow-[var(--shadow-lg)]">
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <div>
+                  <div className="space-y-2">
                     <CardTitle>Edit Event Details</CardTitle>
                     <CardDescription>
                       Update your event information or delete it
                     </CardDescription>
+                    <div className="mt-2">
+                      {selectedEvent.approved === null ? (
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-300">
+                          Status: Approval in Progress
+                        </span>
+                      ) : selectedEvent.approved === false ? (
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-300">
+                          Status: Rejected
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-300">
+                          Status: Approved & Published
+                        </span>
+                      )}
+                    </div>
                   </div>
                   <Button
                     type="button"

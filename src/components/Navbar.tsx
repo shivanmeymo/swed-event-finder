@@ -106,7 +106,7 @@ const Navbar = () => {
             </Button>
 
             {/* User Menu */}
-            {user ? (
+            {user && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" className="gap-2 hidden sm:flex">
@@ -124,10 +124,6 @@ const Navbar = () => {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            ) : (
-              <Link to="/auth" className="hidden sm:block">
-                <Button variant="outline">{t("nav.signIn")}</Button>
-              </Link>
             )}
 
             {/* Burger Menu */}
@@ -155,7 +151,7 @@ const Navbar = () => {
                   </Link>
                 ))}
                 <div className="mt-4 pt-4 border-t-2 border-foreground">
-                  {user ? (
+                  {user && (
                     <>
                       <Button 
                         onClick={() => { 
@@ -176,13 +172,6 @@ const Navbar = () => {
                         {t("nav.signOut")}
                       </Button>
                     </>
-                  ) : (
-                    <Button asChild className="w-full justify-start bg-foreground hover:bg-foreground/90 text-background rounded-lg border-2 border-foreground">
-                      <Link to="/auth" onClick={() => setIsOpen(false)}>
-                        <UserIcon className="h-4 w-4 mr-2" aria-hidden="true" />
-                        {t("nav.signIn")}
-                      </Link>
-                    </Button>
                   )}
                 </div>
               </nav>

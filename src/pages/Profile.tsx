@@ -72,13 +72,12 @@ const Profile = () => {
     setIsLoading(true);
 
     try {
-      // Delete user data from profiles table
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .delete()
-        .eq('id', user?.id);
+      // Call backend edge function to delete the user account
+      const { error } = await supabase.functions.invoke('delete-user-account', {
+        body: { userId: user?.id }
+      });
 
-      if (profileError) throw profileError;
+      if (error) throw error;
 
       // Sign out and redirect
       await signOut();

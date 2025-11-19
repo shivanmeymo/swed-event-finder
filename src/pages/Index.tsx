@@ -166,12 +166,20 @@ const Index = () => {
             <p className="text-xl text-white/90 max-w-2xl mx-auto drop-shadow-md animate-fade-in" style={{ animationDelay: '0.2s' }}>
               Explore thousands of events from Uppsala, Stockholm, and beyond. All in one place.
             </p>
+            <div className="flex justify-center gap-4 mt-8 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+              <Button size="lg" className="group" asChild>
+                <a href="#events-section">
+                  Explore Events
+                  <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
+                </a>
+              </Button>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Filter Section */}
-      <section className="container mx-auto px-4 py-8 relative z-20" aria-label="Event filters">
+      <section className="container mx-auto px-4 -mt-8 relative z-20" aria-label="Event filters">
         <FilterBar onFilterChange={setFilters} />
       </section>
 
@@ -213,13 +221,13 @@ const Index = () => {
                 </p>
                 
                 <h4 className="font-semibold text-foreground mb-2 text-sm">Quick Links</h4>
-                <ul className="space-y-1 text-muted-foreground text-sm">
-                  <li><a href="/" className="hover:text-primary transition-colors">Home</a></li>
-                  <li><a href="/create" className="hover:text-primary transition-colors">Create Event</a></li>
-                  <li><a href="/manage" className="hover:text-primary transition-colors">Manage Event</a></li>
-                  <li><a href="/about" className="hover:text-primary transition-colors">About Us</a></li>
-                  <li><a href="/contact" className="hover:text-primary transition-colors">Contact Us</a></li>
-                  <li><a href="/data-integrity" className="hover:text-primary transition-colors">Data Integrity</a></li>
+                <ul className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
+                  <li><a href="/" className="text-accent hover:text-accent/80 transition-colors">Home</a></li>
+                  <li><a href="/create" className="text-accent hover:text-accent/80 transition-colors">Create Event</a></li>
+                  <li><a href="/manage" className="text-accent hover:text-accent/80 transition-colors">Manage Event</a></li>
+                  <li><a href="/about" className="text-accent hover:text-accent/80 transition-colors">About Us</a></li>
+                  <li><a href="/contact" className="text-accent hover:text-accent/80 transition-colors">Contact Us</a></li>
+                  <li><a href="/data-integrity" className="text-accent hover:text-accent/80 transition-colors">Data Integrity</a></li>
                 </ul>
               </div>
               
@@ -285,7 +293,7 @@ const Index = () => {
           </nav>
           
           <div className="border-t border-border mt-6 pt-3 text-center text-muted-foreground text-xs">
-            <p>&copy; 2026 NowInTown. All rights reserved.</p>
+            <p>&copy; 2025 NowInTown. All rights reserved.</p>
           </div>
         </div>
       </footer>

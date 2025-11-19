@@ -46,16 +46,26 @@ const handler = async (req: Request): Promise<Response> => {
       }
 
       // Get event details to send confirmation email
-      const { data: event } = await supabase
+      const { data: event, error: eventError } = await supabase
         .from("events")
         .select("title, organizer_email")
         .eq("id", eventId)
         .single();
 
+      if (eventError) {
+        console.error("Error fetching event details:", eventError);
+      }
+
+      console.log("Event details:", { 
+        title: event?.title, 
+        organizer_email: event?.organizer_email 
+      });
+
       // Send confirmation email to organizer
       if (event?.organizer_email) {
         try {
-          await resend.emails.send({
+          console.log("Attempting to send email to:", event.organizer_email);
+          const emailResult = await resend.emails.send({
             from: "NowInTown <onboarding@resend.dev>",
             to: [event.organizer_email],
             subject: "Your Event Has Been Approved! 🎉",
@@ -72,10 +82,16 @@ const handler = async (req: Request): Promise<Response> => {
               </div>
             `,
           });
-          console.log("Confirmation email sent to:", event.organizer_email);
-        } catch (emailError) {
-          console.error("Failed to send confirmation email:", emailError);
+          console.log("Email sent successfully! Result:", emailResult);
+        } catch (emailError: any) {
+          console.error("Failed to send confirmation email. Error details:", {
+            message: emailError.message,
+            name: emailError.name,
+            stack: emailError.stack
+          });
         }
+      } else {
+        console.log("No organizer_email found for event:", eventId);
       }
 
       // Redirect to approval page

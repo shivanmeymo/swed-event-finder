@@ -109,10 +109,10 @@ const Navbar = () => {
             {user && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="gap-2 hidden sm:flex">
-                    <UserIcon className="h-4 w-4" />
-                    {userName || user.email?.split('@')[0]}
-                  </Button>
+                  <div className="gap-2 hidden sm:flex items-center cursor-pointer px-3 py-2 rounded-md hover:bg-accent/10 transition-colors">
+                    <UserIcon className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-medium text-foreground">{userName || user.email?.split('@')[0]}</span>
+                  </div>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={() => navigate("/profile")}>
@@ -140,17 +140,16 @@ const Navbar = () => {
             <nav className="flex flex-col gap-1 mt-4" aria-label="Mobile navigation">
               {user && (
                 <div className="pb-4 mb-4 border-b-2 border-foreground">
-                  <Button 
+                  <div 
                     onClick={() => { 
                       navigate("/profile"); 
                       setIsOpen(false); 
                     }} 
-                    variant="outline" 
-                    className="w-full gap-2"
+                    className="w-full flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-accent/10 rounded-md transition-colors"
                   >
-                    <UserIcon className="h-4 w-4" />
-                    {userName || user.email?.split('@')[0]}
-                  </Button>
+                    <UserIcon className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-medium text-foreground">{userName || user.email?.split('@')[0]}</span>
+                  </div>
                 </div>
               )}
               

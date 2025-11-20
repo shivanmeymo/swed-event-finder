@@ -4,6 +4,9 @@ import { cn } from "@/lib/utils";
 
 const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
   ({ className, type, ...props }, ref) => {
+    // For date and time inputs, set step to 1 for proper 24h format
+    const additionalProps = type === 'time' ? { step: '60' } : {};
+    
     return (
       <input
         type={type}
@@ -12,6 +15,7 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
           className,
         )}
         ref={ref}
+        {...additionalProps}
         {...props}
       />
     );

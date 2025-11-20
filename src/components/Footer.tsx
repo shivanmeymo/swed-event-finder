@@ -24,21 +24,20 @@ const Footer = () => {
               <p className="text-muted-foreground text-sm mb-4">
                 {t("footer.description")}
               </p>
-            </div>
-            
-            <div className="flex-shrink-0">
-              <h4 className="font-semibold text-foreground mb-2 text-sm">{t("footer.quickLinks")}</h4>
-              <ul className="flex flex-col gap-y-1 text-sm">
-                <li><Link to="/create" className="text-primary hover:text-primary/80 font-medium transition-colors">{t("footer.createEvent")}</Link></li>
-                <li><Link to="/about" className="text-primary hover:text-primary/80 font-medium transition-colors">{t("footer.aboutUs")}</Link></li>
-                <li><Link to="/contact" className="text-primary hover:text-primary/80 font-medium transition-colors">{t("footer.contactUs")}</Link></li>
-                <li><Link to="/data-integrity" className="text-primary hover:text-primary/80 font-medium transition-colors">{t("footer.dataIntegrity")}</Link></li>
-              </ul>
+              <div className="mt-4">
+                <h4 className="font-semibold text-foreground mb-2 text-sm">{t("footer.quickLinks")}</h4>
+                <ul className="flex flex-col gap-y-1 text-sm">
+                  <li><Link to="/create" className="text-primary hover:text-primary/80 font-medium transition-colors">{t("footer.createEvent")}</Link></li>
+                  <li><Link to="/about" className="text-primary hover:text-primary/80 font-medium transition-colors">{t("footer.aboutUs")}</Link></li>
+                  <li><Link to="/contact" className="text-primary hover:text-primary/80 font-medium transition-colors">{t("footer.contactUs")}</Link></li>
+                  <li><Link to="/data-integrity" className="text-primary hover:text-primary/80 font-medium transition-colors">{t("footer.dataIntegrity")}</Link></li>
+                </ul>
+              </div>
             </div>
           </div>
           
           <div className="border-t border-border mt-6 pt-4 text-center text-xs text-muted-foreground">
-            <p>© {new Date().getFullYear()} NowInTown. All rights reserved.</p>
+            <p>© 2026 NowInTown. All rights reserved.</p>
           </div>
         </nav>
       </div>

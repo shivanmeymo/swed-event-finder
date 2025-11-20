@@ -125,170 +125,199 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
           email: notifyEmail,
           category_filter: categoryFilter || null,
           location_filter: locationFilter || null,
-          keyword_filter: keywords.join(', ') || null,
+          keyword_filter: keywords.length > 0 ? keywords.join(',') : null,
         });
 
-      if (error) {
-        if (error.code === '23505') {
-          toast.error(language === "sv" ? "Denna e-post är redan prenumererad" : "This email is already subscribed");
-        } else {
-          throw error;
-        }
-      } else {
-        toast.success(language === "sv" ? "Fantastiskt! Du kommer att meddelas om nya event! 🎉" : "Awesome! You'll be notified about new events! 🎉");
-        setNotifyEmail("");
-        setNotifyDialogOpen(false);
-      }
-    } catch (error) {
-      console.error("Subscription error:", error);
-      toast.error(language === "sv" ? "Misslyckades att prenumerera" : "Failed to subscribe. Please try again.");
+      if (error) throw error;
+
+      toast.success(language === "sv" ? "Du är nu prenumererad!" : "Successfully subscribed!");
+      setNotifyDialogOpen(false);
+      setNotifyEmail("");
+    } catch (error: any) {
+      toast.error(language === "sv" ? "Kunde inte prenumerera. Försök igen." : "Failed to subscribe. Please try again.");
+      console.error('Subscription error:', error);
     }
   };
 
   return (
-    <div className="w-full rounded-2xl p-6 shadow-sm bg-card/50 backdrop-blur-sm border border-border/50">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        <div className="lg:col-span-2 space-y-2">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+    <div className="bg-card p-6 rounded-lg shadow-sm border border-border mb-8">
+      <div className="flex items-center gap-2 mb-6">
+        <Filter className="h-5 w-5 text-primary" />
+        <h2 className="text-xl font-semibold text-foreground">
+          {language === "sv" ? "Filtrera Evenemang" : "Filter Events"}
+        </h2>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-4">
+          {/* Search Keywords */}
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2 text-foreground">
+              <Search className="h-4 w-4" />
+              {language === "sv" ? "Sök Nyckelord" : "Search Keywords"}
+            </Label>
             <Input
-              placeholder="Search events through keywords..."
-              className="pl-10 bg-background/80 border-border/50 focus:border-primary transition-all"
               value={currentKeyword}
               onChange={(e) => setCurrentKeyword(e.target.value)}
               onKeyDown={handleKeywordAdd}
+              placeholder={language === "sv" ? "Skriv och tryck Enter för att lägga till..." : "Type and press Enter to add..."}
+              className="bg-background border-input"
             />
+            {keywords.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-2">
+                {keywords.map((keyword) => (
+                  <Badge
+                    key={keyword}
+                    variant="secondary"
+                    className="pl-3 pr-1 py-1 bg-primary/10 text-primary"
+                  >
+                    {keyword}
+                    <button
+                      onClick={() => handleKeywordRemove(keyword)}
+                      className="ml-2 hover:bg-primary/20 rounded-full p-0.5"
+                      aria-label={`Remove ${keyword}`}
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </Badge>
+                ))}
+              </div>
+            )}
           </div>
-          {keywords.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {keywords.map((keyword) => (
-                <Badge
-                  key={keyword}
-                  variant="secondary"
-                  className="px-3 py-1 cursor-pointer hover:bg-secondary/80 transition-colors rounded-full"
-                >
-                  {keyword}
-                  <X
-                    className="ml-1 h-3 w-3"
-                    onClick={() => handleKeywordRemove(keyword)}
-                  />
-                </Badge>
-              ))}
-            </div>
-          )}
-        </div>
-        
-        <Select onValueChange={handleDateChange} value={dateFilter}>
-          <SelectTrigger className="bg-background/80 border-border/50 focus:border-primary transition-all">
-            <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
-            <SelectValue placeholder="Date" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Dates</SelectItem>
-            <SelectItem value="today">Today</SelectItem>
-            <SelectItem value="tomorrow">Tomorrow</SelectItem>
-            <SelectItem value="week">This Week</SelectItem>
-            <SelectItem value="month">This Month</SelectItem>
-          </SelectContent>
-        </Select>
 
-        <Select onValueChange={handleLocationChange} value={locationFilter}>
-          <SelectTrigger className="bg-background/80 border-border/50 focus:border-primary transition-all">
-            <MapPin className="h-4 w-4 mr-2 text-muted-foreground" />
-            <SelectValue placeholder="Location" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Locations</SelectItem>
-            <SelectItem value="uppsala">Uppsala</SelectItem>
-            <SelectItem value="stockholm">Stockholm</SelectItem>
-            <SelectItem value="gothenburg">Gothenburg</SelectItem>
-            <SelectItem value="malmo">Malmö</SelectItem>
-          </SelectContent>
-        </Select>
+          {/* Date Filter */}
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2 text-foreground">
+              <Calendar className="h-4 w-4" />
+              {language === "sv" ? "Datum" : "Date"}
+            </Label>
+            <Select value={dateFilter} onValueChange={handleDateChange}>
+              <SelectTrigger className="bg-background border-input">
+                <SelectValue placeholder={language === "sv" ? "Välj datum" : "Select date"} />
+              </SelectTrigger>
+              <SelectContent className="bg-background border-border z-50">
+                <SelectItem value="all">{language === "sv" ? "Alla datum" : "All dates"}</SelectItem>
+                <SelectItem value="today">{language === "sv" ? "Idag" : "Today"}</SelectItem>
+                <SelectItem value="tomorrow">{language === "sv" ? "Imorgon" : "Tomorrow"}</SelectItem>
+                <SelectItem value="this-week">{language === "sv" ? "Denna vecka" : "This week"}</SelectItem>
+                <SelectItem value="this-weekend">{language === "sv" ? "Denna helg" : "This weekend"}</SelectItem>
+                <SelectItem value="next-week">{language === "sv" ? "Nästa vecka" : "Next week"}</SelectItem>
+                <SelectItem value="this-month">{language === "sv" ? "Denna månad" : "This month"}</SelectItem>
+                <SelectItem value="next-month">{language === "sv" ? "Nästa månad" : "Next month"}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-        <Select onValueChange={handleCategoryChange} value={categoryFilter}>
-          <SelectTrigger className="bg-background/80 border-border/50 focus:border-primary transition-all">
-            <Filter className="h-4 w-4 mr-2 text-muted-foreground" />
-            <SelectValue placeholder="Category" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Categories</SelectItem>
-            <SelectItem value="music">Music</SelectItem>
-            <SelectItem value="tech">Tech</SelectItem>
-            <SelectItem value="sports">Sports</SelectItem>
-            <SelectItem value="food">Food & Drink</SelectItem>
-            <SelectItem value="art">Art & Culture</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      
-      <div className="flex items-center gap-4 mt-4 pt-4 border-t border-border/50">
-        <div className="flex items-center space-x-2">
-          <Switch
-            id="free-only"
-            checked={isFreeFilter}
-            onCheckedChange={toggleFreeFilter}
-          />
-          <Label 
-            htmlFor="free-only" 
-            className="text-sm font-medium cursor-pointer"
-          >
-            {language === "sv" ? "Endast gratis event" : "Free events only"}
-          </Label>
+          {/* Location Filter */}
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2 text-foreground">
+              <MapPin className="h-4 w-4" />
+              {language === "sv" ? "Plats" : "Location"}
+            </Label>
+            <Select value={locationFilter} onValueChange={handleLocationChange}>
+              <SelectTrigger className="bg-background border-input">
+                <SelectValue placeholder={language === "sv" ? "Välj plats" : "Select location"} />
+              </SelectTrigger>
+              <SelectContent className="bg-background border-border z-50">
+                <SelectItem value="all">{language === "sv" ? "Alla platser" : "All locations"}</SelectItem>
+                <SelectItem value="Stockholm">Stockholm</SelectItem>
+                <SelectItem value="Gothenburg">Gothenburg</SelectItem>
+                <SelectItem value="Malmö">Malmö</SelectItem>
+                <SelectItem value="Uppsala">Uppsala</SelectItem>
+                <SelectItem value="Västerås">Västerås</SelectItem>
+                <SelectItem value="Örebro">Örebro</SelectItem>
+                <SelectItem value="Linköping">Linköping</SelectItem>
+                <SelectItem value="Helsingborg">Helsingborg</SelectItem>
+                <SelectItem value="Jönköping">Jönköping</SelectItem>
+                <SelectItem value="Norrköping">Norrköping</SelectItem>
+                <SelectItem value="Lund">Lund</SelectItem>
+                <SelectItem value="Umeå">Umeå</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Free Events Filter */}
+          <div className="flex items-center space-x-2 pt-6">
+            <Switch
+              id="free-filter"
+              checked={isFreeFilter}
+              onCheckedChange={toggleFreeFilter}
+            />
+            <Label
+              htmlFor="free-filter"
+              className="text-sm font-medium text-foreground cursor-pointer"
+            >
+              {language === "sv" ? "Endast gratis evenemang" : "Free events only"}
+            </Label>
+          </div>
         </div>
 
-        <Dialog open={notifyDialogOpen} onOpenChange={setNotifyDialogOpen}>
-          <DialogTrigger asChild>
-            <Button variant="outline" size="sm" className="gap-2">
-              <Bell className="h-4 w-4" />
-              {language === "sv" ? "Bli Meddelad" : "Get Notified"}
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <Bell className="h-5 w-5 text-primary" />
-                {language === "sv" ? "Få Meddelanden om Event" : "Get Notified About Events"}
-              </DialogTitle>
-              <DialogDescription>
-                {language === "sv" 
-                  ? "Du kommer att få meddelanden baserat på dina nuvarande filter. Ändra filtren ovan och klicka sedan på 'Bli Meddelad' igen för att uppdatera dina preferenser."
-                  : "You'll be notified based on your current filters. Change the filters above and click 'Get Notified' again to update your preferences."}
-              </DialogDescription>
-            </DialogHeader>
-            <form onSubmit={handleNotifySubscribe} className="space-y-4">
-              <div>
-                <Label htmlFor="notify-email">{language === "sv" ? "E-post" : "Email"}</Label>
-                <Input
-                  id="notify-email"
-                  type="email"
-                  placeholder={language === "sv" ? "din@email.se" : "your@email.com"}
-                  value={notifyEmail}
-                  onChange={(e) => setNotifyEmail(e.target.value)}
-                  required
-                  className="mt-1"
-                />
-              </div>
-              
-              <div className="text-sm text-muted-foreground">
-                <p className="font-semibold mb-1">{language === "sv" ? "Dina nuvarande filter:" : "Your current filters:"}</p>
-                <ul className="space-y-1">
-                  {categoryFilter && <li>• {language === "sv" ? "Kategori" : "Category"}: {categoryFilter}</li>}
-                  {locationFilter && <li>• {language === "sv" ? "Plats" : "Location"}: {locationFilter}</li>}
-                  {keywords.length > 0 && <li>• {language === "sv" ? "Nyckelord" : "Keywords"}: {keywords.join(', ')}</li>}
-                  {isFreeFilter && <li>• {language === "sv" ? "Endast gratis event" : "Free events only"}</li>}
-                  {!categoryFilter && !locationFilter && keywords.length === 0 && !isFreeFilter && (
-                    <li className="text-muted-foreground/60">{language === "sv" ? "Inga filter valda (alla event)" : "No filters selected (all events)"}</li>
-                  )}
-                </ul>
-              </div>
+        <div className="space-y-4">
+          {/* Category Filter */}
+          <div className="space-y-2">
+            <Label className="text-foreground">
+              {language === "sv" ? "Kategori" : "Category"}
+            </Label>
+            <Select value={categoryFilter} onValueChange={handleCategoryChange}>
+              <SelectTrigger className="bg-background border-input">
+                <SelectValue placeholder={language === "sv" ? "Välj kategori" : "Select category"} />
+              </SelectTrigger>
+              <SelectContent className="bg-background border-border z-50">
+                <SelectItem value="all">{language === "sv" ? "Alla kategorier" : "All categories"}</SelectItem>
+                <SelectItem value="Music">{language === "sv" ? "Musik" : "Music"}</SelectItem>
+                <SelectItem value="Sports">{language === "sv" ? "Sport" : "Sports"}</SelectItem>
+                <SelectItem value="Arts & Culture">{language === "sv" ? "Konst & Kultur" : "Arts & Culture"}</SelectItem>
+                <SelectItem value="Food & Drink">{language === "sv" ? "Mat & Dryck" : "Food & Drink"}</SelectItem>
+                <SelectItem value="Business">{language === "sv" ? "Företag" : "Business"}</SelectItem>
+                <SelectItem value="Technology">{language === "sv" ? "Teknologi" : "Technology"}</SelectItem>
+                <SelectItem value="Health & Wellness">{language === "sv" ? "Hälsa & Välbefinnande" : "Health & Wellness"}</SelectItem>
+                <SelectItem value="Education">{language === "sv" ? "Utbildning" : "Education"}</SelectItem>
+                <SelectItem value="Family & Kids">{language === "sv" ? "Familj & Barn" : "Family & Kids"}</SelectItem>
+                <SelectItem value="Community">{language === "sv" ? "Gemenskap" : "Community"}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-              <Button type="submit" className="w-full">
-                {language === "sv" ? "Prenumerera" : "Subscribe"}
+          {/* Be Notified Button */}
+          <Dialog open={notifyDialogOpen} onOpenChange={setNotifyDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="w-full gap-2">
+                <Bell className="h-4 w-4" />
+                {language === "sv" ? "Bli Notifierad" : "Be Notified"}
               </Button>
-            </form>
-          </DialogContent>
-        </Dialog>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>
+                  {language === "sv" ? "Prenumerera på Notifikationer" : "Subscribe to Notifications"}
+                </DialogTitle>
+                <DialogDescription>
+                  {language === "sv" 
+                    ? "Du kommer att meddelas via e-post enligt de filter du har valt. Om du vill ändra dina filter, gå tillbaka till filtersektionen, ändra och klicka på notifiera för att ange din e-post igen."
+                    : "You will be notified via email according to the filters you've chosen. If you want to change your filters, go back to the filter section, change them, and click notify to enter your email again."}
+                </DialogDescription>
+              </DialogHeader>
+              <form onSubmit={handleNotifySubscribe} className="space-y-4">
+                <div>
+                  <Label htmlFor="notify-email">
+                    {language === "sv" ? "E-postadress" : "Email Address"}
+                  </Label>
+                  <Input
+                    id="notify-email"
+                    type="email"
+                    value={notifyEmail}
+                    onChange={(e) => setNotifyEmail(e.target.value)}
+                    placeholder={language === "sv" ? "din@email.se" : "your@email.com"}
+                    required
+                  />
+                </div>
+                <Button type="submit" className="w-full">
+                  {language === "sv" ? "Prenumerera" : "Subscribe"}
+                </Button>
+              </form>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
     </div>
   );

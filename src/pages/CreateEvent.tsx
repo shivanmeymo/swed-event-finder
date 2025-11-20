@@ -15,10 +15,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Calendar, MapPin, Upload, Save } from "lucide-react";
+import { Calendar, MapPin, Upload, Save, Copy, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const eventSchema = z.object({
   organizer_name: z.string().trim().min(2, "Name must be at least 2 characters").max(100),
@@ -45,6 +52,9 @@ const CreateEvent = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string>("");
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [accessCode, setAccessCode] = useState<string>("");
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [copied, setCopied] = useState(false);
   const [showCustomCategory, setShowCustomCategory] = useState(false);
   const [customCategory, setCustomCategory] = useState("");
   const [isFree, setIsFree] = useState(true);
@@ -75,9 +85,11 @@ const CreateEvent = () => {
     const formData = new FormData(e.currentTarget);
 
     try {
+      // Get category value
       const categoryValue = formData.get('category') as string;
       const finalCategory = categoryValue === 'Others' ? customCategory : categoryValue;
       
+      // Validate form data
       const validated = eventSchema.parse({
         organizer_name: formData.get('organizer_name') as string,
         organizer_email: formData.get('organizer_email') as string,
@@ -99,6 +111,7 @@ const CreateEvent = () => {
 
       let imageUrl = "";
 
+      // Upload image if provided
       if (imageFile) {
         const fileExt = imageFile.name.split('.').pop();
         const fileName = `${Math.random()}.${fileExt}`;
@@ -108,6 +121,7 @@ const CreateEvent = () => {
 
         if (uploadError) throw uploadError;
         
+        // Get public URL
         const { data: { publicUrl } } = supabase.storage
           .from('event-images')
           .getPublicUrl(fileName);
@@ -115,9 +129,11 @@ const CreateEvent = () => {
         imageUrl = publicUrl;
       }
 
+      // Create datetime strings
       const startDatetime = `${validated.start_date} ${validated.start_time}`;
       const endDatetime = `${validated.end_date} ${validated.end_time}`;
 
+      // Insert event data
       const { data: eventData, error: insertError } = await supabase
         .from('events')
         .insert([{
@@ -143,6 +159,7 @@ const CreateEvent = () => {
 
       if (insertError) throw insertError;
 
+      // Notify admin about new event
       try {
         await supabase.functions.invoke('notify-admin-event-created', {
           body: {
@@ -152,13 +169,14 @@ const CreateEvent = () => {
             location: validated.location,
             category: finalCategory,
             startDatetime: startDatetime,
-            organizerEmail: validated.organizer_email,
+            organizerEmail: user!.email,
             organizerDescription: validated.organizer_description,
           },
         });
         console.log("Admin notification sent");
       } catch (notifError) {
         console.error("Failed to send admin notification:", notifError);
+        // Don't fail the event creation if notification fails
       }
 
       toast({
@@ -166,6 +184,7 @@ const CreateEvent = () => {
         description: t("create.pendingApproval"),
       });
 
+      // Navigate back to home after short delay
       setTimeout(() => navigate("/"), 2000);
     } catch (error: any) {
       if (error instanceof z.ZodError) {
@@ -186,6 +205,12 @@ const CreateEvent = () => {
     }
   };
 
+  const copyAccessCode = () => {
+    navigator.clipboard.writeText(accessCode);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -195,368 +220,485 @@ const CreateEvent = () => {
           <div className="mb-8">
             <h1 className="text-4xl font-bold text-foreground mb-2">Create New Event</h1>
             <p className="text-muted-foreground">
-              Fill in the details below to publish your event
+              Fill in the details below to publish your event on SwedEvents
             </p>
           </div>
 
+          <Card className="border-border shadow-[var(--shadow-lg)]">
+            <CardHeader>
+              <CardTitle>Event Details</CardTitle>
+              <CardDescription>
+                Make your event stand out with clear and engaging information
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
           <form onSubmit={handleSubmit} className="space-y-8">
-            <Card className="border-border/40 shadow-lg">
-              <CardHeader className="pb-4 border-b border-border/40">
-                <CardTitle className="text-xl flex items-center gap-2 text-foreground">
-                  <Upload className="h-5 w-5 text-primary" />
-                  Organizer Information
-                </CardTitle>
-                <CardDescription className="text-muted-foreground">
-                  Tell us about yourself
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="pt-6 space-y-6">
+          <Card className="border-border/40 shadow-lg">
+            <CardHeader className="pb-4 border-b border-border/40">
+              <CardTitle className="text-xl flex items-center gap-2 text-foreground">
+                <Upload className="h-5 w-5 text-primary" />
+                Organizer Information
+              </CardTitle>
+              <CardDescription className="text-muted-foreground">
+                Tell us about yourself
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-6 space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="organizer_name" className="text-sm font-semibold text-foreground flex items-center gap-1">
+                  Organizer's Name
+                  <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="organizer_name"
+                  name="organizer_name"
+                  required
+                  placeholder="Enter organizer's full name"
+                  className="bg-background border-input"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="organizer_email" className="text-sm font-semibold text-foreground flex items-center gap-1">
+                  Organizer's Email
+                  <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="organizer_email"
+                  name="organizer_email"
+                  type="email"
+                  required
+                  placeholder="organizer@example.com"
+                  className="bg-background border-input"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="organizer_description" className="text-sm font-semibold text-foreground flex items-center gap-1">
+                  Organizer's Description
+                  <span className="text-destructive">*</span>
+                </Label>
+                <Textarea
+                  id="organizer_description"
+                  name="organizer_description"
+                  required
+                  placeholder="Tell us about yourself and your experience organizing events..."
+                  className="min-h-[120px] bg-background border-input resize-none"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Minimum 20 characters
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-border/40 shadow-lg">
+            <CardHeader className="pb-4 border-b border-border/40">
+              <CardTitle className="text-xl flex items-center gap-2 text-foreground">
+                <Calendar className="h-5 w-5 text-primary" />
+                Event Details
+              </CardTitle>
+              <CardDescription className="text-muted-foreground">
+                Fill in your event information
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-6 space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="title" className="text-sm font-semibold text-foreground flex items-center gap-1">
+                  Event Title
+                  <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="title"
+                  name="title"
+                  required
+                  placeholder="e.g., Summer Music Festival 2025"
+                  className="bg-background border-input"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="description" className="text-sm font-semibold text-foreground">
+                  Description
+                </Label>
+                <Textarea
+                  id="description"
+                  name="description"
+                  placeholder="Describe your event in detail..."
+                  className="min-h-[120px] bg-background border-input resize-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="organizer_name" className="text-sm font-semibold text-foreground flex items-center gap-1">
-                    Organizer's Name
+                  <Label htmlFor="start_date" className="text-sm font-semibold text-foreground flex items-center gap-1">
+                    Start Date
                     <span className="text-destructive">*</span>
                   </Label>
                   <Input
-                    id="organizer_name"
-                    name="organizer_name"
+                    id="start_date"
+                    name="start_date"
+                    type="date"
                     required
-                    placeholder="Enter organizer's full name"
                     className="bg-background border-input"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="organizer_email" className="text-sm font-semibold text-foreground flex items-center gap-1">
-                    Organizer's Email
+                  <Label htmlFor="start_time" className="text-sm font-semibold text-foreground flex items-center gap-1">
+                    Start Time
                     <span className="text-destructive">*</span>
                   </Label>
                   <Input
-                    id="organizer_email"
-                    name="organizer_email"
-                    type="email"
+                    id="start_time"
+                    name="start_time"
+                    type="time"
                     required
-                    placeholder="organizer@example.com"
+                    className="bg-background border-input"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="end_date" className="text-sm font-semibold text-foreground flex items-center gap-1">
+                    End Date
+                    <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    id="end_date"
+                    name="end_date"
+                    type="date"
+                    required
                     className="bg-background border-input"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="organizer_description" className="text-sm font-semibold text-foreground flex items-center gap-1">
-                    Organizer's Description
-                    <span className="text-destructive">*</span>
-                  </Label>
-                  <Textarea
-                    id="organizer_description"
-                    name="organizer_description"
-                    required
-                    placeholder="Tell us about yourself and your experience organizing events..."
-                    className="min-h-[120px] bg-background border-input resize-none"
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Minimum 20 characters
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-border/40 shadow-lg">
-              <CardHeader className="pb-4 border-b border-border/40">
-                <CardTitle className="text-xl flex items-center gap-2 text-foreground">
-                  <Calendar className="h-5 w-5 text-primary" />
-                  Event Details
-                </CardTitle>
-                <CardDescription className="text-muted-foreground">
-                  Fill in your event information
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="pt-6 space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="title" className="text-sm font-semibold text-foreground flex items-center gap-1">
-                    Event Title
+                  <Label htmlFor="end_time" className="text-sm font-semibold text-foreground flex items-center gap-1">
+                    End Time
                     <span className="text-destructive">*</span>
                   </Label>
                   <Input
-                    id="title"
-                    name="title"
+                    id="end_time"
+                    name="end_time"
+                    type="time"
                     required
-                    placeholder="e.g., Summer Music Festival 2025"
                     className="bg-background border-input"
                   />
                 </div>
+              </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="description" className="text-sm font-semibold text-foreground">
-                    Description
-                  </Label>
-                  <Textarea
-                    id="description"
-                    name="description"
-                    placeholder="Describe your event in detail..."
-                    className="min-h-[120px] bg-background border-input resize-none"
+              <div className="space-y-2">
+                <Label htmlFor="location" className="text-sm font-semibold text-foreground flex items-center gap-1">
+                  Location
+                  <span className="text-destructive">*</span>
+                </Label>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="location"
+                    name="location"
+                    required
+                    placeholder="Event location"
+                    className="pl-10 bg-background border-input"
                   />
                 </div>
+              </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="start_date" className="text-sm font-semibold text-foreground flex items-center gap-1">
-                      Start Date
-                      <span className="text-destructive">*</span>
-                    </Label>
-                    <Input
-                      id="start_date"
-                      name="start_date"
-                      type="date"
-                      required
-                      className="bg-background border-input"
-                    />
-                  </div>
+              <div className="space-y-2">
+                <Label htmlFor="category" className="text-sm font-semibold text-foreground flex items-center gap-1">
+                  Category
+                  <span className="text-destructive">*</span>
+                </Label>
+                <Select
+                  name="category"
+                  onValueChange={(value) => {
+                    setShowCustomCategory(value === 'Others');
+                  }}
+                >
+                  <SelectTrigger className="bg-background border-input">
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background border-border z-50">
+                    <SelectItem value="Music">Music</SelectItem>
+                    <SelectItem value="Tech">Tech</SelectItem>
+                    <SelectItem value="Sports">Sports</SelectItem>
+                    <SelectItem value="Food">Food</SelectItem>
+                    <SelectItem value="Art">Art</SelectItem>
+                    <SelectItem value="Others">Others (Custom)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="start_time" className="text-sm font-semibold text-foreground flex items-center gap-1">
-                      Start Time
-                      <span className="text-destructive">*</span>
-                    </Label>
-                    <Input
-                      id="start_time"
-                      name="start_time"
-                      type="time"
-                      required
-                      className="bg-background border-input"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="end_date" className="text-sm font-semibold text-foreground flex items-center gap-1">
-                      End Date
-                      <span className="text-destructive">*</span>
-                    </Label>
-                    <Input
-                      id="end_date"
-                      name="end_date"
-                      type="date"
-                      required
-                      className="bg-background border-input"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="end_time" className="text-sm font-semibold text-foreground flex items-center gap-1">
-                      End Time
-                      <span className="text-destructive">*</span>
-                    </Label>
-                    <Input
-                      id="end_time"
-                      name="end_time"
-                      type="time"
-                      required
-                      className="bg-background border-input"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="location" className="text-sm font-semibold text-foreground flex items-center gap-1">
-                    Location
+              {showCustomCategory && (
+                <div className="space-y-2 animate-fade-in">
+                  <Label htmlFor="custom_category" className="text-sm font-semibold text-foreground flex items-center gap-1">
+                    Custom Category
                     <span className="text-destructive">*</span>
                   </Label>
-                  <div className="relative">
+                  <Input
+                    id="custom_category"
+                    value={customCategory}
+                    onChange={(e) => setCustomCategory(e.target.value)}
+                    placeholder="Enter your custom category"
+                    className="bg-background border-input"
+                  />
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <Label className="text-sm font-semibold text-foreground flex items-center gap-1">
+                  Event Price
+                  <span className="text-destructive">*</span>
+                </Label>
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id="is_free"
+                      checked={isFree}
+                      onChange={(e) => setIsFree(e.target.checked)}
+                      className="h-4 w-4"
+                    />
+                    <Label htmlFor="is_free" className="text-sm font-normal cursor-pointer">
+                      This event is free
+                    </Label>
+                  </div>
+                  
+                  {!isFree && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-6">
+                      <div className="space-y-2">
+                        <Label htmlFor="price_adults" className="text-sm">
+                          Adults
+                        </Label>
+                        <Input
+                          id="price_adults"
+                          name="price_adults"
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          placeholder="0.00"
+                          className="bg-background border-input"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="price_students" className="text-sm">
+                          Students
+                        </Label>
+                        <Input
+                          id="price_students"
+                          name="price_students"
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          placeholder="0.00"
+                          className="bg-background border-input"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="price_kids" className="text-sm">
+                          Kids
+                        </Label>
+                        <Input
+                          id="price_kids"
+                          name="price_kids"
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          placeholder="0.00"
+                          className="bg-background border-input"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="price_seniors" className="text-sm">
+                          Seniors
+                        </Label>
+                        <Input
+                          id="price_seniors"
+                          name="price_seniors"
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          placeholder="0.00"
+                          className="bg-background border-input"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-border/40 shadow-lg">
                     <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="location"
                       name="location"
+                      placeholder="Venue name and address"
+                      className="pl-10"
                       required
-                      placeholder="Event location"
-                      className="pl-10 bg-background border-input"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="category" className="text-sm font-semibold text-foreground flex items-center gap-1">
-                    Category
-                    <span className="text-destructive">*</span>
-                  </Label>
-                  <Select
-                    name="category"
-                    onValueChange={(value) => {
-                      setShowCustomCategory(value === 'Others');
-                    }}
+                  <Label htmlFor="category">Category *</Label>
+                  <Select 
+                    name="category" 
+                    required 
+                    onValueChange={(value) => setShowCustomCategory(value === "Others")}
                   >
-                    <SelectTrigger className="bg-background border-input">
-                      <SelectValue placeholder="Select a category" />
+                    <SelectTrigger id="category">
+                      <SelectValue placeholder="Select category" />
                     </SelectTrigger>
-                    <SelectContent className="bg-background border-border z-50">
+                    <SelectContent>
                       <SelectItem value="Music">Music</SelectItem>
                       <SelectItem value="Tech">Tech</SelectItem>
                       <SelectItem value="Sports">Sports</SelectItem>
-                      <SelectItem value="Food">Food</SelectItem>
-                      <SelectItem value="Art">Art</SelectItem>
-                      <SelectItem value="Others">Others (Custom)</SelectItem>
+                      <SelectItem value="Food">Food & Drink</SelectItem>
+                      <SelectItem value="Art">Art & Culture</SelectItem>
+                      <SelectItem value="Student">Student</SelectItem>
+                      <SelectItem value="Kid">Kid</SelectItem>
+                      <SelectItem value="Others">Others</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 {showCustomCategory && (
-                  <div className="space-y-2 animate-fade-in">
-                    <Label htmlFor="custom_category" className="text-sm font-semibold text-foreground flex items-center gap-1">
-                      Custom Category
-                      <span className="text-destructive">*</span>
-                    </Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="customCategory">Custom Category *</Label>
                     <Input
-                      id="custom_category"
+                      id="customCategory"
+                      name="customCategory"
+                      placeholder="Enter your custom category"
                       value={customCategory}
                       onChange={(e) => setCustomCategory(e.target.value)}
-                      placeholder="Enter your custom category"
-                      className="bg-background border-input"
+                      required
                     />
                   </div>
                 )}
 
                 <div className="space-y-2">
-                  <Label className="text-sm font-semibold text-foreground flex items-center gap-1">
-                    Event Price
-                    <span className="text-destructive">*</span>
-                  </Label>
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        id="is_free"
-                        checked={isFree}
-                        onChange={(e) => setIsFree(e.target.checked)}
-                        className="h-4 w-4"
+                  <Label htmlFor="organizer_description">{t("create.aboutYourself")} *</Label>
+                  <Textarea
+                    id="organizer_description"
+                    name="organizer_description"
+                    placeholder={t("create.aboutPlaceholder")}
+                    rows={4}
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="image">Event Image</Label>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-4">
+                      <Input
+                        id="image"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="cursor-pointer"
                       />
-                      <Label htmlFor="is_free" className="text-sm font-normal cursor-pointer">
-                        This event is free
-                      </Label>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => document.getElementById("image")?.click()}
+                      >
+                        <Upload className="h-4 w-4 mr-2" />
+                        Upload
+                      </Button>
                     </div>
-                    
-                    {!isFree && (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-6">
-                        <div className="space-y-2">
-                          <Label htmlFor="price_adults" className="text-sm">
-                            Adults
-                          </Label>
-                          <Input
-                            id="price_adults"
-                            name="price_adults"
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            placeholder="0.00"
-                            className="bg-background border-input"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="price_students" className="text-sm">
-                            Students
-                          </Label>
-                          <Input
-                            id="price_students"
-                            name="price_students"
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            placeholder="0.00"
-                            className="bg-background border-input"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="price_kids" className="text-sm">
-                            Kids
-                          </Label>
-                          <Input
-                            id="price_kids"
-                            name="price_kids"
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            placeholder="0.00"
-                            className="bg-background border-input"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="price_seniors" className="text-sm">
-                            Seniors
-                          </Label>
-                          <Input
-                            id="price_seniors"
-                            name="price_seniors"
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            placeholder="0.00"
-                            className="bg-background border-input"
-                          />
-                        </div>
+                    {imagePreview && (
+                      <div className="relative w-full h-48 rounded-lg overflow-hidden border border-border">
+                        <img
+                          src={imagePreview}
+                          alt="Event preview"
+                          className="w-full h-full object-cover"
+                        />
                       </div>
                     )}
                   </div>
                 </div>
-              </CardContent>
-            </Card>
 
-            <Card className="border-border/40 shadow-lg">
-              <CardHeader className="pb-4 border-b border-border/40">
-                <CardTitle className="text-xl flex items-center gap-2 text-foreground">
-                  <Upload className="h-5 w-5 text-primary" />
-                  Event Image
-                </CardTitle>
-                <CardDescription className="text-muted-foreground">
-                  Upload an image to make your event more attractive
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="pt-6">
-                <div className="space-y-4">
-                  <div className="border-2 border-dashed border-border/40 rounded-lg p-6 text-center hover:border-primary/50 transition-colors cursor-pointer">
-                    <input
-                      type="file"
-                      id="image"
-                      name="image"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="hidden"
-                    />
-                    <label htmlFor="image" className="cursor-pointer">
-                      {imagePreview ? (
-                        <img
-                          src={imagePreview}
-                          alt="Preview"
-                          className="max-h-64 mx-auto rounded-lg"
-                        />
-                      ) : (
-                        <div className="space-y-2">
-                          <Upload className="h-12 w-12 mx-auto text-muted-foreground" />
-                          <p className="text-sm text-muted-foreground">
-                            Click to upload or drag and drop
-                          </p>
-                        </div>
-                      )}
-                    </label>
-                  </div>
+                <div className="flex gap-4 pt-4">
+                  <Button
+                    type="submit"
+                    className="flex-1 bg-gradient-to-r from-primary to-[hsl(230,89%,62%)]"
+                    disabled={isLoading}
+                  >
+                    <Save className="mr-2 h-4 w-4" />
+                    {isLoading ? "Publishing..." : "Publish Event"}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => window.history.back()}
+                  >
+                    Cancel
+                  </Button>
                 </div>
-              </CardContent>
-            </Card>
-
-            <Button
-              type="submit"
-              disabled={isLoading}
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-6 text-lg shadow-lg"
-            >
-              {isLoading ? (
-                "Creating Event..."
-              ) : (
-                <>
-                  <Save className="mr-2 h-5 w-5" />
-                  Create Event
-                </>
-              )}
-            </Button>
-          </form>
+              </form>
+            </CardContent>
+          </Card>
         </div>
       </div>
+
+      <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Event Created Successfully! 🎉</DialogTitle>
+            <DialogDescription>
+              Save your access code to manage this event later. You'll need it to edit or delete your event.
+              <br /><br />
+              <strong>Note:</strong> Your event will be automatically deleted at the end of the event date and time.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="p-4 bg-muted rounded-lg">
+              <p className="text-sm text-muted-foreground mb-2">Your Access Code:</p>
+              <div className="flex items-center gap-2">
+                <code className="text-2xl font-bold tracking-wider">{accessCode}</code>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={copyAccessCode}
+                  className="ml-auto"
+                >
+                  {copied ? (
+                    <Check className="h-4 w-4" />
+                  ) : (
+                    <Copy className="h-4 w-4" />
+                  )}
+                </Button>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                onClick={() => {
+                  setShowSuccessDialog(false);
+                  navigate("/");
+                }}
+                className="flex-1"
+              >
+                View Events
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowSuccessDialog(false);
+                  window.location.reload();
+                }}
+              >
+                Create Another
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

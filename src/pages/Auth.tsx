@@ -164,7 +164,7 @@ const Auth = () => {
 
       if (error) throw error;
 
-      toast.success("Password reset email sent! Check your inbox.");
+      toast.success("You should receive an email if you already have an account at NowInTown.");
       setResetEmail("");
       setShowForgotPassword(false);
     } catch (error) {
@@ -177,7 +177,6 @@ const Auth = () => {
       setIsLoading(false);
     }
   };
-
   const handleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);

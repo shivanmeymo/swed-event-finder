@@ -61,6 +61,13 @@ const CreateEvent = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
+  // Set default start date to today
+  const today = new Date().toISOString().split('T')[0];
+  const [startDate, setStartDate] = useState(today);
+  const [startTime, setStartTime] = useState("18:00");
+  const [endDate, setEndDate] = useState(today);
+  const [endTime, setEndTime] = useState("20:00");
+
   useEffect(() => {
     if (!loading && !user) {
       navigate("/auth");
@@ -89,13 +96,14 @@ const CreateEvent = () => {
       const finalCategory = categoryValue === 'Others' ? customCategory : categoryValue;
       
       const organizerDesc = formData.get('organizer_description') as string;
+      const eventDesc = formData.get('description') as string;
       
       const validated = eventSchema.parse({
         organizer_name: formData.get('organizer_name') as string || "",
         organizer_email: formData.get('organizer_email') as string || "",
-        organizer_description: organizerDesc?.trim() || undefined,
+        organizer_description: organizerDesc && organizerDesc.trim() ? organizerDesc.trim() : undefined,
         title: formData.get('title') as string || "",
-        description: (formData.get('description') as string) || undefined,
+        description: eventDesc && eventDesc.trim() ? eventDesc.trim() : undefined,
         location: formData.get('location') as string || "",
         category: finalCategory || "",
         start_date: formData.get('start_date') as string || "",
@@ -103,10 +111,10 @@ const CreateEvent = () => {
         end_date: formData.get('end_date') as string || "",
         end_time: formData.get('end_time') as string || "",
         is_free: isFree,
-        price_adults: formData.get('price_adults') as string,
-        price_students: formData.get('price_students') as string,
-        price_kids: formData.get('price_kids') as string,
-        price_seniors: formData.get('price_seniors') as string,
+        price_adults: formData.get('price_adults') as string || "",
+        price_students: formData.get('price_students') as string || "",
+        price_kids: formData.get('price_kids') as string || "",
+        price_seniors: formData.get('price_seniors') as string || "",
       });
 
       let imageUrl = "";
@@ -203,9 +211,9 @@ const CreateEvent = () => {
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-3xl mx-auto">
           <div className="mb-8">
-            <h1 className="text-4xl font-bold text-foreground mb-2">Create New Event</h1>
+            <h1 className="text-4xl font-bold text-foreground mb-2">{t("create.title")}</h1>
             <p className="text-muted-foreground">
-              Fill in the details below to publish your event
+              {t("create.subtitle")}
             </p>
           </div>
 
@@ -214,10 +222,10 @@ const CreateEvent = () => {
               <CardHeader className="pb-4 border-b border-border/40">
                 <CardTitle className="text-xl flex items-center gap-2 text-foreground">
                   <Upload className="h-5 w-5 text-primary" />
-                  Organizer Information
+                  {t("create.organizerInfo")}
                 </CardTitle>
                 <CardDescription className="text-muted-foreground">
-                  Tell us about yourself
+                  {t("create.organizerInfoDesc")}
                 </CardDescription>
               </CardHeader>
               <CardContent className="pt-6 space-y-6">
@@ -312,6 +320,8 @@ const CreateEvent = () => {
                       name="start_date"
                       type="date"
                       required
+                      value={startDate}
+                      onChange={(e) => setStartDate(e.target.value)}
                       className="bg-background border-input"
                     />
                   </div>
@@ -326,6 +336,8 @@ const CreateEvent = () => {
                       name="start_time"
                       type="time"
                       required
+                      value={startTime}
+                      onChange={(e) => setStartTime(e.target.value)}
                       className="bg-background border-input"
                     />
                   </div>
@@ -342,6 +354,8 @@ const CreateEvent = () => {
                       name="end_date"
                       type="date"
                       required
+                      value={endDate}
+                      onChange={(e) => setEndDate(e.target.value)}
                       className="bg-background border-input"
                     />
                   </div>
@@ -356,6 +370,8 @@ const CreateEvent = () => {
                       name="end_time"
                       type="time"
                       required
+                      value={endTime}
+                      onChange={(e) => setEndTime(e.target.value)}
                       className="bg-background border-input"
                     />
                   </div>

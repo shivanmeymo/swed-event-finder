@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import logo from "@/assets/logo.png";
-import NotificationDialog from "./NotificationDialog";
 
 const Footer = () => {
   const { t } = useLanguage();
@@ -33,15 +32,6 @@ const Footer = () => {
                 <li><Link to="/contact" className="text-primary hover:text-primary/80 font-medium transition-colors">{t("footer.contactUs")}</Link></li>
                 <li><Link to="/data-integrity" className="text-primary hover:text-primary/80 font-medium transition-colors">{t("footer.dataIntegrity")}</Link></li>
               </ul>
-            </div>
-            
-            <div className="flex flex-col items-start md:items-end gap-3">
-              <div className="text-left md:text-right">
-                <p className="text-sm text-muted-foreground mb-3">
-                  Get notified when new events matching your interests are posted!
-                </p>
-                <NotificationDialog />
-              </div>
             </div>
           </div>
           

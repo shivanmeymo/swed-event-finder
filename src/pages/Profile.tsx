@@ -12,11 +12,13 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { User, Mail, Trash2, Key } from "lucide-react";
 import { z } from "zod";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const passwordSchema = z.string().min(6, "Password must be at least 6 characters").max(100);
 
 const Profile = () => {
   const { user, loading, signOut } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [fullName, setFullName] = useState("");
@@ -102,9 +104,9 @@ const Profile = () => {
       <main className="flex-1 container mx-auto px-4 py-12">
         <div className="max-w-3xl mx-auto">
           <div className="mb-8">
-            <h1 className="text-4xl font-bold text-foreground mb-2">My Account</h1>
+            <h1 className="text-4xl font-bold text-foreground mb-2">{t("profile.title")}</h1>
             <p className="text-muted-foreground">
-              Manage your account settings and preferences
+              {t("profile.subtitle")}
             </p>
           </div>
 

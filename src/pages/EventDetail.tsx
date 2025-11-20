@@ -103,24 +103,25 @@ const EventDetail = () => {
 
         <div className="max-w-4xl mx-auto">
           <Card className="overflow-hidden border-border">
-            <div className="relative h-96">
-              {event.image_url ? (
-                <img
-                  src={event.image_url}
-                  alt={event.title}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-                  <Calendar className="h-24 w-24 text-muted-foreground" />
-                </div>
-              )}
-              <Badge className={`absolute top-4 right-4 ${getCategoryColor(event.category)} text-white border-0 text-lg px-4 py-2`}>
-                {event.category}
-              </Badge>
-            </div>
+            <CardContent className="p-0">
+              <div className="relative h-96">
+                {event.image_url ? (
+                  <img
+                    src={event.image_url}
+                    alt={event.title}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
+                    <Calendar className="h-24 w-24 text-muted-foreground" />
+                  </div>
+                )}
+                <Badge className={`absolute top-4 right-4 ${getCategoryColor(event.category)} text-white border-0 text-lg px-4 py-2`}>
+                  {event.category}
+                </Badge>
+              </div>
 
-            <CardContent className="p-8">
+              <div className="p-8">
               <h1 className="text-4xl font-bold mb-6 text-foreground">
                 {event.title}
               </h1>
@@ -267,6 +268,7 @@ END:VCALENDAR`;
                     iCal Calendar
                   </Button>
                 </div>
+              </div>
               </div>
             </CardContent>
           </Card>

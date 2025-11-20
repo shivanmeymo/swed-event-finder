@@ -90,7 +90,7 @@ const Navbar = () => {
               <img 
                 src={language === "sv" ? flagSweden : flagUK} 
                 alt={language === "sv" ? "Swedish flag" : "UK flag"}
-                className="h-6 w-6 rounded"
+                className="h-6 w-8 rounded object-cover"
               />
             </Button>
 
@@ -109,7 +109,7 @@ const Navbar = () => {
             {user && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <div className="gap-2 hidden sm:flex items-center cursor-pointer px-3 py-2 rounded-md hover:bg-accent/10 transition-colors">
+                  <div className="gap-2 hidden sm:flex items-center cursor-pointer px-3 py-2 rounded-md hover:bg-accent/10 transition-colors bg-muted/50">
                     <UserIcon className="h-4 w-4 text-muted-foreground" />
                     <span className="text-sm font-medium text-foreground">{userName || user.email?.split('@')[0]}</span>
                   </div>

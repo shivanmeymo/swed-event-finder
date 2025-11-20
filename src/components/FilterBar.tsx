@@ -90,14 +90,15 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
     });
   };
 
-  const handleFreeFilterChange = (checked: boolean) => {
-    setIsFreeFilter(checked);
+  const toggleFreeFilter = () => {
+    const newValue = !isFreeFilter;
+    setIsFreeFilter(newValue);
     onFilterChange({
       keywords,
       date: dateFilter,
       location: locationFilter,
       category: categoryFilter,
-      isFree: checked,
+      isFree: newValue,
     });
   };
 
@@ -176,6 +177,14 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
             <SelectItem value="art">Art & Culture</SelectItem>
           </SelectContent>
         </Select>
+
+        <Button
+          variant={isFreeFilter ? "default" : "outline"}
+          onClick={toggleFreeFilter}
+          className="w-full whitespace-nowrap"
+        >
+          {isFreeFilter ? "✓ " : ""}Free Only
+        </Button>
       </div>
     </div>
   );

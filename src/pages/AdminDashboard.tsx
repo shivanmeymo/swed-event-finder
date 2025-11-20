@@ -71,17 +71,16 @@ const AdminDashboard = () => {
     if (error) {
       toast.error("Failed to approve event");
     } else {
-      toast.success("Event approved successfully");
-      
       // Send approval email to organizer
       try {
         await supabase.functions.invoke('send-approval-email', {
           body: { eventId },
         });
+        toast.success("Event approved successfully! 🎉 Organizer will be notified via email 📧");
         console.log("Approval email sent to organizer");
       } catch (emailError) {
         console.error("Failed to send approval email:", emailError);
-        // Don't fail the approval if email fails
+        toast.success("Event approved successfully!");
       }
       
       fetchEvents();

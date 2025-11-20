@@ -23,7 +23,7 @@ import { z } from "zod";
 const eventSchema = z.object({
   organizer_name: z.string().trim().min(2, "Name must be at least 2 characters").max(100),
   organizer_email: z.string().trim().email("Please enter a valid email").max(255),
-  organizer_description: z.string().trim().min(20, "Please write at least 20 characters about yourself").max(1000),
+  organizer_description: z.string().trim().max(1000).optional(),
   title: z.string().trim().min(3, "Title must be at least 3 characters").max(200),
   description: z.string().trim().max(2000, "Description too long").optional(),
   location: z.string().trim().min(3, "Location must be at least 3 characters").max(200),
@@ -37,7 +37,17 @@ const eventSchema = z.object({
   price_students: z.string().optional(),
   price_kids: z.string().optional(),
   price_seniors: z.string().optional(),
-});
+}).refine(
+  (data) => {
+    const startDateTime = new Date(`${data.start_date}T${data.start_time}`);
+    const endDateTime = new Date(`${data.end_date}T${data.end_time}`);
+    return endDateTime > startDateTime;
+  },
+  {
+    message: "Oops! Your event can't end before it starts! 🕐 Please check your dates and times.",
+    path: ["end_date"],
+  }
+);
 
 const CreateEvent = () => {
   const { user, loading } = useAuth();
@@ -79,17 +89,17 @@ const CreateEvent = () => {
       const finalCategory = categoryValue === 'Others' ? customCategory : categoryValue;
       
       const validated = eventSchema.parse({
-        organizer_name: formData.get('organizer_name') as string,
-        organizer_email: formData.get('organizer_email') as string,
-        organizer_description: formData.get('organizer_description') as string,
-        title: formData.get('title') as string,
+        organizer_name: formData.get('organizer_name') as string || "",
+        organizer_email: formData.get('organizer_email') as string || "",
+        organizer_description: formData.get('organizer_description') as string || undefined,
+        title: formData.get('title') as string || "",
         description: (formData.get('description') as string) || '',
-        location: formData.get('location') as string,
-        category: finalCategory,
-        start_date: formData.get('start_date') as string,
-        start_time: formData.get('start_time') as string,
-        end_date: formData.get('end_date') as string,
-        end_time: formData.get('end_time') as string,
+        location: formData.get('location') as string || "",
+        category: finalCategory || "",
+        start_date: formData.get('start_date') as string || "",
+        start_time: formData.get('start_time') as string || "",
+        end_date: formData.get('end_date') as string || "",
+        end_time: formData.get('end_time') as string || "",
         is_free: isFree,
         price_adults: formData.get('price_adults') as string,
         price_students: formData.get('price_students') as string,
@@ -162,23 +172,21 @@ const CreateEvent = () => {
       }
 
       toast({
-        title: language === "sv" ? "Event skapat!" : "Event created!",
-        description: t("create.pendingApproval"),
+        title: "Awesome! Your event is submitted! 🎉",
+        description: "Our team will review it soon and you'll get an email when it's approved!",
       });
 
       setTimeout(() => navigate("/"), 2000);
     } catch (error: any) {
       if (error instanceof z.ZodError) {
         toast({
-          title: "Validation Error",
+          title: "✨ Let's fix a few things!",
           description: error.errors[0].message,
-          variant: "destructive",
         });
       } else {
         toast({
-          title: "Error",
-          description: error.message,
-          variant: "destructive",
+          title: "Hmm, something unexpected happened! 🤔",
+          description: error.message || "Please try again or contact support if the issue persists.",
         });
       }
     } finally {
@@ -242,19 +250,14 @@ const CreateEvent = () => {
 
                 <div className="space-y-2">
                   <Label htmlFor="organizer_description" className="text-sm font-semibold text-foreground flex items-center gap-1">
-                    Organizer's Description
-                    <span className="text-destructive">*</span>
+                    Organizer's Description (Optional)
                   </Label>
                   <Textarea
                     id="organizer_description"
                     name="organizer_description"
-                    required
-                    placeholder="Tell us about yourself and your experience organizing events..."
+                    placeholder="Tell us about yourself and your experience organizing events (optional)..."
                     className="min-h-[120px] bg-background border-input resize-none"
                   />
-                  <p className="text-xs text-muted-foreground">
-                    Minimum 20 characters
-                  </p>
                 </div>
               </CardContent>
             </Card>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Calendar, MapPin, Clock, ArrowLeft } from "lucide-react";
+import { Calendar, MapPin, Clock, ArrowLeft, UserCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -162,7 +162,10 @@ const EventDetail = () => {
 
               {event.organizer_description && (
                 <div className="border-t border-border pt-6">
-                  <h2 className="text-2xl font-semibold mb-4 text-foreground">About the Organizer</h2>
+                  <div className="flex items-center gap-2 mb-4">
+                    <UserCircle2 className="h-6 w-6 text-primary" />
+                    <h2 className="text-2xl font-semibold text-foreground">About the Organizer</h2>
+                  </div>
                   <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
                     {event.organizer_description}
                   </p>

@@ -81,7 +81,7 @@ const Navbar = () => {
             {/* Language Selector */}
             <Button 
               variant="ghost" 
-              size="icon" 
+              size="icon"
               className="hidden sm:flex hover:bg-accent/20"
               aria-label={language === "sv" ? "Switch to English" : "Byt till Svenska"}
               title={language === "sv" ? "English" : "Svenska"}
@@ -90,7 +90,7 @@ const Navbar = () => {
               <img 
                 src={language === "sv" ? flagSweden : flagUK} 
                 alt={language === "sv" ? "Swedish flag" : "UK flag"}
-                className="h-6 w-8 rounded object-cover"
+                className="h-5 w-8 rounded object-cover"
               />
             </Button>
 

@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Search, Calendar, MapPin, Filter, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -90,27 +91,26 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
     });
   };
 
-  const toggleFreeFilter = () => {
-    const newValue = !isFreeFilter;
-    setIsFreeFilter(newValue);
+  const toggleFreeFilter = (checked: boolean) => {
+    setIsFreeFilter(checked);
     onFilterChange({
       keywords,
       date: dateFilter,
       location: locationFilter,
       category: categoryFilter,
-      isFree: newValue,
+      isFree: checked,
     });
   };
 
   return (
-    <div className="w-full border-2 border-border/40 rounded-xl p-6 shadow-lg backdrop-blur-sm bg-gradient-to-br from-background/5 to-background/5">
+    <div className="w-full rounded-2xl p-6 shadow-sm bg-card/50 backdrop-blur-sm border border-border/50">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <div className="lg:col-span-2 space-y-2">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search events through keywords..."
-              className="pl-10 bg-background border-input"
+              className="pl-10 bg-background/80 border-border/50 focus:border-primary transition-all"
               value={currentKeyword}
               onChange={(e) => setCurrentKeyword(e.target.value)}
               onKeyDown={handleKeywordAdd}
@@ -122,7 +122,7 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
                 <Badge
                   key={keyword}
                   variant="secondary"
-                  className="px-3 py-1 cursor-pointer hover:bg-secondary/80 transition-colors"
+                  className="px-3 py-1 cursor-pointer hover:bg-secondary/80 transition-colors rounded-full"
                 >
                   {keyword}
                   <X
@@ -136,7 +136,7 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
         </div>
         
         <Select onValueChange={handleDateChange} value={dateFilter}>
-          <SelectTrigger className="bg-background">
+          <SelectTrigger className="bg-background/80 border-border/50 focus:border-primary transition-all">
             <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
             <SelectValue placeholder="Date" />
           </SelectTrigger>
@@ -150,7 +150,7 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
         </Select>
 
         <Select onValueChange={handleLocationChange} value={locationFilter}>
-          <SelectTrigger className="bg-background">
+          <SelectTrigger className="bg-background/80 border-border/50 focus:border-primary transition-all">
             <MapPin className="h-4 w-4 mr-2 text-muted-foreground" />
             <SelectValue placeholder="Location" />
           </SelectTrigger>
@@ -164,7 +164,7 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
         </Select>
 
         <Select onValueChange={handleCategoryChange} value={categoryFilter}>
-          <SelectTrigger className="bg-background">
+          <SelectTrigger className="bg-background/80 border-border/50 focus:border-primary transition-all">
             <Filter className="h-4 w-4 mr-2 text-muted-foreground" />
             <SelectValue placeholder="Category" />
           </SelectTrigger>
@@ -177,14 +177,20 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
             <SelectItem value="art">Art & Culture</SelectItem>
           </SelectContent>
         </Select>
-
-        <Button
-          variant={isFreeFilter ? "default" : "outline"}
-          onClick={toggleFreeFilter}
-          className="w-full whitespace-nowrap"
+      </div>
+      
+      <div className="flex items-center gap-2 mt-4 pt-4 border-t border-border/50">
+        <Switch
+          id="free-only"
+          checked={isFreeFilter}
+          onCheckedChange={toggleFreeFilter}
+        />
+        <Label 
+          htmlFor="free-only" 
+          className="text-sm font-medium cursor-pointer"
         >
-          {isFreeFilter ? "✓ " : ""}Free Only
-        </Button>
+          Show only free events
+        </Label>
       </div>
     </div>
   );

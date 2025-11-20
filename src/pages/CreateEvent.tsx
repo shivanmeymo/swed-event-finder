@@ -88,12 +88,14 @@ const CreateEvent = () => {
       const categoryValue = formData.get('category') as string;
       const finalCategory = categoryValue === 'Others' ? customCategory : categoryValue;
       
+      const organizerDesc = formData.get('organizer_description') as string;
+      
       const validated = eventSchema.parse({
         organizer_name: formData.get('organizer_name') as string || "",
         organizer_email: formData.get('organizer_email') as string || "",
-        organizer_description: formData.get('organizer_description') as string || undefined,
+        organizer_description: organizerDesc?.trim() || undefined,
         title: formData.get('title') as string || "",
-        description: (formData.get('description') as string) || '',
+        description: (formData.get('description') as string) || undefined,
         location: formData.get('location') as string || "",
         category: finalCategory || "",
         start_date: formData.get('start_date') as string || "",
@@ -132,15 +134,15 @@ const CreateEvent = () => {
         .from('events')
         .insert([{
           title: validated.title,
-          description: validated.description,
+          description: validated.description || null,
           location: validated.location,
           category: finalCategory,
           start_datetime: startDatetime,
           end_datetime: endDatetime,
           organizer_id: user!.id,
-          image_url: imageUrl,
+          image_url: imageUrl || null,
           organizer_email: validated.organizer_email,
-          organizer_description: validated.organizer_description,
+          organizer_description: validated.organizer_description || null,
           approved: false,
           is_free: validated.is_free,
           price_adults: validated.price_adults ? parseFloat(validated.price_adults) : null,

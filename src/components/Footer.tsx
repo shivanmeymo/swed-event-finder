@@ -1,63 +1,16 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
 import logo from "@/assets/logo.png";
+import NotificationDialog from "./NotificationDialog";
 
 const Footer = () => {
-  const { t, language } = useLanguage();
-  const [subscribeEmail, setSubscribeEmail] = useState("");
-  const [subscribeCategory, setSubscribeCategory] = useState("");
-  const [subscribeLocation, setSubscribeLocation] = useState("");
-  const [subscribeKeyword, setSubscribeKeyword] = useState("");
-
-  const handleSubscribe = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!subscribeEmail) {
-      toast.error(language === "sv" ? "Ange din e-postadress" : "Please enter your email address");
-      return;
-    }
-
-    try {
-      const { error } = await supabase
-        .from('newsletter_subscriptions')
-        .insert({
-          email: subscribeEmail,
-          category_filter: subscribeCategory || null,
-          location_filter: subscribeLocation || null,
-          keyword_filter: subscribeKeyword || null,
-        });
-
-      if (error) {
-        if (error.code === '23505') {
-          toast.error(language === "sv" ? "Denna e-post är redan prenumererad" : "This email is already subscribed");
-        } else {
-          throw error;
-        }
-      } else {
-        toast.success(language === "sv" ? "Prenumeration lyckades!" : "Successfully subscribed to newsletter!");
-        setSubscribeEmail("");
-        setSubscribeCategory("");
-        setSubscribeLocation("");
-        setSubscribeKeyword("");
-      }
-    } catch (error) {
-      console.error("Subscription error:", error);
-      toast.error(language === "sv" ? "Misslyckades att prenumerera" : "Failed to subscribe. Please try again.");
-    }
-  };
+  const { t } = useLanguage();
 
   return (
     <footer className="border-t border-border bg-card mt-12" role="contentinfo">
       <div className="container mx-auto px-4 py-8">
         <nav aria-label="Footer navigation">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
             <div>
               <button
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
@@ -82,63 +35,13 @@ const Footer = () => {
               </ul>
             </div>
             
-            <div>
-              <h4 className="font-semibold text-foreground mb-3 text-sm">{t("footer.newsletter")}</h4>
-              <form onSubmit={handleSubscribe} className="space-y-2">
-                <div>
-                  <Label htmlFor="subscribe-email" className="sr-only">{t("footer.email")}</Label>
-                  <Input
-                    id="subscribe-email"
-                    type="email"
-                    placeholder={t("footer.email")}
-                    value={subscribeEmail}
-                    onChange={(e) => setSubscribeEmail(e.target.value)}
-                    required
-                    className="h-9"
-                  />
-                </div>
-                <div className="grid grid-cols-3 gap-2">
-                  <div>
-                    <Label htmlFor="subscribe-category" className="text-xs text-muted-foreground">{t("footer.category")}</Label>
-                    <Select value={subscribeCategory} onValueChange={setSubscribeCategory}>
-                      <SelectTrigger id="subscribe-category" className="h-8 text-xs">
-                        <SelectValue placeholder={t("footer.any")} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="music">Music</SelectItem>
-                        <SelectItem value="sports">Sports</SelectItem>
-                        <SelectItem value="art">Art</SelectItem>
-                        <SelectItem value="food">Food</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="subscribe-location" className="text-xs text-muted-foreground">{t("footer.location")}</Label>
-                    <Input
-                      id="subscribe-location"
-                      type="text"
-                      placeholder={t("footer.location")}
-                      value={subscribeLocation}
-                      onChange={(e) => setSubscribeLocation(e.target.value)}
-                      className="h-8 text-xs"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="subscribe-keyword" className="text-xs text-muted-foreground">{t("footer.keyword")}</Label>
-                    <Input
-                      id="subscribe-keyword"
-                      type="text"
-                      placeholder={t("footer.keyword")}
-                      value={subscribeKeyword}
-                      onChange={(e) => setSubscribeKeyword(e.target.value)}
-                      className="h-8 text-xs"
-                    />
-                  </div>
-                </div>
-                <Button type="submit" size="sm" className="w-full h-8 text-xs">
-                  {t("footer.subscribe")}
-                </Button>
-              </form>
+            <div className="flex flex-col items-start md:items-end gap-3">
+              <div className="text-left md:text-right">
+                <p className="text-sm text-muted-foreground mb-3">
+                  Get notified when new events matching your interests are posted!
+                </p>
+                <NotificationDialog />
+              </div>
             </div>
           </div>
           

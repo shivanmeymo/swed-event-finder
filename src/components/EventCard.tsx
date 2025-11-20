@@ -22,7 +22,7 @@ const EventCard = ({ id, title, start_datetime, end_datetime, location, category
   const isOwnEvent = organizer_id && currentUserId && organizer_id === currentUserId;
   const formatDateTime = (datetime: string) => {
     try {
-      return format(new Date(datetime), "MMM d, yyyy 'at' h:mm a");
+      return format(new Date(datetime), "dd/MM/yyyy 'kl' HH:mm");
     } catch {
       return datetime;
     }

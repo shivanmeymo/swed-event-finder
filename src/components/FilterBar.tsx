@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { Search, Calendar, MapPin, Filter, X } from "lucide-react";
+import { Search, Calendar, MapPin, Filter, X, Bell } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
@@ -11,6 +13,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface FilterBarProps {
   onFilterChange: (filters: {
@@ -23,12 +28,15 @@ interface FilterBarProps {
 }
 
 const FilterBar = ({ onFilterChange }: FilterBarProps) => {
+  const { language } = useLanguage();
   const [keywords, setKeywords] = useState<string[]>([]);
   const [currentKeyword, setCurrentKeyword] = useState("");
   const [dateFilter, setDateFilter] = useState("");
   const [locationFilter, setLocationFilter] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [isFreeFilter, setIsFreeFilter] = useState(false);
+  const [notifyDialogOpen, setNotifyDialogOpen] = useState(false);
+  const [notifyEmail, setNotifyEmail] = useState("");
 
   const handleKeywordAdd = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && currentKeyword.trim()) {
@@ -100,6 +108,41 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
       category: categoryFilter,
       isFree: checked,
     });
+  };
+
+  const handleNotifySubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!notifyEmail) {
+      toast.error(language === "sv" ? "Ange din e-postadress" : "Please enter your email address");
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('newsletter_subscriptions')
+        .insert({
+          email: notifyEmail,
+          category_filter: categoryFilter || null,
+          location_filter: locationFilter || null,
+          keyword_filter: keywords.join(', ') || null,
+        });
+
+      if (error) {
+        if (error.code === '23505') {
+          toast.error(language === "sv" ? "Denna e-post är redan prenumererad" : "This email is already subscribed");
+        } else {
+          throw error;
+        }
+      } else {
+        toast.success(language === "sv" ? "Fantastiskt! Du kommer att meddelas om nya event! 🎉" : "Awesome! You'll be notified about new events! 🎉");
+        setNotifyEmail("");
+        setNotifyDialogOpen(false);
+      }
+    } catch (error) {
+      console.error("Subscription error:", error);
+      toast.error(language === "sv" ? "Misslyckades att prenumerera" : "Failed to subscribe. Please try again.");
+    }
   };
 
   return (
@@ -179,18 +222,73 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
         </Select>
       </div>
       
-      <div className="flex items-center gap-2 mt-4 pt-4 border-t border-border/50">
-        <Switch
-          id="free-only"
-          checked={isFreeFilter}
-          onCheckedChange={toggleFreeFilter}
-        />
-        <Label 
-          htmlFor="free-only" 
-          className="text-sm font-medium cursor-pointer"
-        >
-          Show only free events
-        </Label>
+      <div className="flex items-center gap-4 mt-4 pt-4 border-t border-border/50">
+        <div className="flex items-center space-x-2">
+          <Switch
+            id="free-only"
+            checked={isFreeFilter}
+            onCheckedChange={toggleFreeFilter}
+          />
+          <Label 
+            htmlFor="free-only" 
+            className="text-sm font-medium cursor-pointer"
+          >
+            {language === "sv" ? "Endast gratis event" : "Free events only"}
+          </Label>
+        </div>
+
+        <Dialog open={notifyDialogOpen} onOpenChange={setNotifyDialogOpen}>
+          <DialogTrigger asChild>
+            <Button variant="outline" size="sm" className="gap-2">
+              <Bell className="h-4 w-4" />
+              {language === "sv" ? "Bli Meddelad" : "Get Notified"}
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Bell className="h-5 w-5 text-primary" />
+                {language === "sv" ? "Få Meddelanden om Event" : "Get Notified About Events"}
+              </DialogTitle>
+              <DialogDescription>
+                {language === "sv" 
+                  ? "Du kommer att få meddelanden baserat på dina nuvarande filter. Ändra filtren ovan och klicka sedan på 'Bli Meddelad' igen för att uppdatera dina preferenser."
+                  : "You'll be notified based on your current filters. Change the filters above and click 'Get Notified' again to update your preferences."}
+              </DialogDescription>
+            </DialogHeader>
+            <form onSubmit={handleNotifySubscribe} className="space-y-4">
+              <div>
+                <Label htmlFor="notify-email">{language === "sv" ? "E-post" : "Email"}</Label>
+                <Input
+                  id="notify-email"
+                  type="email"
+                  placeholder={language === "sv" ? "din@email.se" : "your@email.com"}
+                  value={notifyEmail}
+                  onChange={(e) => setNotifyEmail(e.target.value)}
+                  required
+                  className="mt-1"
+                />
+              </div>
+              
+              <div className="text-sm text-muted-foreground">
+                <p className="font-semibold mb-1">{language === "sv" ? "Dina nuvarande filter:" : "Your current filters:"}</p>
+                <ul className="space-y-1">
+                  {categoryFilter && <li>• {language === "sv" ? "Kategori" : "Category"}: {categoryFilter}</li>}
+                  {locationFilter && <li>• {language === "sv" ? "Plats" : "Location"}: {locationFilter}</li>}
+                  {keywords.length > 0 && <li>• {language === "sv" ? "Nyckelord" : "Keywords"}: {keywords.join(', ')}</li>}
+                  {isFreeFilter && <li>• {language === "sv" ? "Endast gratis event" : "Free events only"}</li>}
+                  {!categoryFilter && !locationFilter && keywords.length === 0 && !isFreeFilter && (
+                    <li className="text-muted-foreground/60">{language === "sv" ? "Inga filter valda (alla event)" : "No filters selected (all events)"}</li>
+                  )}
+                </ul>
+              </div>
+
+              <Button type="submit" className="w-full">
+                {language === "sv" ? "Prenumerera" : "Subscribe"}
+              </Button>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

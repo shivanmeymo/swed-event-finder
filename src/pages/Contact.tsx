@@ -18,8 +18,10 @@ import { Mail, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import contactHero from "@/assets/contact-hero.jpg";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Contact = () => {
+  const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [category, setCategory] = useState("");
   const { toast } = useToast();
@@ -84,12 +86,12 @@ const Contact = () => {
 
           {/* Header */}
           <div className="mb-12 text-center">
-            <h1 className="text-4xl font-bold text-foreground mb-4">✉️ Contact NowInTown</h1>
+            <h1 className="text-4xl font-bold text-foreground mb-4">✉️ {t("contact.title")}</h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              We'd love to hear from you!
+              {t("contact.subtitle")}
             </p>
             <p className="text-muted-foreground mt-2 max-w-3xl mx-auto">
-              Whether you're planning an unforgettable corporate event, a private celebration, or looking to collaborate, the NowInTown team is here to make it happen.
+              {t("contact.description")}
             </p>
           </div>
 

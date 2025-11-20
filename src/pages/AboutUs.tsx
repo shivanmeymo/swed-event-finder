@@ -6,38 +6,51 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
+import heroImage from "@/assets/about-hero.jpg";
 
 const AboutUs = () => {
   const { t } = useLanguage();
   
   useEffect(() => {
-    document.title = "About SwedEvents - Your Premier Event Discovery Platform in Sweden";
+    document.title = t("aboutUs.pageTitle");
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
       metaDescription.setAttribute(
         "content",
-        "Discover SwedEvents: Sweden's leading event discovery platform connecting people with unforgettable experiences. Learn about our mission to make every event in Sweden easily discoverable."
+        t("aboutUs.pageDescription")
       );
     }
-  }, []);
+  }, [t]);
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
       
       <main className="container mx-auto px-4 py-12">
+        {/* Hero Section */}
         <header className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary via-[hsl(230,89%,62%)] to-accent bg-clip-text text-transparent">
-            {t("aboutUs.title")}
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            {t("aboutUs.subtitle")}
-          </p>
+          <div className="relative rounded-2xl overflow-hidden mb-8 h-[400px] shadow-2xl">
+            <img 
+              src={heroImage} 
+              alt={t("aboutUs.heroImageAlt")}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/60 to-background/20 flex items-end justify-center pb-12">
+              <div>
+                <h1 className="text-4xl md:text-6xl font-bold mb-4 text-foreground drop-shadow-lg">
+                  {t("aboutUs.title")}
+                </h1>
+                <p className="text-xl md:text-2xl text-foreground/90 max-w-3xl mx-auto drop-shadow-md px-4">
+                  {t("aboutUs.subtitle")}
+                </p>
+              </div>
+            </div>
+          </div>
         </header>
 
         <section className="mb-16" aria-labelledby="mission-heading">
           <div className="bg-card border rounded-lg p-8">
-          <h2 id="mission-heading" className="text-3xl font-bold mb-6">{t("aboutUs.mission")}</h2>
+            <h2 id="mission-heading" className="text-3xl font-bold mb-6">{t("aboutUs.mission")}</h2>
             <p className="text-lg text-muted-foreground mb-4">
               {t("aboutUs.missionText1")}
             </p>
@@ -51,13 +64,12 @@ const AboutUs = () => {
           <Card>
             <CardHeader>
               <Heart className="w-12 h-12 mb-4 text-primary" aria-hidden="true" />
-              <CardTitle>Community First</CardTitle>
-              <CardDescription>Building connections that matter</CardDescription>
+              <CardTitle>{t("aboutUs.valueTitle1")}</CardTitle>
+              <CardDescription>{t("aboutUs.valueSubtitle1")}</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground">
-                We believe in the power of community. Every event brings people together, creates memories, 
-                and strengthens the social fabric of Sweden.
+                {t("aboutUs.valueText1")}
               </p>
             </CardContent>
           </Card>
@@ -65,13 +77,12 @@ const AboutUs = () => {
           <Card>
             <CardHeader>
               <Sparkles className="w-12 h-12 mb-4 text-primary" aria-hidden="true" />
-              <CardTitle>Simplicity & Access</CardTitle>
-              <CardDescription>Easy for everyone to use</CardDescription>
+              <CardTitle>{t("aboutUs.valueTitle2")}</CardTitle>
+              <CardDescription>{t("aboutUs.valueSubtitle2")}</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground">
-                Creating and finding events should be simple. Our platform is designed to be intuitive, 
-                accessible, and welcoming for all users.
+                {t("aboutUs.valueText2")}
               </p>
             </CardContent>
           </Card>
@@ -79,13 +90,12 @@ const AboutUs = () => {
           <Card>
             <CardHeader>
               <Award className="w-12 h-12 mb-4 text-primary" aria-hidden="true" />
-              <CardTitle>Quality & Trust</CardTitle>
-              <CardDescription>Reliable event information</CardDescription>
+              <CardTitle>{t("aboutUs.valueTitle3")}</CardTitle>
+              <CardDescription>{t("aboutUs.valueSubtitle3")}</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground">
-                We maintain high standards for event listings and protect user data with enterprise-grade 
-                security measures.
+                {t("aboutUs.valueText3")}
               </p>
             </CardContent>
           </Card>

@@ -24,10 +24,15 @@ export type Database = {
           end_datetime: string
           id: string
           image_url: string | null
+          is_free: boolean | null
           location: string
           organizer_description: string | null
           organizer_email: string | null
           organizer_id: string
+          price_adults: number | null
+          price_kids: number | null
+          price_seniors: number | null
+          price_students: number | null
           start_datetime: string
           title: string
           updated_at: string | null
@@ -41,10 +46,15 @@ export type Database = {
           end_datetime?: string
           id?: string
           image_url?: string | null
+          is_free?: boolean | null
           location: string
           organizer_description?: string | null
           organizer_email?: string | null
           organizer_id: string
+          price_adults?: number | null
+          price_kids?: number | null
+          price_seniors?: number | null
+          price_students?: number | null
           start_datetime?: string
           title: string
           updated_at?: string | null
@@ -58,10 +68,15 @@ export type Database = {
           end_datetime?: string
           id?: string
           image_url?: string | null
+          is_free?: boolean | null
           location?: string
           organizer_description?: string | null
           organizer_email?: string | null
           organizer_id?: string
+          price_adults?: number | null
+          price_kids?: number | null
+          price_seniors?: number | null
+          price_students?: number | null
           start_datetime?: string
           title?: string
           updated_at?: string | null

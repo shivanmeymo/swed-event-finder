@@ -19,6 +19,7 @@ const Index = () => {
     date: "",
     location: "",
     category: "",
+    isFree: false,
   });
   const [allEvents, setAllEvents] = useState<any[]>([]);
 
@@ -41,6 +42,7 @@ const Index = () => {
           category: event.category,
           image: event.image_url,
           organizer_id: event.organizer_id,
+          is_free: event.is_free,
         })));
       }
     };
@@ -93,6 +95,11 @@ const Index = () => {
         if (event.category.toLowerCase() !== filters.category.toLowerCase()) {
           return false;
         }
+      }
+
+      // Free filter
+      if (filters.isFree && !event.is_free) {
+        return false;
       }
 
       return true;

@@ -91,7 +91,7 @@ const AdminDashboard = () => {
         console.error("Failed to send notification emails:", notifError);
       }
 
-      toast.success("Event approved successfully! 🎉 Organizer and subscribers will be notified via email 📧");
+      toast.success("Event approved successfully! 🎉");
       fetchEvents();
     }
   };

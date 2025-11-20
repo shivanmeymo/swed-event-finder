@@ -5,8 +5,11 @@ import Footer from "@/components/Footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const AboutUs = () => {
+  const { t } = useLanguage();
+  
   useEffect(() => {
     document.title = "About SwedEvents - Your Premier Event Discovery Platform in Sweden";
     const metaDescription = document.querySelector('meta[name="description"]');
@@ -25,24 +28,21 @@ const AboutUs = () => {
       <main className="container mx-auto px-4 py-12">
         <header className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary via-[hsl(230,89%,62%)] to-accent bg-clip-text text-transparent">
-            About SwedEvents
+            {t("aboutUs.title")}
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Connecting people with unforgettable experiences across Sweden
+            {t("aboutUs.subtitle")}
           </p>
         </header>
 
         <section className="mb-16" aria-labelledby="mission-heading">
           <div className="bg-card border rounded-lg p-8">
-          <h2 id="mission-heading" className="text-3xl font-bold mb-6">Our Mission</h2>
+          <h2 id="mission-heading" className="text-3xl font-bold mb-6">{t("aboutUs.mission")}</h2>
             <p className="text-lg text-muted-foreground mb-4">
-              NowInTown was born from a simple idea: every amazing event happening across Sweden should be easily 
-              discoverable by everyone. Whether it's a local art exhibition in Malmö, a sports tournament in Stockholm, 
-              or a music festival in Gothenburg, we believe great experiences should never go unnoticed.
+              {t("aboutUs.missionText1")}
             </p>
             <p className="text-lg text-muted-foreground">
-              We're here to bridge the gap between event organizers and attendees, making it effortless to share, 
-              discover, and participate in the vibrant cultural landscape of Sweden.
+              {t("aboutUs.missionText2")}
             </p>
           </div>
         </section>

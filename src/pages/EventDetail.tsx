@@ -53,7 +53,7 @@ const EventDetail = () => {
 
   const formatDateTime = (datetime: string) => {
     try {
-      return format(new Date(datetime), "EEEE, MMMM d, yyyy 'at' h:mm a");
+      return format(new Date(datetime), "EEEE, d MMMM yyyy 'kl' HH:mm");
     } catch {
       return datetime;
     }

@@ -76,13 +76,22 @@ const AdminDashboard = () => {
         await supabase.functions.invoke('send-approval-email', {
           body: { eventId },
         });
-        toast.success("Event approved successfully! 🎉 Organizer will be notified via email 📧");
         console.log("Approval email sent to organizer");
       } catch (emailError) {
         console.error("Failed to send approval email:", emailError);
-        toast.success("Event approved successfully!");
       }
-      
+
+      // Send notification emails to subscribers
+      try {
+        await supabase.functions.invoke('send-notification-emails', {
+          body: { eventId },
+        });
+        console.log("Notification emails sent to subscribers");
+      } catch (notifError) {
+        console.error("Failed to send notification emails:", notifError);
+      }
+
+      toast.success("Event approved successfully! 🎉 Organizer and subscribers will be notified via email 📧");
       fetchEvents();
     }
   };

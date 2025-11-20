@@ -17,6 +17,7 @@ interface FilterBarProps {
     date: string;
     location: string;
     category: string;
+    isFree: boolean;
   }) => void;
 }
 
@@ -26,6 +27,7 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
   const [dateFilter, setDateFilter] = useState("");
   const [locationFilter, setLocationFilter] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
+  const [isFreeFilter, setIsFreeFilter] = useState(false);
 
   const handleKeywordAdd = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && currentKeyword.trim()) {
@@ -38,6 +40,7 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
         date: dateFilter,
         location: locationFilter,
         category: categoryFilter,
+        isFree: isFreeFilter,
       });
     }
   };
@@ -50,6 +53,7 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
       date: dateFilter,
       location: locationFilter,
       category: categoryFilter,
+      isFree: isFreeFilter,
     });
   };
 
@@ -60,6 +64,7 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
       date: value,
       location: locationFilter,
       category: categoryFilter,
+      isFree: isFreeFilter,
     });
   };
 
@@ -70,6 +75,7 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
       date: dateFilter,
       location: value,
       category: categoryFilter,
+      isFree: isFreeFilter,
     });
   };
 
@@ -80,12 +86,24 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
       date: dateFilter,
       location: locationFilter,
       category: value,
+      isFree: isFreeFilter,
+    });
+  };
+
+  const handleFreeFilterChange = (checked: boolean) => {
+    setIsFreeFilter(checked);
+    onFilterChange({
+      keywords,
+      date: dateFilter,
+      location: locationFilter,
+      category: categoryFilter,
+      isFree: checked,
     });
   };
 
   return (
     <div className="w-full border-2 border-border/40 rounded-xl p-6 shadow-lg backdrop-blur-sm bg-gradient-to-br from-background/5 to-background/5">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <div className="lg:col-span-2 space-y-2">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />

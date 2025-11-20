@@ -159,6 +159,112 @@ const EventDetail = () => {
                   </p>
                 </div>
               )}
+
+              {event.organizer_description && (
+                <div className="border-t border-border pt-6">
+                  <h2 className="text-2xl font-semibold mb-4 text-foreground">About the Organizer</h2>
+                  <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
+                    {event.organizer_description}
+                  </p>
+                </div>
+              )}
+
+              <div className="border-t border-border pt-6">
+                <h2 className="text-2xl font-semibold mb-4 text-foreground">Pricing</h2>
+                {event.is_free ? (
+                  <p className="text-lg font-semibold text-primary">FREE EVENT</p>
+                ) : (
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {event.price_adults && (
+                      <div className="bg-muted/30 rounded-lg p-4">
+                        <p className="text-sm text-muted-foreground mb-1">Adults</p>
+                        <p className="text-lg font-semibold">{event.price_adults} SEK</p>
+                      </div>
+                    )}
+                    {event.price_students && (
+                      <div className="bg-muted/30 rounded-lg p-4">
+                        <p className="text-sm text-muted-foreground mb-1">Students</p>
+                        <p className="text-lg font-semibold">{event.price_students} SEK</p>
+                      </div>
+                    )}
+                    {event.price_kids && (
+                      <div className="bg-muted/30 rounded-lg p-4">
+                        <p className="text-sm text-muted-foreground mb-1">Kids</p>
+                        <p className="text-lg font-semibold">{event.price_kids} SEK</p>
+                      </div>
+                    )}
+                    {event.price_seniors && (
+                      <div className="bg-muted/30 rounded-lg p-4">
+                        <p className="text-sm text-muted-foreground mb-1">Seniors</p>
+                        <p className="text-lg font-semibold">{event.price_seniors} SEK</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <div className="border-t border-border pt-6">
+                <h2 className="text-2xl font-semibold mb-4 text-foreground">Add to Calendar</h2>
+                <div className="flex flex-wrap gap-3">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      const title = encodeURIComponent(event.title);
+                      const details = encodeURIComponent(event.description || '');
+                      const location = encodeURIComponent(event.location);
+                      const start = new Date(event.start_datetime).toISOString().replace(/-|:|\.\d\d\d/g, '');
+                      const end = new Date(event.end_datetime).toISOString().replace(/-|:|\.\d\d\d/g, '');
+                      window.open(
+                        `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&location=${location}&dates=${start}/${end}`,
+                        '_blank'
+                      );
+                    }}
+                  >
+                    Google Calendar
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      const start = new Date(event.start_datetime).toISOString().replace(/-|:|\.\d\d\d/g, '');
+                      const end = new Date(event.end_datetime).toISOString().replace(/-|:|\.\d\d\d/g, '');
+                      window.open(
+                        `https://outlook.office.com/calendar/0/deeplink/compose?subject=${encodeURIComponent(event.title)}&body=${encodeURIComponent(event.description || '')}&location=${encodeURIComponent(event.location)}&startdt=${start}&enddt=${end}`,
+                        '_blank'
+                      );
+                    }}
+                  >
+                    Outlook Calendar
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      const start = new Date(event.start_datetime).toISOString().replace(/-|:|\.\d\d\d/g, '');
+                      const end = new Date(event.end_datetime).toISOString().replace(/-|:|\.\d\d\d/g, '');
+                      const icsContent = `BEGIN:VCALENDAR
+VERSION:2.0
+BEGIN:VEVENT
+DTSTART:${start}
+DTEND:${end}
+SUMMARY:${event.title}
+DESCRIPTION:${event.description || ''}
+LOCATION:${event.location}
+END:VEVENT
+END:VCALENDAR`;
+                      const blob = new Blob([icsContent], { type: 'text/calendar' });
+                      const url = window.URL.createObjectURL(blob);
+                      const link = document.createElement('a');
+                      link.href = url;
+                      link.download = `${event.title}.ics`;
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+                      window.URL.revokeObjectURL(url);
+                    }}
+                  >
+                    iCal Calendar
+                  </Button>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>

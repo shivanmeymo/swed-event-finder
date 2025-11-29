@@ -68,8 +68,18 @@ const handler = async (req: Request): Promise<Response> => {
       });
       console.log("Email sent successfully! Result:", emailResult);
 
+      // Trigger notification to subscribers
+      try {
+        await supabase.functions.invoke('notify-subscribers-new-event', {
+          body: { eventId }
+        });
+        console.log("Subscriber notifications triggered");
+      } catch (notifError) {
+        console.error("Failed to trigger subscriber notifications:", notifError);
+      }
+
       return new Response(
-        JSON.stringify({ success: true, message: "Approval email sent" }),
+        JSON.stringify({ success: true, message: "Approval email sent and subscribers notified" }),
         {
           status: 200,
           headers: { "Content-Type": "application/json", ...corsHeaders },

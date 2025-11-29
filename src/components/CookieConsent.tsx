@@ -23,11 +23,6 @@ const CookieConsent = () => {
     setShowConsent(false);
   };
 
-  const handleCustomize = () => {
-    localStorage.setItem("cookieConsent", "custom");
-    setShowConsent(false);
-  };
-
   if (!showConsent) return null;
 
   return (
@@ -41,13 +36,6 @@ const CookieConsent = () => {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3">
-          <Button 
-            onClick={handleCustomize} 
-            variant="outline" 
-            className="flex-1 border-2 hover:bg-accent/10 rounded-lg"
-          >
-            {t("cookie.customize")}
-          </Button>
           <Button 
             onClick={handleRejectAll} 
             variant="outline" 

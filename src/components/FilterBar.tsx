@@ -139,105 +139,108 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
     }
   };
 
+  const getActiveFiltersText = () => {
+    const filters = [];
+    if (categoryFilter && categoryFilter !== 'all') filters.push(categoryFilter);
+    if (locationFilter && locationFilter !== 'all') filters.push(locationFilter);
+    if (isFreeFilter) filters.push(language === "sv" ? "Gratis" : "Free");
+    if (keywords.length > 0) filters.push(keywords.join(', '));
+    
+    if (filters.length === 0) {
+      return language === "sv" ? "alla evenemang" : "all events";
+    }
+    return filters.join(', ');
+  };
+
   return (
-    <div className="bg-card p-6 rounded-lg shadow-sm border border-border mb-8">
-      <div className="flex items-center gap-2 mb-6">
-        <Filter className="h-5 w-5 text-primary" />
-        <h2 className="text-xl font-semibold text-foreground">
-          {language === "sv" ? "Filtrera Evenemang" : "Filter Events"}
-        </h2>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-4">
-          {/* Search Keywords */}
-          <div className="space-y-2">
-            <Label className="flex items-center gap-2 text-foreground">
-              <Search className="h-4 w-4" />
-              {language === "sv" ? "Sök Nyckelord" : "Search Keywords"}
-            </Label>
-            <Input
-              value={currentKeyword}
-              onChange={(e) => setCurrentKeyword(e.target.value)}
-              onKeyDown={handleKeywordAdd}
-              placeholder={language === "sv" ? "Skriv och tryck Enter för att lägga till..." : "Type and press Enter to add..."}
-              className="bg-background border-input"
-            />
-            {keywords.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-2">
-                {keywords.map((keyword) => (
-                  <Badge
-                    key={keyword}
-                    variant="secondary"
-                    className="pl-3 pr-1 py-1 bg-primary/10 text-primary"
+    <div className="bg-card p-4 rounded-lg shadow-sm border border-border mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Search Keywords */}
+        <div className="space-y-2">
+          <Label className="flex items-center gap-2 text-foreground text-sm">
+            <Search className="h-4 w-4" />
+            {language === "sv" ? "Sök" : "Search"}
+          </Label>
+          <Input
+            value={currentKeyword}
+            onChange={(e) => setCurrentKeyword(e.target.value)}
+            onKeyDown={handleKeywordAdd}
+            placeholder={language === "sv" ? "Tryck Enter..." : "Press Enter..."}
+            className="bg-background border-input h-9"
+          />
+          {keywords.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-1">
+              {keywords.map((keyword) => (
+                <Badge
+                  key={keyword}
+                  variant="secondary"
+                  className="pl-2 pr-1 py-0.5 text-xs bg-primary/10 text-primary"
+                >
+                  {keyword}
+                  <button
+                    onClick={() => handleKeywordRemove(keyword)}
+                    className="ml-1 hover:bg-primary/20 rounded-full p-0.5"
+                    aria-label={`Remove ${keyword}`}
                   >
-                    {keyword}
-                    <button
-                      onClick={() => handleKeywordRemove(keyword)}
-                      className="ml-2 hover:bg-primary/20 rounded-full p-0.5"
-                      aria-label={`Remove ${keyword}`}
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </Badge>
-                ))}
-              </div>
-            )}
-          </div>
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
+              ))}
+            </div>
+          )}
+        </div>
 
-          {/* Date Filter */}
-          <div className="space-y-2">
-            <Label className="flex items-center gap-2 text-foreground">
-              <Calendar className="h-4 w-4" />
-              {language === "sv" ? "Datum" : "Date"}
-            </Label>
-            <Select value={dateFilter} onValueChange={handleDateChange}>
-              <SelectTrigger className="bg-background border-input">
-                <SelectValue placeholder={language === "sv" ? "Välj datum" : "Select date"} />
-              </SelectTrigger>
-              <SelectContent className="bg-background border-border z-50">
-                <SelectItem value="all">{language === "sv" ? "Alla datum" : "All dates"}</SelectItem>
-                <SelectItem value="today">{language === "sv" ? "Idag" : "Today"}</SelectItem>
-                <SelectItem value="tomorrow">{language === "sv" ? "Imorgon" : "Tomorrow"}</SelectItem>
-                <SelectItem value="this-week">{language === "sv" ? "Denna vecka" : "This week"}</SelectItem>
-                <SelectItem value="this-weekend">{language === "sv" ? "Denna helg" : "This weekend"}</SelectItem>
-                <SelectItem value="next-week">{language === "sv" ? "Nästa vecka" : "Next week"}</SelectItem>
-                <SelectItem value="this-month">{language === "sv" ? "Denna månad" : "This month"}</SelectItem>
-                <SelectItem value="next-month">{language === "sv" ? "Nästa månad" : "Next month"}</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+        {/* Location Filter */}
+        <div className="space-y-2">
+          <Label className="flex items-center gap-2 text-foreground text-sm">
+            <MapPin className="h-4 w-4" />
+            {language === "sv" ? "Plats" : "Location"}
+          </Label>
+          <Select value={locationFilter} onValueChange={handleLocationChange}>
+            <SelectTrigger className="bg-background border-input h-9">
+              <SelectValue placeholder={language === "sv" ? "Välj..." : "Select..."} />
+            </SelectTrigger>
+            <SelectContent className="bg-background border-border z-50">
+              <SelectItem value="all">{language === "sv" ? "Alla platser" : "All locations"}</SelectItem>
+              <SelectItem value="Stockholm">Stockholm</SelectItem>
+              <SelectItem value="Gothenburg">Gothenburg</SelectItem>
+              <SelectItem value="Malmö">Malmö</SelectItem>
+              <SelectItem value="Uppsala">Uppsala</SelectItem>
+              <SelectItem value="Västerås">Västerås</SelectItem>
+              <SelectItem value="Örebro">Örebro</SelectItem>
+              <SelectItem value="Linköping">Linköping</SelectItem>
+              <SelectItem value="Helsingborg">Helsingborg</SelectItem>
+              <SelectItem value="Jönköping">Jönköping</SelectItem>
+              <SelectItem value="Norrköping">Norrköping</SelectItem>
+              <SelectItem value="Lund">Lund</SelectItem>
+              <SelectItem value="Umeå">Umeå</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
-          {/* Location Filter */}
-          <div className="space-y-2">
-            <Label className="flex items-center gap-2 text-foreground">
-              <MapPin className="h-4 w-4" />
-              {language === "sv" ? "Plats" : "Location"}
-            </Label>
-            <Select value={locationFilter} onValueChange={handleLocationChange}>
-              <SelectTrigger className="bg-background border-input">
-                <SelectValue placeholder={language === "sv" ? "Välj plats" : "Select location"} />
-              </SelectTrigger>
-              <SelectContent className="bg-background border-border z-50">
-                <SelectItem value="all">{language === "sv" ? "Alla platser" : "All locations"}</SelectItem>
-                <SelectItem value="Stockholm">Stockholm</SelectItem>
-                <SelectItem value="Gothenburg">Gothenburg</SelectItem>
-                <SelectItem value="Malmö">Malmö</SelectItem>
-                <SelectItem value="Uppsala">Uppsala</SelectItem>
-                <SelectItem value="Västerås">Västerås</SelectItem>
-                <SelectItem value="Örebro">Örebro</SelectItem>
-                <SelectItem value="Linköping">Linköping</SelectItem>
-                <SelectItem value="Helsingborg">Helsingborg</SelectItem>
-                <SelectItem value="Jönköping">Jönköping</SelectItem>
-                <SelectItem value="Norrköping">Norrköping</SelectItem>
-                <SelectItem value="Lund">Lund</SelectItem>
-                <SelectItem value="Umeå">Umeå</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+        {/* Category Filter */}
+        <div className="space-y-2">
+          <Label className="text-foreground text-sm">
+            {language === "sv" ? "Kategori" : "Category"}
+          </Label>
+          <Select value={categoryFilter} onValueChange={handleCategoryChange}>
+            <SelectTrigger className="bg-background border-input h-9">
+              <SelectValue placeholder={language === "sv" ? "Välj..." : "Select..."} />
+            </SelectTrigger>
+            <SelectContent className="bg-background border-border z-50">
+              <SelectItem value="all">{language === "sv" ? "Alla kategorier" : "All categories"}</SelectItem>
+              <SelectItem value="Music">{language === "sv" ? "Musik" : "Music"}</SelectItem>
+              <SelectItem value="Sports">{language === "sv" ? "Sport" : "Sports"}</SelectItem>
+              <SelectItem value="Art">{language === "sv" ? "Konst" : "Art"}</SelectItem>
+              <SelectItem value="Food">{language === "sv" ? "Mat" : "Food"}</SelectItem>
+              <SelectItem value="Tech">{language === "sv" ? "Teknologi" : "Tech"}</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
-          {/* Free Events Filter */}
-          <div className="flex items-center space-x-2 pt-6">
+        {/* Free Events Filter & Notify Button */}
+        <div className="space-y-2">
+          <div className="flex items-center space-x-2">
             <Switch
               id="free-filter"
               checked={isFreeFilter}
@@ -247,43 +250,16 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
               htmlFor="free-filter"
               className="text-sm font-medium text-foreground cursor-pointer"
             >
-              {language === "sv" ? "Endast gratis evenemang" : "Free events only"}
+              {language === "sv" ? "Gratis" : "Free"}
             </Label>
           </div>
-        </div>
-
-        <div className="space-y-4">
-          {/* Category Filter */}
-          <div className="space-y-2">
-            <Label className="text-foreground">
-              {language === "sv" ? "Kategori" : "Category"}
-            </Label>
-            <Select value={categoryFilter} onValueChange={handleCategoryChange}>
-              <SelectTrigger className="bg-background border-input">
-                <SelectValue placeholder={language === "sv" ? "Välj kategori" : "Select category"} />
-              </SelectTrigger>
-              <SelectContent className="bg-background border-border z-50">
-                <SelectItem value="all">{language === "sv" ? "Alla kategorier" : "All categories"}</SelectItem>
-                <SelectItem value="Music">{language === "sv" ? "Musik" : "Music"}</SelectItem>
-                <SelectItem value="Sports">{language === "sv" ? "Sport" : "Sports"}</SelectItem>
-                <SelectItem value="Arts & Culture">{language === "sv" ? "Konst & Kultur" : "Arts & Culture"}</SelectItem>
-                <SelectItem value="Food & Drink">{language === "sv" ? "Mat & Dryck" : "Food & Drink"}</SelectItem>
-                <SelectItem value="Business">{language === "sv" ? "Företag" : "Business"}</SelectItem>
-                <SelectItem value="Technology">{language === "sv" ? "Teknologi" : "Technology"}</SelectItem>
-                <SelectItem value="Health & Wellness">{language === "sv" ? "Hälsa & Välbefinnande" : "Health & Wellness"}</SelectItem>
-                <SelectItem value="Education">{language === "sv" ? "Utbildning" : "Education"}</SelectItem>
-                <SelectItem value="Family & Kids">{language === "sv" ? "Familj & Barn" : "Family & Kids"}</SelectItem>
-                <SelectItem value="Community">{language === "sv" ? "Gemenskap" : "Community"}</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
+          
           {/* Be Notified Button */}
           <Dialog open={notifyDialogOpen} onOpenChange={setNotifyDialogOpen}>
             <DialogTrigger asChild>
-              <Button variant="outline" className="w-full gap-2">
+              <Button variant="outline" className="w-full gap-2 h-9 mt-2">
                 <Bell className="h-4 w-4" />
-                {language === "sv" ? "Bli Notifierad" : "Be Notified"}
+                {language === "sv" ? "Notifiera" : "Notify"}
               </Button>
             </DialogTrigger>
             <DialogContent>
@@ -291,10 +267,17 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
                 <DialogTitle>
                   {language === "sv" ? "Prenumerera på Notifikationer" : "Subscribe to Notifications"}
                 </DialogTitle>
-                <DialogDescription>
-                  {language === "sv" 
-                    ? "Du kommer att meddelas via e-post enligt de filter du har valt. Om du vill ändra dina filter, gå tillbaka till filtersektionen, ändra och klicka på notifiera för att ange din e-post igen."
-                    : "You will be notified via email according to the filters you've chosen. If you want to change your filters, go back to the filter section, change them, and click notify to enter your email again."}
+                <DialogDescription className="space-y-2">
+                  <p>
+                    {language === "sv" 
+                      ? `Du kommer att få e-post för: ${getActiveFiltersText()}`
+                      : `You'll receive emails for: ${getActiveFiltersText()}`}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {language === "sv" 
+                      ? "För att ändra dina filter, gå tillbaka och justera filtren."
+                      : "To change your filters, go back and adjust the filters."}
+                  </p>
                 </DialogDescription>
               </DialogHeader>
               <form onSubmit={handleNotifySubscribe} className="space-y-4">

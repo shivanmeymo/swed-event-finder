@@ -25,13 +25,14 @@ const Footer = () => {
                 {t("footer.description")}
               </p>
               <div className="mt-4">
-                <h4 className="font-semibold text-foreground mb-2 text-sm">{t("footer.quickLinks")}</h4>
-                <ul className="flex flex-col gap-y-1 text-sm">
-                  <li><Link to="/create" className="text-primary hover:text-primary/80 font-medium transition-colors">{t("footer.createEvent")}</Link></li>
-                  <li><Link to="/about" className="text-primary hover:text-primary/80 font-medium transition-colors">{t("footer.aboutUs")}</Link></li>
-                  <li><Link to="/contact" className="text-primary hover:text-primary/80 font-medium transition-colors">{t("footer.contactUs")}</Link></li>
-                  <li><Link to="/data-integrity" className="text-primary hover:text-primary/80 font-medium transition-colors">{t("footer.dataIntegrity")}</Link></li>
-                </ul>
+                <h4 className="font-semibold text-foreground mb-3 text-sm">{t("footer.quickLinks")}</h4>
+                <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
+                  <Link to="/" className="text-primary hover:text-primary/80 font-medium transition-colors">{t("footer.home")}</Link>
+                  <Link to="/create" className="text-primary hover:text-primary/80 font-medium transition-colors">{t("footer.createEvent")}</Link>
+                  <Link to="/about" className="text-primary hover:text-primary/80 font-medium transition-colors">{t("footer.aboutUs")}</Link>
+                  <Link to="/contact" className="text-primary hover:text-primary/80 font-medium transition-colors">{t("footer.contactUs")}</Link>
+                  <Link to="/data-integrity" className="text-primary hover:text-primary/80 font-medium transition-colors">{t("footer.dataIntegrity")}</Link>
+                </div>
               </div>
             </div>
           </div>

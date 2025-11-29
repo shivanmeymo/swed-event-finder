@@ -14,3 +14,6 @@ verify_jwt = false
 
 [functions.send-notification-emails]
 verify_jwt = false
+
+[functions.notify-subscribers-new-event]
+verify_jwt = false

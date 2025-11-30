@@ -21,6 +21,7 @@ interface FilterBarProps {
   onFilterChange: (filters: {
     keywords: string[];
     date: string;
+    dateRange: string;
     location: string;
     category: string;
     isFree: boolean;
@@ -32,6 +33,7 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
   const [keywords, setKeywords] = useState<string[]>([]);
   const [currentKeyword, setCurrentKeyword] = useState("");
   const [dateFilter, setDateFilter] = useState("");
+  const [dateRangeFilter, setDateRangeFilter] = useState("");
   const [locationFilter, setLocationFilter] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [isFreeFilter, setIsFreeFilter] = useState(false);
@@ -47,6 +49,7 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
       onFilterChange({
         keywords: newKeywords,
         date: dateFilter,
+        dateRange: dateRangeFilter,
         location: locationFilter,
         category: categoryFilter,
         isFree: isFreeFilter,
@@ -60,6 +63,7 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
     onFilterChange({
       keywords: newKeywords,
       date: dateFilter,
+      dateRange: dateRangeFilter,
       location: locationFilter,
       category: categoryFilter,
       isFree: isFreeFilter,
@@ -71,6 +75,19 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
     onFilterChange({
       keywords,
       date: value,
+      dateRange: dateRangeFilter,
+      location: locationFilter,
+      category: categoryFilter,
+      isFree: isFreeFilter,
+    });
+  };
+
+  const handleDateRangeChange = (value: string) => {
+    setDateRangeFilter(value);
+    onFilterChange({
+      keywords,
+      date: dateFilter,
+      dateRange: value,
       location: locationFilter,
       category: categoryFilter,
       isFree: isFreeFilter,
@@ -82,6 +99,7 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
     onFilterChange({
       keywords,
       date: dateFilter,
+      dateRange: dateRangeFilter,
       location: value,
       category: categoryFilter,
       isFree: isFreeFilter,
@@ -93,6 +111,7 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
     onFilterChange({
       keywords,
       date: dateFilter,
+      dateRange: dateRangeFilter,
       location: locationFilter,
       category: value,
       isFree: isFreeFilter,
@@ -104,6 +123,7 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
     onFilterChange({
       keywords,
       date: dateFilter,
+      dateRange: dateRangeFilter,
       location: locationFilter,
       category: categoryFilter,
       isFree: checked,
@@ -143,6 +163,12 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
     const filters = [];
     if (categoryFilter && categoryFilter !== 'all') filters.push(categoryFilter);
     if (locationFilter && locationFilter !== 'all') filters.push(locationFilter);
+    if (dateRangeFilter && dateRangeFilter !== 'all') {
+      const dateRangeText = dateRangeFilter === 'today' ? (language === "sv" ? "Idag" : "Today") :
+                            dateRangeFilter === 'thisWeek' ? (language === "sv" ? "Denna vecka" : "This week") :
+                            dateRangeFilter === 'thisMonth' ? (language === "sv" ? "Denna månad" : "This month") : '';
+      if (dateRangeText) filters.push(dateRangeText);
+    }
     if (isFreeFilter) filters.push(language === "sv" ? "Gratis" : "Free");
     if (keywords.length > 0) filters.push(keywords.join(', '));
     
@@ -154,7 +180,7 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
 
   return (
     <div className="bg-card p-4 rounded-lg shadow-sm border border-border mb-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
         {/* Search Keywords */}
         <div className="space-y-2">
           <Label className="flex items-center gap-2 text-foreground text-sm">
@@ -188,6 +214,25 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
               ))}
             </div>
           )}
+        </div>
+
+        {/* Date Range Filter */}
+        <div className="space-y-2">
+          <Label className="flex items-center gap-2 text-foreground text-sm">
+            <Calendar className="h-4 w-4" />
+            {language === "sv" ? "Datum" : "Date"}
+          </Label>
+          <Select value={dateRangeFilter} onValueChange={handleDateRangeChange}>
+            <SelectTrigger className="bg-background border-input h-9">
+              <SelectValue placeholder={language === "sv" ? "Välj..." : "Select..."} />
+            </SelectTrigger>
+            <SelectContent className="bg-background border-border z-50">
+              <SelectItem value="all">{language === "sv" ? "Alla datum" : "All dates"}</SelectItem>
+              <SelectItem value="today">{language === "sv" ? "Idag" : "Today"}</SelectItem>
+              <SelectItem value="thisWeek">{language === "sv" ? "Denna vecka" : "This week"}</SelectItem>
+              <SelectItem value="thisMonth">{language === "sv" ? "Denna månad" : "This month"}</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Location Filter */}

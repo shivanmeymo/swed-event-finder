@@ -104,50 +104,33 @@ const AboutUs = () => {
         <section className="mb-16" aria-labelledby="story-heading">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 id="story-heading" className="text-3xl font-bold mb-6">Our Story</h2>
+              <h2 id="story-heading" className="text-3xl font-bold mb-6">{t("about.storyTitle")}</h2>
               <div className="space-y-4 text-muted-foreground">
-                <p>
-                  SwedEvents started in 2024 with a vision to transform how people discover and share events 
-                  throughout Sweden. Our founders, passionate about community building and cultural experiences, 
-                  recognized that incredible events were often happening in people's backyards without them knowing.
-                </p>
-                <p>
-                  Today, we're proud to serve event organizers and attendees across Sweden, from major cities 
-                  to small towns. Our platform has become a trusted resource for discovering everything from 
-                  art exhibitions and sports events to family-friendly activities and professional networking opportunities.
-                </p>
-                <p>
-                  We're committed to continuously improving our platform, adding new features, and expanding 
-                  our reach to ensure that no great event goes undiscovered.
-                </p>
+                <p>{t("about.storyText1")}</p>
+                <p>{t("about.storyText2")}</p>
+                <p>{t("about.storyText3")}</p>
               </div>
             </div>
             <div className="space-y-6">
               <div className="flex items-start gap-4">
                 <MapPin className="w-8 h-8 text-primary flex-shrink-0" aria-hidden="true" />
                 <div>
-                  <h3 className="font-semibold text-lg mb-2">Nationwide Coverage</h3>
-                  <p className="text-muted-foreground">
-                    Events from all across Sweden, from Stockholm to Kiruna
-                  </p>
+                  <h3 className="font-semibold text-lg mb-2">{t("about.coverageTitle")}</h3>
+                  <p className="text-muted-foreground">{t("about.coverageText")}</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
                 <Calendar className="w-8 h-8 text-primary flex-shrink-0" aria-hidden="true" />
                 <div>
-                  <h3 className="font-semibold text-lg mb-2">Daily Updates</h3>
-                  <p className="text-muted-foreground">
-                    Fresh event listings added every day by our community
-                  </p>
+                  <h3 className="font-semibold text-lg mb-2">{t("about.updatesTitle")}</h3>
+                  <p className="text-muted-foreground">{t("about.updatesText")}</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
                 <Users className="w-8 h-8 text-primary flex-shrink-0" aria-hidden="true" />
                 <div>
-                  <h3 className="font-semibold text-lg mb-2">Growing Community</h3>
-                  <p className="text-muted-foreground">
-                    Thousands of event organizers and attendees trust SwedEvents
-                  </p>
+                  <h3 className="font-semibold text-lg mb-2">{t("about.communityGrowthTitle")}</h3>
+                  <p className="text-muted-foreground">{t("about.communityGrowthText")}</p>
                 </div>
               </div>
             </div>
@@ -155,25 +138,24 @@ const AboutUs = () => {
         </section>
 
         <section className="bg-gradient-to-br from-primary/10 via-[hsl(230,89%,62%)]/10 to-accent/10 rounded-lg p-12 text-center" aria-labelledby="cta-heading">
-          <h2 id="cta-heading" className="text-3xl font-bold mb-4">Ready to Get Started?</h2>
+          <h2 id="cta-heading" className="text-3xl font-bold mb-4">{t("about.ctaTitle")}</h2>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Join our community of event organizers and attendees. Create your first event or discover 
-            something amazing happening near you.
+            {t("about.ctaText")}
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Button size="lg" asChild>
-              <Link to="/create">Create an Event</Link>
+              <Link to="/create">{t("about.createEvent")}</Link>
             </Button>
             <Button size="lg" variant="outline" asChild>
-              <Link to="/">Explore Events</Link>
+              <Link to="/">{t("about.exploreEvents")}</Link>
             </Button>
           </div>
         </section>
 
         <section className="mt-16 bg-card border rounded-lg p-8" aria-labelledby="contact-heading">
-          <h2 id="contact-heading" className="text-3xl font-bold mb-6">Get in Touch</h2>
+          <h2 id="contact-heading" className="text-3xl font-bold mb-6">{t("about.contactTitle")}</h2>
           <p className="text-muted-foreground mb-6">
-            Have questions, suggestions, or just want to say hello? We'd love to hear from you!
+            {t("about.contactText")}
           </p>
           <div className="space-y-2 text-muted-foreground">
             <p><strong>Email:</strong> <a href="mailto:contact@nowintown.com" className="text-primary hover:underline">contact@nowintown.com</a></p>
@@ -181,7 +163,7 @@ const AboutUs = () => {
             <p><strong>Address:</strong> Uppsala, Sweden</p>
           </div>
           <Button className="mt-6" variant="default" asChild>
-            <Link to="/contact">Contact Us</Link>
+            <Link to="/contact">{t("about.contactButton")}</Link>
           </Button>
         </section>
       </main>

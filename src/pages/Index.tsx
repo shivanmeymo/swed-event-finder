@@ -17,6 +17,7 @@ const Index = () => {
   const [filters, setFilters] = useState({
     keywords: [] as string[],
     date: "",
+    dateRange: "",
     location: "",
     category: "",
     isFree: false,
@@ -81,6 +82,26 @@ const Index = () => {
           eventText.includes(keyword.toLowerCase())
         );
         if (!matchesKeywords) return false;
+      }
+
+      // Date range filter
+      if (filters.dateRange && filters.dateRange !== "all") {
+        const eventDate = new Date(event.start_datetime);
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        
+        if (filters.dateRange === "today") {
+          const tomorrow = new Date(today);
+          tomorrow.setDate(tomorrow.getDate() + 1);
+          if (eventDate < today || eventDate >= tomorrow) return false;
+        } else if (filters.dateRange === "thisWeek") {
+          const weekEnd = new Date(today);
+          weekEnd.setDate(weekEnd.getDate() + 7);
+          if (eventDate < today || eventDate >= weekEnd) return false;
+        } else if (filters.dateRange === "thisMonth") {
+          const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+          if (eventDate < today || eventDate >= monthEnd) return false;
+        }
       }
 
       // Location filter

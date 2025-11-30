@@ -5,18 +5,21 @@ import Footer from "@/components/Footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const DataIntegrity = () => {
+  const { t } = useLanguage();
+  
   useEffect(() => {
-    document.title = "Data Integrity & Security - SwedEvents | Secure Event Management";
+    document.title = t("dataIntegrity.pageTitle");
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
       metaDescription.setAttribute(
         "content",
-        "Learn how SwedEvents ensures data integrity and security for all event information. Our commitment to protecting your data with enterprise-grade security measures."
+        t("dataIntegrity.pageDescription")
       );
     }
-  }, []);
+  }, [t]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -25,10 +28,10 @@ const DataIntegrity = () => {
       <main className="container mx-auto px-4 py-12">
         <header className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary via-[hsl(230,89%,62%)] to-accent bg-clip-text text-transparent">
-            Data Integrity & Security
+            {t("dataIntegrity.title")}
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Your trust is our priority. We implement robust security measures to protect your event data and ensure its integrity at all times.
+            {t("dataIntegrity.subtitle")}
           </p>
         </header>
 
@@ -36,13 +39,12 @@ const DataIntegrity = () => {
           <Card>
             <CardHeader>
               <Shield className="w-12 h-12 mb-4 text-primary" aria-hidden="true" />
-              <CardTitle>Data Protection</CardTitle>
-              <CardDescription>Enterprise-grade security for your peace of mind</CardDescription>
+              <CardTitle>{t("dataIntegrity.dataProtection")}</CardTitle>
+              <CardDescription>{t("dataIntegrity.dataProtectionDesc")}</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground">
-                All event data is encrypted both in transit and at rest using industry-standard encryption protocols. 
-                We employ SSL/TLS certificates and secure data transmission to protect your information from unauthorized access.
+                {t("dataIntegrity.dataProtectionText")}
               </p>
             </CardContent>
           </Card>
@@ -50,17 +52,15 @@ const DataIntegrity = () => {
           <Card>
             <CardHeader>
               <Lock className="w-12 h-12 mb-4 text-primary" aria-hidden="true" />
-              <CardTitle>Access Control</CardTitle>
-              <CardDescription>Secure authentication and authorization</CardDescription>
+              <CardTitle>{t("dataIntegrity.accessControl")}</CardTitle>
+              <CardDescription>{t("dataIntegrity.accessControlDesc")}</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground mb-4">
-                Event organizers receive unique access codes to manage their events. Only authorized users can view, 
-                modify, or delete event information, ensuring complete control over your data.
+                {t("dataIntegrity.accessControlText1")}
               </p>
               <p className="text-muted-foreground">
-                Users can manage their account settings, reset passwords, and delete their accounts at any time through 
-                their <Link to="/profile" className="text-primary hover:underline font-medium">account page</Link>.
+                {t("dataIntegrity.accessControlText2")} <Link to="/profile" className="text-primary hover:underline font-medium">{t("dataIntegrity.accountPage")}</Link>.
               </p>
             </CardContent>
           </Card>
@@ -68,13 +68,12 @@ const DataIntegrity = () => {
           <Card>
             <CardHeader>
               <Database className="w-12 h-12 mb-4 text-primary" aria-hidden="true" />
-              <CardTitle>Data Integrity</CardTitle>
-              <CardDescription>Reliable and consistent information</CardDescription>
+              <CardTitle>{t("dataIntegrity.dataIntegrity")}</CardTitle>
+              <CardDescription>{t("dataIntegrity.dataIntegrityDesc")}</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground">
-                We maintain strict data validation rules to ensure all event information remains accurate and consistent. 
-                Regular integrity checks prevent data corruption and maintain reliability across our platform.
+                {t("dataIntegrity.dataIntegrityText")}
               </p>
             </CardContent>
           </Card>
@@ -82,13 +81,12 @@ const DataIntegrity = () => {
           <Card>
             <CardHeader>
               <FileCheck className="w-12 h-12 mb-4 text-primary" aria-hidden="true" />
-              <CardTitle>Automatic Cleanup</CardTitle>
-              <CardDescription>Privacy-first data management</CardDescription>
+              <CardTitle>{t("dataIntegrity.autoCleanup")}</CardTitle>
+              <CardDescription>{t("dataIntegrity.autoCleanupDesc")}</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground">
-                Events are automatically deleted at the end of their scheduled date, ensuring no unnecessary data retention. 
-                This privacy-first approach minimizes data storage and protects user information.
+                {t("dataIntegrity.autoCleanupText")}
               </p>
             </CardContent>
           </Card>
@@ -96,13 +94,12 @@ const DataIntegrity = () => {
           <Card>
             <CardHeader>
               <Eye className="w-12 h-12 mb-4 text-primary" aria-hidden="true" />
-              <CardTitle>Transparency</CardTitle>
-              <CardDescription>Clear data usage policies</CardDescription>
+              <CardTitle>{t("dataIntegrity.transparency")}</CardTitle>
+              <CardDescription>{t("dataIntegrity.transparencyDesc")}</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground">
-                We collect only essential information needed to display and manage events. No personal data is shared 
-                with third parties without explicit consent, and users can request data deletion at any time.
+                {t("dataIntegrity.transparencyText")}
               </p>
             </CardContent>
           </Card>
@@ -110,47 +107,44 @@ const DataIntegrity = () => {
           <Card>
             <CardHeader>
               <RefreshCw className="w-12 h-12 mb-4 text-primary" aria-hidden="true" />
-              <CardTitle>Regular Backups</CardTitle>
-              <CardDescription>Reliable data recovery</CardDescription>
+              <CardTitle>{t("dataIntegrity.regularBackups")}</CardTitle>
+              <CardDescription>{t("dataIntegrity.regularBackupsDesc")}</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground">
-                Automated backups ensure your event data is safe and recoverable in case of system failures. 
-                Our redundant storage systems guarantee high availability and data durability.
+                {t("dataIntegrity.regularBackupsText")}
               </p>
             </CardContent>
           </Card>
         </section>
 
         <section className="bg-card border rounded-lg p-8 mb-12" aria-labelledby="commitment-heading">
-          <h2 id="commitment-heading" className="text-3xl font-bold mb-6">Our Commitment to You</h2>
+          <h2 id="commitment-heading" className="text-3xl font-bold mb-6">{t("dataIntegrity.commitmentTitle")}</h2>
           <div className="space-y-4 text-muted-foreground">
             <p>
-              At SwedEvents, we understand that your event data is valuable and sensitive. We are committed to maintaining 
-              the highest standards of data security and integrity through:
+              {t("dataIntegrity.commitmentText")}
             </p>
             <ul className="list-disc list-inside space-y-2 ml-4">
-              <li>Regular security audits and penetration testing</li>
-              <li>Compliance with GDPR and international data protection regulations</li>
-              <li>Continuous monitoring for suspicious activities</li>
-              <li>Prompt security updates and patches</li>
-              <li>Transparent incident reporting and response procedures</li>
+              <li>{t("dataIntegrity.commitmentItem1")}</li>
+              <li>{t("dataIntegrity.commitmentItem2")}</li>
+              <li>{t("dataIntegrity.commitmentItem3")}</li>
+              <li>{t("dataIntegrity.commitmentItem4")}</li>
+              <li>{t("dataIntegrity.commitmentItem5")}</li>
             </ul>
             <p className="mt-6">
-              If you have any questions about our data security practices or would like to report a security concern, 
-              please contact us at <a href="mailto:security@swedevents.com" className="text-primary hover:underline">security@swedevents.com</a>
+              {t("dataIntegrity.contactText")} <Link to="/contact" className="text-primary hover:underline">{t("dataIntegrity.contactUs")}</Link>
             </p>
           </div>
         </section>
 
         <section className="bg-gradient-to-br from-primary/10 via-[hsl(230,89%,62%)]/10 to-accent/10 rounded-lg p-12 text-center">
           <User className="w-16 h-16 mx-auto mb-4 text-primary" aria-hidden="true" />
-          <h2 className="text-3xl font-bold mb-4">Manage Your Account</h2>
+          <h2 className="text-3xl font-bold mb-4">{t("dataIntegrity.manageAccountTitle")}</h2>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Take full control of your account settings, update your password, or delete your account at any time.
+            {t("dataIntegrity.manageAccountText")}
           </p>
           <Button size="lg" asChild>
-            <Link to="/profile">Go to My Account</Link>
+            <Link to="/profile">{t("dataIntegrity.goToAccount")}</Link>
           </Button>
         </section>
       </main>

@@ -14,6 +14,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import EventApproved from "./pages/EventApproved";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
+import TermsConditions from "./pages/TermsConditions";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,7 @@ const App = () => (
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/event-approved" element={<EventApproved />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/terms" element={<TermsConditions />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>

@@ -25,7 +25,7 @@ const eventSchema = z.object({
   organizer_email: z.string().trim().email("Please enter a valid email").max(255),
   organizer_description: z.string().trim().max(1000).optional(),
   title: z.string().trim().min(3, "Title must be at least 3 characters").max(200),
-  description: z.string().trim().max(2000, "Description too long").optional(),
+  description: z.string().trim().min(10, "Description must be at least 10 characters").max(2000, "Description too long"),
   location: z.string().trim().min(3, "Location must be at least 3 characters").max(200),
   category: z.string().min(1, "Please select a category"),
   start_date: z.string().min(1, "Start date is required"),
@@ -103,7 +103,7 @@ const CreateEvent = () => {
         organizer_email: formData.get('organizer_email') as string || "",
         organizer_description: organizerDesc && organizerDesc.trim() ? organizerDesc.trim() : undefined,
         title: formData.get('title') as string || "",
-        description: eventDesc && eventDesc.trim() ? eventDesc.trim() : undefined,
+        description: eventDesc || "",
         location: formData.get('location') as string || "",
         category: finalCategory || "",
         start_date: formData.get('start_date') as string || "",
@@ -296,12 +296,15 @@ const CreateEvent = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="description" className="text-sm font-semibold text-foreground">
+                    <Label htmlFor="description" className="text-sm font-semibold text-foreground flex items-center gap-1">
                       {t("create.eventDesc")}
+                      <span className="text-destructive">*</span>
                     </Label>
                     <Textarea
                       id="description"
                       name="description"
+                      required
+                      minLength={10}
                       placeholder={t("create.eventDescPlaceholder")}
                       className="min-h-[100px] bg-background border-input resize-none"
                     />

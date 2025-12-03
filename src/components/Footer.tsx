@@ -32,6 +32,7 @@ const Footer = () => {
                   <Link to="/about" className="text-primary hover:text-primary/80 font-medium transition-colors">{t("footer.aboutUs")}</Link>
                   <Link to="/contact" className="text-primary hover:text-primary/80 font-medium transition-colors">{t("footer.contactUs")}</Link>
                   <Link to="/data-integrity" className="text-primary hover:text-primary/80 font-medium transition-colors">{t("footer.dataIntegrity")}</Link>
+                  <Link to="/terms" className="text-primary hover:text-primary/80 font-medium transition-colors">{t("footer.terms")}</Link>
                 </div>
               </div>
             </div>

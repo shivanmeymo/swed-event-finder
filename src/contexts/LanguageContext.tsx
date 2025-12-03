@@ -40,6 +40,7 @@ const translations = {
     "footer.aboutUs": "About Us",
     "footer.contactUs": "Contact Us",
     "footer.dataIntegrity": "Data Integrity",
+    "footer.terms": "Terms & Conditions",
     "footer.newsletter": "Subscribe to Newsletter",
     "footer.email": "Your email",
     "footer.category": "Category",
@@ -60,10 +61,9 @@ const translations = {
     
     // Cookie Consent
     "cookie.title": "We care about your privacy",
-    "cookie.description": "We use cookies to improve your browsing experience, show personalized ads or content and analyze our traffic. By clicking \"Accept all\" you consent to our use of cookies.",
-    "cookie.customize": "Customize",
-    "cookie.rejectAll": "Reject all",
-    "cookie.acceptAll": "Accept all",
+    "cookie.description": "We use cookies to improve your browsing experience and analyze our traffic. By clicking \"Accept all\" you consent to our use of all cookies. Click \"Accept necessary\" to only allow essential cookies required for the website to function.",
+    "cookie.acceptNecessary": "Accept Necessary",
+    "cookie.acceptAll": "Accept All",
     
     // Auth
     "auth.invalidEmail": "Invalid email address. Please check and try again.",
@@ -86,7 +86,7 @@ const translations = {
     "create.eventDetails": "Event Details",
     "create.eventDetailsDesc": "Fill in your event information",
     "create.eventTitle": "Event Title",
-    "create.eventDesc": "Event Description (Optional)",
+    "create.eventDesc": "Event Description",
     "create.eventDescPlaceholder": "Describe what makes your event special...",
     "create.startDate": "Start Date",
     "create.startTime": "Start Time",
@@ -219,7 +219,7 @@ const translations = {
     "about.verificationTitle": "Quality Control",
     "about.verificationText": "All events are reviewed to ensure they meet our quality standards and provide accurate information to our users.",
     "about.storyTitle": "Our Story",
-    "about.storyText1": "NowInTown started in 2024 with a vision to transform how people discover and share events throughout Sweden. Our founders, passionate about community building and cultural experiences, recognized that incredible events were often happening in people's backyards without them knowing.",
+    "about.storyText1": "NowInTown started in 2025 with a vision to transform how people discover and share events throughout Sweden. Our founders, passionate about community building and cultural experiences, recognized that incredible events were often happening in people's backyards without them knowing.",
     "about.storyText2": "Today, we're proud to serve event organizers and attendees across Sweden, from major cities to small towns. Our platform has become a trusted resource for discovering everything from art exhibitions and sports events to family-friendly activities and professional networking opportunities.",
     "about.storyText3": "We're committed to continuously improving our platform, adding new features, and expanding our reach to ensure that no great event goes undiscovered.",
     "about.coverageTitle": "Nationwide Coverage",
@@ -303,6 +303,7 @@ const translations = {
     "footer.aboutUs": "Om Oss",
     "footer.contactUs": "Kontakta Oss",
     "footer.dataIntegrity": "Dataintegritet",
+    "footer.terms": "Villkor",
     "footer.newsletter": "Prenumerera på Nyhetsbrev",
     "footer.email": "Din e-post",
     "footer.category": "Kategori",
@@ -323,10 +324,9 @@ const translations = {
     
     // Cookie Consent
     "cookie.title": "Vi värnar om din integritet",
-    "cookie.description": "Vi använder cookies för att förbättra din surfupplevelse, visa personliga annonser eller innehåll och analysera vår trafik. Genom att klicka på \"Acceptera alla\" samtycker du till vår användning av cookies.",
-    "cookie.customize": "Anpassa",
-    "cookie.rejectAll": "Avvisa alla",
-    "cookie.acceptAll": "Acceptera alla",
+    "cookie.description": "Vi använder cookies för att förbättra din surfupplevelse och analysera vår trafik. Genom att klicka på \"Acceptera alla\" samtycker du till vår användning av alla cookies. Klicka på \"Acceptera nödvändiga\" för att endast tillåta nödvändiga cookies.",
+    "cookie.acceptNecessary": "Acceptera Nödvändiga",
+    "cookie.acceptAll": "Acceptera Alla",
     
     // Auth
     "auth.invalidEmail": "Ogiltig e-postadress. Vänligen kontrollera och försök igen.",
@@ -349,7 +349,7 @@ const translations = {
     "create.eventDetails": "Eventdetaljer",
     "create.eventDetailsDesc": "Fyll i din eventinformation",
     "create.eventTitle": "Eventtitel",
-    "create.eventDesc": "Eventbeskrivning (Valfritt)",
+    "create.eventDesc": "Eventbeskrivning",
     "create.eventDescPlaceholder": "Beskriv vad som gör ditt event speciellt...",
     "create.startDate": "Startdatum",
     "create.startTime": "Starttid",
@@ -482,7 +482,7 @@ const translations = {
     "about.verificationTitle": "Kvalitetskontroll",
     "about.verificationText": "Alla evenemang granskas för att säkerställa att de uppfyller våra kvalitetsstandarder och ger korrekt information till våra användare.",
     "about.storyTitle": "Vår Historia",
-    "about.storyText1": "NowInTown startade 2024 med en vision att förändra hur människor upptäcker och delar evenemang över hela Sverige. Våra grundare, passionerade för att bygga gemenskap och kulturella upplevelser, insåg att otroliga evenemang ofta hände i människors trädgårdar utan att de visste om det.",
+    "about.storyText1": "NowInTown startade 2025 med en vision att förändra hur människor upptäcker och delar evenemang över hela Sverige. Våra grundare, passionerade för att bygga gemenskap och kulturella upplevelser, insåg att otroliga evenemang ofta hände i människors trädgårdar utan att de visste om det.",
     "about.storyText2": "Idag är vi stolta över att tjäna eventarrangörer och deltagare över hela Sverige, från stora städer till små städer. Vår plattform har blivit en pålitlig resurs för att upptäcka allt från konstutställningar och sportevenemang till familjevänliga aktiviteter och professionella nätverksmöjligheter.",
     "about.storyText3": "Vi är engagerade i att kontinuerligt förbättra vår plattform, lägga till nya funktioner och utöka vår räckvidd för att säkerställa att inget fantastiskt evenemang förblir oupptäckt.",
     "about.coverageTitle": "Rikstäckning",

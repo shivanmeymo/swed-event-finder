@@ -26,8 +26,8 @@ const DataIntegrity = () => {
       <Navbar />
       
       <main className="container mx-auto px-4 py-12">
-        <header className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary via-[hsl(230,89%,62%)] to-accent bg-clip-text text-transparent">
+        <header className="text-center mb-16">
+          <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary via-[hsl(230,89%,62%)] to-accent bg-clip-text text-transparent">
             {t("dataIntegrity.title")}
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">

@@ -17,11 +17,11 @@ import {
 import { Mail, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import contactHero from "@/assets/contact-hero.jpg";
+import contactHero from "@/assets/contact-hero-new.jpg";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const Contact = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [category, setCategory] = useState("");
   const { toast } = useToast();
@@ -99,23 +99,23 @@ const Contact = () => {
             {/* Contact Information */}
             <Card className="border-border shadow-[var(--shadow-lg)]">
               <CardHeader>
-                <CardTitle>📍 Get in Touch</CardTitle>
+                <CardTitle>📍 {t("contact.getInTouch")}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <p className="font-semibold text-foreground mb-1">Email:</p>
-                  <a href="mailto:contact@nowintown.com" className="text-primary hover:underline">
-                    contact@nowintown.com
+                  <p className="font-semibold text-foreground mb-1">{t("contact.email")}:</p>
+                  <a href="mailto:contact@nowintown.se" className="text-primary hover:underline">
+                    contact@nowintown.se
                   </a>
                 </div>
                 <div>
-                  <p className="font-semibold text-foreground mb-1">Phone:</p>
+                  <p className="font-semibold text-foreground mb-1">{t("contact.phone")}:</p>
                   <a href="tel:+46705430505" className="text-primary hover:underline">
                     +46 (0)70 543 05 05
                   </a>
                 </div>
                 <div>
-                  <p className="font-semibold text-foreground mb-1">Office Address:</p>
+                  <p className="font-semibold text-foreground mb-1">{language === "sv" ? "Adress:" : "Office Address:"}</p>
                   <p className="text-muted-foreground">
                     Uppsala, Sweden
                   </p>
@@ -126,11 +126,11 @@ const Contact = () => {
             {/* Office Hours */}
             <Card className="border-border shadow-[var(--shadow-lg)]">
               <CardHeader>
-                <CardTitle>🕒 Office Hours</CardTitle>
+                <CardTitle>🕒 {t("contact.hours")}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Monday – Friday: 9:00 AM – 5:00 PM
+                  {t("contact.hoursValue")}
                 </p>
               </CardContent>
             </Card>
@@ -139,36 +139,38 @@ const Contact = () => {
           {/* Contact Form */}
           <Card className="border-border shadow-[var(--shadow-lg)]">
             <CardHeader>
-              <CardTitle>💬 Send Us a Message</CardTitle>
+              <CardTitle>💬 {t("contact.sendMessage")}</CardTitle>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Name *</Label>
+                    <Label htmlFor="name">{t("contact.name")} *</Label>
                     <Input
                       id="name"
                       name="name"
-                      placeholder="Your full name"
+                      placeholder={language === "sv" ? "Ditt fullständiga namn" : "Your full name"}
                       required
+                      aria-required="true"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email *</Label>
+                    <Label htmlFor="email">{t("contact.email")} *</Label>
                     <Input
                       id="email"
                       name="email"
                       type="email"
-                      placeholder="your.email@example.com"
+                      placeholder={language === "sv" ? "din.email@exempel.se" : "your.email@example.com"}
                       required
+                      aria-required="true"
                     />
                   </div>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="phone">Phone</Label>
+                    <Label htmlFor="phone">{t("contact.phone")}</Label>
                     <Input
                       id="phone"
                       name="phone"
@@ -178,31 +180,32 @@ const Contact = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="category">Category *</Label>
+                    <Label htmlFor="category">{t("contact.category")} *</Label>
                     <Select value={category} onValueChange={setCategory} required>
                       <SelectTrigger id="category">
-                        <SelectValue placeholder="Select category" />
+                        <SelectValue placeholder={t("contact.selectCategory")} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Support">Support</SelectItem>
-                        <SelectItem value="Data Integrity">Data Integrity</SelectItem>
-                        <SelectItem value="Suggestion">Suggestion</SelectItem>
-                        <SelectItem value="Events">Events</SelectItem>
-                        <SelectItem value="Business">Business</SelectItem>
-                        <SelectItem value="Others">Others</SelectItem>
+                        <SelectItem value="Support">{language === "sv" ? "Support" : "Support"}</SelectItem>
+                        <SelectItem value="Data Integrity">{language === "sv" ? "Dataintegritet" : "Data Integrity"}</SelectItem>
+                        <SelectItem value="Suggestion">{language === "sv" ? "Förslag" : "Suggestion"}</SelectItem>
+                        <SelectItem value="Events">{language === "sv" ? "Evenemang" : "Events"}</SelectItem>
+                        <SelectItem value="Business">{language === "sv" ? "Företag" : "Business"}</SelectItem>
+                        <SelectItem value="Others">{language === "sv" ? "Annat" : "Others"}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="summary">Message *</Label>
+                  <Label htmlFor="summary">{language === "sv" ? "Meddelande" : "Message"} *</Label>
                   <Textarea
                     id="summary"
                     name="summary"
-                    placeholder="Tell us about your event or inquiry..."
+                    placeholder={language === "sv" ? "Berätta mer om din förfrågan..." : "Tell us about your event or inquiry..."}
                     rows={6}
                     required
+                    aria-required="true"
                   />
                 </div>
 
@@ -212,7 +215,7 @@ const Contact = () => {
                   disabled={isLoading}
                 >
                   <Send className="mr-2 h-4 w-4" />
-                  {isLoading ? "Sending..." : "Send Message"}
+                  {isLoading ? t("contact.sending") : t("contact.send")}
                 </Button>
               </form>
             </CardContent>
@@ -220,10 +223,13 @@ const Contact = () => {
 
           {/* Footer Message */}
           <div className="mt-12 text-center">
-            <h3 className="text-2xl font-bold text-foreground mb-2">🤝 Let's Create Something Unforgettable</h3>
+            <h3 className="text-2xl font-bold text-foreground mb-2">
+              🤝 {language === "sv" ? "Låt oss skapa något oförglömligt" : "Let's Create Something Unforgettable"}
+            </h3>
             <p className="text-muted-foreground max-w-3xl mx-auto">
-              At NowInTown, we specialize in turning your ideas into memorable experiences — from concept to celebration. 
-              Fill out the form or reach out directly, and one of our event specialists will get back to you within 24 hours.
+              {language === "sv"
+                ? "På NowInTown specialiserar vi oss på att förvandla dina idéer till minnesvärda upplevelser — från koncept till firande. Fyll i formuläret eller kontakta oss direkt, så återkommer en av våra eventspecialister inom 24 timmar."
+                : "At NowInTown, we specialize in turning your ideas into memorable experiences — from concept to celebration. Fill out the form or reach out directly, and one of our event specialists will get back to you within 24 hours."}
             </p>
           </div>
         </div>

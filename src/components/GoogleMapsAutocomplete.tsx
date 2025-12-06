@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
-import { MapPin, Loader2 } from "lucide-react";
+import { MapPin, Loader2, AlertCircle } from "lucide-react";
 
 interface GoogleMapsAutocompleteProps {
   value: string;
@@ -34,40 +34,58 @@ const GoogleMapsAutocomplete = ({
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // If no API key, just use basic input
+    if (!GOOGLE_MAPS_API_KEY) {
+      console.warn("Google Maps API key not configured - using basic input");
+      return;
+    }
+
     // Check if Google Maps is already loaded
     if (window.google?.maps?.places) {
       setIsLoaded(true);
       return;
     }
 
+    // Check if script is already loading
+    if (document.querySelector('script[src*="maps.googleapis.com"]')) {
+      // Wait for existing script to load
+      const checkLoaded = setInterval(() => {
+        if (window.google?.maps?.places) {
+          setIsLoaded(true);
+          setIsLoading(false);
+          clearInterval(checkLoaded);
+        }
+      }, 100);
+      return () => clearInterval(checkLoaded);
+    }
+
     // Load Google Maps script
-    const loadScript = () => {
-      if (document.querySelector('script[src*="maps.googleapis.com"]')) {
-        return;
-      }
-
-      setIsLoading(true);
-      const script = document.createElement("script");
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places&callback=initGoogleMaps`;
-      script.async = true;
-      script.defer = true;
-      
-      window.initGoogleMaps = () => {
-        setIsLoaded(true);
-        setIsLoading(false);
-      };
-
-      script.onerror = () => {
-        setIsLoading(false);
-        console.error("Failed to load Google Maps");
-      };
-
-      document.head.appendChild(script);
+    setIsLoading(true);
+    const script = document.createElement("script");
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places&callback=initGoogleMaps`;
+    script.async = true;
+    script.defer = true;
+    
+    window.initGoogleMaps = () => {
+      setIsLoaded(true);
+      setIsLoading(false);
     };
 
-    loadScript();
+    script.onerror = () => {
+      setIsLoading(false);
+      setError("Failed to load location suggestions");
+      console.error("Failed to load Google Maps");
+    };
+
+    document.head.appendChild(script);
+
+    return () => {
+      // Cleanup
+      delete window.initGoogleMaps;
+    };
   }, []);
 
   useEffect(() => {
@@ -78,7 +96,7 @@ const GoogleMapsAutocomplete = ({
         inputRef.current,
         {
           types: ["establishment", "geocode"],
-          componentRestrictions: { country: "se" }, // Restrict to Sweden
+          componentRestrictions: { country: "se" },
           fields: ["formatted_address", "name", "geometry"],
         }
       );
@@ -92,8 +110,9 @@ const GoogleMapsAutocomplete = ({
           onChange(locationName);
         }
       });
-    } catch (error) {
-      console.error("Error initializing autocomplete:", error);
+    } catch (err) {
+      console.error("Error initializing autocomplete:", err);
+      setError("Location suggestions unavailable");
     }
 
     return () => {
@@ -108,6 +127,9 @@ const GoogleMapsAutocomplete = ({
       <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground z-10" />
       {isLoading && (
         <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground animate-spin z-10" />
+      )}
+      {error && !isLoading && (
+        <AlertCircle className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground z-10" />
       )}
       <Input
         ref={inputRef}

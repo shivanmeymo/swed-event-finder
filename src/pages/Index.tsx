@@ -88,19 +88,27 @@ const Index = () => {
       if (filters.dateRange && filters.dateRange !== "all") {
         const eventDate = new Date(event.start_datetime);
         const now = new Date();
-        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        
+        // Get today's date at midnight in local timezone
+        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const todayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
         
         if (filters.dateRange === "today") {
-          const tomorrow = new Date(today);
-          tomorrow.setDate(tomorrow.getDate() + 1);
-          if (eventDate < today || eventDate >= tomorrow) return false;
+          // Check if event date is today (comparing just the date parts)
+          const eventDateOnly = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate());
+          const todayDateOnly = new Date(todayStart.getFullYear(), todayStart.getMonth(), todayStart.getDate());
+          if (eventDateOnly.getTime() !== todayDateOnly.getTime()) return false;
         } else if (filters.dateRange === "thisWeek") {
-          const weekEnd = new Date(today);
+          // Get end of week (7 days from today)
+          const weekEnd = new Date(todayStart);
           weekEnd.setDate(weekEnd.getDate() + 7);
-          if (eventDate < today || eventDate >= weekEnd) return false;
+          const eventDateOnly = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate());
+          if (eventDateOnly < todayStart || eventDateOnly >= weekEnd) return false;
         } else if (filters.dateRange === "thisMonth") {
-          const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 1);
-          if (eventDate < today || eventDate >= monthEnd) return false;
+          // Get events from today until end of current month
+          const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+          const eventDateOnly = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate());
+          if (eventDateOnly < todayStart || eventDate > monthEnd) return false;
         }
       }
 

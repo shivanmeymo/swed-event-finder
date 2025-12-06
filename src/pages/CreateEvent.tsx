@@ -15,10 +15,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Calendar, MapPin, Upload, Save } from "lucide-react";
+import { Calendar, Upload, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
+import GoogleMapsAutocomplete from "@/components/GoogleMapsAutocomplete";
 
 const eventSchema = z.object({
   organizer_name: z.string().trim().min(2, "Name must be at least 2 characters").max(100),
@@ -58,6 +59,7 @@ const CreateEvent = () => {
   const [showCustomCategory, setShowCustomCategory] = useState(false);
   const [customCategory, setCustomCategory] = useState("");
   const [isFree, setIsFree] = useState(true);
+  const [locationValue, setLocationValue] = useState("");
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -104,7 +106,7 @@ const CreateEvent = () => {
         organizer_description: organizerDesc && organizerDesc.trim() ? organizerDesc.trim() : undefined,
         title: formData.get('title') as string || "",
         description: eventDesc || "",
-        location: formData.get('location') as string || "",
+        location: locationValue || "",
         category: finalCategory || "",
         start_date: formData.get('start_date') as string || "",
         start_time: formData.get('start_time') as string || "",
@@ -383,16 +385,15 @@ const CreateEvent = () => {
                       {t("create.location")}
                       <span className="text-destructive">*</span>
                     </Label>
-                    <div className="relative">
-                      <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="location"
-                        name="location"
-                        required
-                        placeholder={language === "sv" ? "Eventplats" : "Event location"}
-                        className="pl-10 bg-background border-input"
-                      />
-                    </div>
+                    <GoogleMapsAutocomplete
+                      id="location"
+                      name="location"
+                      value={locationValue}
+                      onChange={setLocationValue}
+                      required
+                      placeholder={language === "sv" ? "Sök efter plats i Sverige..." : "Search for location in Sweden..."}
+                      className="bg-background border-input"
+                    />
                   </div>
 
                   <div className="space-y-2">

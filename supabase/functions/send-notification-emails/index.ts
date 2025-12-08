@@ -32,7 +32,7 @@ const handler = async (req: Request): Promise<Response> => {
     // Get event details
     const { data: event, error: eventError } = await supabase
       .from("events")
-      .select("title, category, location, start_datetime")
+      .select("*")
       .eq("id", eventId)
       .single();
 
@@ -68,25 +68,32 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Filter subscriptions based on event criteria
     const matchingSubscriptions = subscriptions.filter(sub => {
-      // Check category filter
-      if (sub.category_filter && sub.category_filter !== event.category) {
+      // Check category filter - skip if 'all' or empty
+      if (sub.category_filter && sub.category_filter !== 'all' && sub.category_filter !== event.category) {
+        console.log(`Subscription ${sub.email} skipped: category mismatch (${sub.category_filter} vs ${event.category})`);
         return false;
       }
 
-      // Check location filter
-      if (sub.location_filter && !event.location.toLowerCase().includes(sub.location_filter.toLowerCase())) {
-        return false;
-      }
-
-      // Check keyword filter
-      if (sub.keyword_filter) {
-        const keywords = sub.keyword_filter.toLowerCase();
-        const eventText = `${event.title} ${event.location}`.toLowerCase();
-        if (!eventText.includes(keywords)) {
+      // Check location filter - skip if 'all' or empty
+      if (sub.location_filter && sub.location_filter !== 'all') {
+        if (!event.location.toLowerCase().includes(sub.location_filter.toLowerCase())) {
+          console.log(`Subscription ${sub.email} skipped: location mismatch`);
           return false;
         }
       }
 
+      // Check keyword filter
+      if (sub.keyword_filter) {
+        const keywords = sub.keyword_filter.toLowerCase().split(',').map((k: string) => k.trim());
+        const eventText = `${event.title} ${event.location} ${event.description || ''}`.toLowerCase();
+        const hasMatch = keywords.some((keyword: string) => eventText.includes(keyword));
+        if (!hasMatch) {
+          console.log(`Subscription ${sub.email} skipped: keyword mismatch`);
+          return false;
+        }
+      }
+
+      console.log(`Subscription ${sub.email} matches event criteria`);
       return true;
     });
 
@@ -95,6 +102,14 @@ const handler = async (req: Request): Promise<Response> => {
     // Send emails to all matching subscribers
     const emailPromises = matchingSubscriptions.map(async (subscription) => {
       try {
+        const startDate = new Date(event.start_datetime);
+        const formattedDate = startDate.toLocaleDateString('en-US', { 
+          weekday: 'long', 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        });
+
         await resend.emails.send({
           from: "NowInTown <onboarding@resend.dev>",
           to: [subscription.email],
@@ -105,7 +120,8 @@ const handler = async (req: Request): Promise<Response> => {
               <h2 style="color: #333;">${event.title}</h2>
               <p><strong>Category:</strong> ${event.category}</p>
               <p><strong>Location:</strong> ${event.location}</p>
-              <p><strong>Date:</strong> ${new Date(event.start_datetime).toLocaleDateString()}</p>
+              <p><strong>Date:</strong> ${formattedDate}</p>
+              ${event.is_free ? '<p style="color: #28a745; font-weight: bold;">FREE EVENT</p>' : ''}
               <p style="margin-top: 30px;">Check out this event and more on NowInTown!</p>
               <p style="color: #666; font-size: 14px; margin-top: 30px;">
                 Best regards,<br>

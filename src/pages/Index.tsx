@@ -84,31 +84,34 @@ const Index = () => {
         if (!matchesKeywords) return false;
       }
 
-      // Date range filter
+      // Date range filter - filter by event START date only
       if (filters.dateRange && filters.dateRange !== "all") {
-        const eventDate = new Date(event.start_datetime);
+        const eventStartDate = new Date(event.start_datetime);
         const now = new Date();
         
-        // Get today's date at midnight in local timezone
-        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        const todayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+        // Get today's date at midnight (start of day) in local timezone
+        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+        
+        // Get event start date at midnight for date-only comparison
+        const eventStartDateOnly = new Date(
+          eventStartDate.getFullYear(), 
+          eventStartDate.getMonth(), 
+          eventStartDate.getDate(), 
+          0, 0, 0, 0
+        );
         
         if (filters.dateRange === "today") {
-          // Check if event date is today (comparing just the date parts)
-          const eventDateOnly = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate());
-          const todayDateOnly = new Date(todayStart.getFullYear(), todayStart.getMonth(), todayStart.getDate());
-          if (eventDateOnly.getTime() !== todayDateOnly.getTime()) return false;
+          // Event must START today
+          if (eventStartDateOnly.getTime() !== todayStart.getTime()) return false;
         } else if (filters.dateRange === "thisWeek") {
-          // Get end of week (7 days from today)
+          // Event must START within the next 7 days (from today)
           const weekEnd = new Date(todayStart);
           weekEnd.setDate(weekEnd.getDate() + 7);
-          const eventDateOnly = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate());
-          if (eventDateOnly < todayStart || eventDateOnly >= weekEnd) return false;
+          if (eventStartDateOnly < todayStart || eventStartDateOnly >= weekEnd) return false;
         } else if (filters.dateRange === "thisMonth") {
-          // Get events from today until end of current month
-          const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
-          const eventDateOnly = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate());
-          if (eventDateOnly < todayStart || eventDate > monthEnd) return false;
+          // Event must START within the current month (from today until end of month)
+          const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+          if (eventStartDateOnly < todayStart || eventStartDateOnly > monthEnd) return false;
         }
       }
 

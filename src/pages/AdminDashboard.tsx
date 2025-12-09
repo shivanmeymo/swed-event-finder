@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Check, X, Eye, Trash2, Edit } from "lucide-react";
+import { Check, X, Eye, Trash2, Edit, Download, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 
 const AdminDashboard = () => {
@@ -16,6 +16,7 @@ const AdminDashboard = () => {
   const [events, setEvents] = useState<any[]>([]);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loadingEvents, setLoadingEvents] = useState(true);
+  const [importingEvents, setImportingEvents] = useState(false);
 
   useEffect(() => {
     const checkAdminStatus = async () => {
@@ -126,6 +127,41 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleImportTicksterEvents = async () => {
+    setImportingEvents(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('import-tickster-events', {
+        body: { limit: 50 },
+      });
+
+      if (error) {
+        console.error("Import error:", error);
+        toast.error(`Failed to import events: ${error.message}`);
+        return;
+      }
+
+      if (data?.error) {
+        toast.error(`Import failed: ${data.error}`);
+        return;
+      }
+
+      const message = `Imported ${data.imported} events${data.skipped ? `, skipped ${data.skipped} duplicates` : ''}`;
+      toast.success(message);
+      
+      if (data.errors && data.errors.length > 0) {
+        console.warn("Import errors:", data.errors);
+        toast.warning(`Some events had errors: ${data.errors.length} issues`);
+      }
+
+      fetchEvents();
+    } catch (err) {
+      console.error("Import exception:", err);
+      toast.error("Failed to import events from Tickster");
+    } finally {
+      setImportingEvents(false);
+    }
+  };
+
   if (loading || !isAdmin) {
     return (
       <div className="min-h-screen bg-background">
@@ -141,9 +177,28 @@ const AdminDashboard = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       <div className="container mx-auto px-4 py-20">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-2">Admin Dashboard</h1>
-          <p className="text-muted-foreground">Manage all events</p>
+        <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-4xl font-bold text-foreground mb-2">Admin Dashboard</h1>
+            <p className="text-muted-foreground">Manage all events</p>
+          </div>
+          <Button
+            onClick={handleImportTicksterEvents}
+            disabled={importingEvents}
+            className="bg-primary hover:bg-primary/90"
+          >
+            {importingEvents ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                Importing...
+              </>
+            ) : (
+              <>
+                <Download className="h-4 w-4 mr-2" />
+                Import from Tickster
+              </>
+            )}
+          </Button>
         </div>
 
         {loadingEvents ? (

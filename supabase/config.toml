@@ -17,3 +17,9 @@ verify_jwt = false
 
 [functions.notify-subscribers-new-event]
 verify_jwt = false
+
+[functions.delete-user-account]
+verify_jwt = false
+
+[functions.import-tickster-events]
+verify_jwt = false

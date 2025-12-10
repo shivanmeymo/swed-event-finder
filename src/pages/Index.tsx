@@ -24,11 +24,11 @@ const Index = () => {
   });
   const [allEvents, setAllEvents] = useState<any[]>([]);
 
-  // Fetch events from database
+  // Fetch events from database using the secure view
   useEffect(() => {
     const fetchEvents = async () => {
       const { data, error } = await supabase
-        .from('events')
+        .from('events_public' as any)
         .select('*')
         .eq('approved', true)
         .order('created_at', { ascending: false });

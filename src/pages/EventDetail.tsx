@@ -18,8 +18,9 @@ const EventDetail = () => {
 
   useEffect(() => {
     const fetchEvent = async () => {
+      // Use events_public view to protect organizer email from unauthorized access
       const { data, error } = await supabase
-        .from('events')
+        .from('events_public' as any)
         .select('*')
         .eq('id', id)
         .maybeSingle();

@@ -160,7 +160,75 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      events_public: {
+        Row: {
+          approved: boolean | null
+          attendees: number | null
+          category: string | null
+          created_at: string | null
+          description: string | null
+          end_datetime: string | null
+          id: string | null
+          image_url: string | null
+          is_free: boolean | null
+          location: string | null
+          organizer_description: string | null
+          organizer_email: string | null
+          organizer_id: string | null
+          price_adults: number | null
+          price_kids: number | null
+          price_seniors: number | null
+          price_students: number | null
+          start_datetime: string | null
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          approved?: boolean | null
+          attendees?: number | null
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          end_datetime?: string | null
+          id?: string | null
+          image_url?: string | null
+          is_free?: boolean | null
+          location?: string | null
+          organizer_description?: string | null
+          organizer_email?: never
+          organizer_id?: string | null
+          price_adults?: number | null
+          price_kids?: number | null
+          price_seniors?: number | null
+          price_students?: number | null
+          start_datetime?: string | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          approved?: boolean | null
+          attendees?: number | null
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          end_datetime?: string | null
+          id?: string | null
+          image_url?: string | null
+          is_free?: boolean | null
+          location?: string | null
+          organizer_description?: string | null
+          organizer_email?: never
+          organizer_id?: string | null
+          price_adults?: number | null
+          price_kids?: number | null
+          price_seniors?: number | null
+          price_students?: number | null
+          start_datetime?: string | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       has_role: {

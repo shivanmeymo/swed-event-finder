@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 
@@ -8,11 +9,22 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
-interface ContactEmailRequest {
-  name: string;
-  email: string;
-  subject: string;
-  message: string;
+// Validation schema for contact form
+const contactSchema = z.object({
+  name: z.string().trim().min(1, "Name is required").max(100, "Name too long"),
+  email: z.string().trim().email("Invalid email").max(255, "Email too long"),
+  subject: z.string().trim().min(1, "Subject is required").max(200, "Subject too long"),
+  message: z.string().trim().min(1, "Message is required").max(5000, "Message too long"),
+});
+
+// HTML escape function to prevent XSS in emails
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -21,9 +33,30 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { name, email, subject, message }: ContactEmailRequest = await req.json();
+    const body = await req.json();
+    
+    // Validate input
+    const validationResult = contactSchema.safeParse(body);
+    if (!validationResult.success) {
+      console.error("Validation failed:", validationResult.error.errors);
+      return new Response(
+        JSON.stringify({ error: validationResult.error.errors[0].message }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        }
+      );
+    }
 
-    console.log("Sending contact email from:", name, email);
+    const { name, email, subject, message } = validationResult.data;
+
+    console.log("Sending contact email from:", name);
+
+    // Escape all user input before inserting into HTML
+    const safeName = escapeHtml(name);
+    const safeEmail = escapeHtml(email);
+    const safeSubject = escapeHtml(subject);
+    const safeMessage = escapeHtml(message).replace(/\n/g, '<br>');
 
     const emailResponse = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -35,15 +68,15 @@ const handler = async (req: Request): Promise<Response> => {
         from: "NowInTown <onboarding@resend.dev>",
         to: ["shivan.meymo@gmail.com"],
         reply_to: email,
-        subject: `NowInTown Contact: ${subject}`,
+        subject: `NowInTown Contact: ${safeSubject}`,
         html: `
           <h2>New Contact Form Submission</h2>
-          <p><strong>From:</strong> ${name}</p>
-          <p><strong>Email:</strong> ${email}</p>
-          <p><strong>Subject:</strong> ${subject}</p>
+          <p><strong>From:</strong> ${safeName}</p>
+          <p><strong>Email:</strong> ${safeEmail}</p>
+          <p><strong>Subject:</strong> ${safeSubject}</p>
           <hr>
           <p><strong>Message:</strong></p>
-          <p>${message.replace(/\n/g, '<br>')}</p>
+          <p>${safeMessage}</p>
         `,
       }),
     });

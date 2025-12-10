@@ -170,6 +170,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      mask_email: { Args: { email: string }; Returns: string }
     }
     Enums: {
       app_role: "admin" | "organizer" | "user"

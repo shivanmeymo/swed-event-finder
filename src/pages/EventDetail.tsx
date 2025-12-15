@@ -94,11 +94,11 @@ const EventDetail = () => {
       
       <div className="container mx-auto px-4 py-8">
         <Button
-          variant="ghost"
+          variant="default"
           onClick={() => navigate('/')}
-          className="mb-6"
+          className="mb-6 inline-flex items-center gap-2"
         >
-          <ArrowLeft className="mr-2 h-4 w-4" />
+          <ArrowLeft className="h-4 w-4" />
           Back to Events
         </Button>
 

@@ -63,11 +63,13 @@ const CreateEvent = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // Set default start date to today
-  const today = new Date().toISOString().split('T')[0];
-  const [startDate, setStartDate] = useState(today);
+  // Set default start date to tomorrow
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const tomorrowStr = tomorrow.toISOString().split('T')[0];
+  const [startDate, setStartDate] = useState(tomorrowStr);
   const [startTime, setStartTime] = useState("18:00");
-  const [endDate, setEndDate] = useState(today);
+  const [endDate, setEndDate] = useState(tomorrowStr);
   const [endTime, setEndTime] = useState("20:00");
 
   useEffect(() => {

@@ -88,7 +88,7 @@ const handler = async (req: Request): Promise<Response> => {
     const safeOrganizerDescription = escapeHtml(organizerDescription || "");
 
     const emailBody = {
-      from: "NowInTown <onboarding@resend.dev>",
+      from: "NowInTown <notifications@nowintown.se>",
       to: [ADMIN_EMAIL],
       subject: `New Event Pending Approval: ${safeTitle}`,
       html: `

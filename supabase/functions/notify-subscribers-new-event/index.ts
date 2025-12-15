@@ -112,7 +112,7 @@ const handler = async (req: Request): Promise<Response> => {
         });
 
         await resend.emails.send({
-          from: "NowInTown <onboarding@resend.dev>",
+          from: "NowInTown <notifications@nowintown.se>",
           to: [sub.email],
           subject: `New Event Alert: ${event.title}`,
           html: `

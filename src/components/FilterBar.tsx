@@ -279,6 +279,8 @@ const FilterBar = ({ onFilterChange }: FilterBarProps) => {
               <SelectItem value="Art">{language === "sv" ? "Konst" : "Art"}</SelectItem>
               <SelectItem value="Food">{language === "sv" ? "Mat" : "Food"}</SelectItem>
               <SelectItem value="Tech">{language === "sv" ? "Teknologi" : "Tech"}</SelectItem>
+              <SelectItem value="Student">{language === "sv" ? "Student" : "Student"}</SelectItem>
+              <SelectItem value="Kid">{language === "sv" ? "Barn" : "Kid"}</SelectItem>
             </SelectContent>
           </Select>
         </div>

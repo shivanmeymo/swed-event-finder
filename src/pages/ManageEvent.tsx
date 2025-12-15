@@ -15,7 +15,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Calendar, MapPin, Upload, Save, Trash2 } from "lucide-react";
+import { Calendar, Upload, Save, Trash2 } from "lucide-react";
+import GoogleMapsAutocomplete from "@/components/GoogleMapsAutocomplete";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -38,6 +39,7 @@ const ManageEvent = () => {
   const [imagePreview, setImagePreview] = useState<string>("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [locationValue, setLocationValue] = useState("");
   const { toast } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -87,6 +89,7 @@ const ManageEvent = () => {
 
   const handleSelectEvent = (event: any) => {
     setSelectedEvent(event);
+    setLocationValue(event.location || "");
     if (event.image_url) {
       setImagePreview(event.image_url);
     }
@@ -142,7 +145,7 @@ const ManageEvent = () => {
           description: formData.get('description') as string,
           start_datetime: startDatetime,
           end_datetime: endDatetime,
-          location: formData.get('location') as string,
+          location: locationValue || formData.get('location') as string,
           category: formData.get('category') as string,
           image_url: imageUrl,
         } as any)
@@ -379,16 +382,14 @@ const ManageEvent = () => {
 
                   <div className="space-y-2">
                     <Label htmlFor="location">Location *</Label>
-                    <div className="relative">
-                      <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="location"
-                        name="location"
-                        defaultValue={selectedEvent.location}
-                        className="pl-10"
-                        required
-                      />
-                    </div>
+                    <GoogleMapsAutocomplete
+                      id="location"
+                      name="location"
+                      value={locationValue}
+                      onChange={setLocationValue}
+                      required
+                      placeholder="Search for location..."
+                    />
                   </div>
 
                   <div className="space-y-2">

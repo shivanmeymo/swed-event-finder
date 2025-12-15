@@ -139,7 +139,7 @@ const handler = async (req: Request): Promise<Response> => {
         try {
           console.log("Attempting to send email to:", event.organizer_email);
           const emailResult = await resend.emails.send({
-            from: "NowInTown <onboarding@resend.dev>",
+            from: "NowInTown <notifications@nowintown.se>",
             to: [event.organizer_email],
             subject: "Your Event Has Been Approved! 🎉",
             html: `

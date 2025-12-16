@@ -23,3 +23,9 @@ verify_jwt = false
 
 [functions.import-tickster-events]
 verify_jwt = false
+
+[functions.gdpr-retention-check]
+verify_jwt = false
+
+[functions.gdpr-extend-retention]
+verify_jwt = false

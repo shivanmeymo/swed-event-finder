@@ -20,6 +20,7 @@ export type Database = {
           attendees: number | null
           category: string
           created_at: string | null
+          data_retention_extended_at: string | null
           description: string | null
           end_datetime: string
           id: string
@@ -42,6 +43,7 @@ export type Database = {
           attendees?: number | null
           category: string
           created_at?: string | null
+          data_retention_extended_at?: string | null
           description?: string | null
           end_datetime?: string
           id?: string
@@ -64,6 +66,7 @@ export type Database = {
           attendees?: number | null
           category?: string
           created_at?: string | null
+          data_retention_extended_at?: string | null
           description?: string | null
           end_datetime?: string
           id?: string
@@ -114,24 +117,30 @@ export type Database = {
         Row: {
           avatar_url: string | null
           created_at: string | null
+          data_retention_extended_at: string | null
           email: string
           full_name: string | null
+          gdpr_deletion_notified_at: string | null
           id: string
           updated_at: string | null
         }
         Insert: {
           avatar_url?: string | null
           created_at?: string | null
+          data_retention_extended_at?: string | null
           email: string
           full_name?: string | null
+          gdpr_deletion_notified_at?: string | null
           id: string
           updated_at?: string | null
         }
         Update: {
           avatar_url?: string | null
           created_at?: string | null
+          data_retention_extended_at?: string | null
           email?: string
           full_name?: string | null
+          gdpr_deletion_notified_at?: string | null
           id?: string
           updated_at?: string | null
         }
@@ -231,12 +240,32 @@ export type Database = {
       }
     }
     Functions: {
+      extend_data_retention: { Args: { p_user_id: string }; Returns: undefined }
+      get_users_due_for_gdpr_deletion: {
+        Args: never
+        Returns: {
+          email: string
+          user_id: string
+        }[]
+      }
+      get_users_due_for_gdpr_warning: {
+        Args: never
+        Returns: {
+          email: string
+          full_name: string
+          user_id: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
         Returns: boolean
+      }
+      mark_gdpr_warning_sent: {
+        Args: { p_user_id: string }
+        Returns: undefined
       }
       mask_email: { Args: { email: string }; Returns: string }
     }
